@@ -2,12 +2,16 @@ package com.assettrader.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.assettrader.model.utils.UsState;
 
 @Entity
 @Table(name = "ADDRESS")
@@ -17,22 +21,23 @@ public class Address {
 	@Column(name = "ADDRESS_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	// Owning-side of relationship; requires @JoinColumn  
+
+	// Owning-side of relationship; requires @JoinColumn
 	@ManyToOne
-	@JoinColumn(name="USER_PROFILE_ID")
+	@JoinColumn(name = "USER_PROFILE_ID")
 	private UserProfile userProfile;
-	
-	@Column(name="STREET_ADDRESS")
+
+	@Column(name = "STREET_ADDRESS")
 	private String streetAddress;
-	
-	@Column(name="CITY")
+
+	@Column(name = "CITY")
 	private String city;
-	
-	@Column(name="STATE")
-	private String state;
-	
-	@Column(name="ZIP")
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATE")
+	private UsState state;
+
+	@Column(name = "ZIP")
 	private String zip;
 
 	public Long getId() {
@@ -59,11 +64,19 @@ public class Address {
 		this.city = city;
 	}
 
-	public String getState() {
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+
+	public UsState getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(UsState state) {
 		this.state = state;
 	}
 

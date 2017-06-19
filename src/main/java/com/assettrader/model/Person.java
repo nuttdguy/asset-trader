@@ -1,24 +1,17 @@
 package com.assettrader.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
-@Entity
+@MappedSuperclass
 public abstract class Person {
 
-	@Id
-	private Long id;
-	private String firstName;
-	private String lastName;
+
+	@Column(name = "FIRST_NAME")
+	protected String firstName;
 	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+	@Column(name = "LAST_NAME")
+	protected String lastName;
 
 	public String getFirstName() {
 		return firstName;

@@ -1,23 +1,57 @@
 package com.assettrader.model.coin;
 
-import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
+@Table( name = "COIN" )
 public class Coin {
 
-	@Id
+	
+	@Column( name = "COIN_ID" )
+	@GeneratedValue( strategy = GenerationType.IDENTITY )
 	private long id;
+	
+	@Id
+	@Column( name = "MARKET_NAME" )
 	private String marketName;
+	
+	@Column( name = "BASE_CURRENCY" )
 	private String baseCurrency;
+	
+	@Column( name = "BASE_CURRENCY_LONG" )
 	private String baseCurrencyLong;
+	
+	@Column( name = "MARKET_CURRENCY" )
 	private String marketCurrency;
+	
+	@Column( name = "MARKET_CURRENCY_LONG" )
 	private String marketCurrencyLong;
+	
+	@Column( name = "IS_ACTIVE" )
 	private boolean isActive;
-	private LocalDate createDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "CREATE_DATE")
+	private Date createDate;
+	
+	@Column( name = "LOGO_URL")
 	private String logoUrl;
+	
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "coin")
+	private List<OrderBook> orderBook;
+	
 
 	public long getId() {
 		return id;
@@ -75,11 +109,11 @@ public class Coin {
 		this.isActive = isActive;
 	}
 
-	public LocalDate getCreateDate() {
+	public Date getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(LocalDate createDate) {
+	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
 

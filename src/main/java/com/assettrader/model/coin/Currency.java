@@ -1,20 +1,45 @@
 package com.assettrader.model.coin;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table( name = "CURRENCY")
 public class Currency {
 
 	@Id
+	@Column( name = "CURRENCY_ID")
+	@GeneratedValue( strategy = GenerationType.IDENTITY )
 	private long id;
+	
+	@Column( name = "CURRENCY_LONG")
 	private double currencyLong;
+	
+	@Column( name = "MIN_CONFIRMATION")
 	private short minConfirmation;
+	
+	@Column( name = "TX_FEE")
 	private double txFee;
+	
+	@Column( name = "IS_ACTIVE")
 	private boolean isActive;
+	
+	@Column( name = "COIN_TYPE")
 	private String coinType;
+	
+	@Column( name = "BASE_ADDRESS")
 	private double baseAddress;
 
+	@ManyToOne
+	@JoinColumn( name = "COIN_ID")
+	private Coin coin;
+	
 	public long getId() {
 		return id;
 	}
@@ -71,4 +96,13 @@ public class Currency {
 		this.baseAddress = baseAddress;
 	}
 
+	public Coin getCoin() {
+		return coin;
+	}
+
+	public void setCoin(Coin coin) {
+		this.coin = coin;
+	}
+
+	
 }

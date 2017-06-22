@@ -1,64 +1,24 @@
-package com.assettrader.model.coin;
+package com.assettrader.model.DTO;
 
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+public class CoinDTO {
 
-@Entity
-@Table(name = "COIN")
-public class Coin {
-
-	@Column(name = "COIN_ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-
-	@Id
-	@Column(name = "MARKET_NAME")
 	private String marketName;
 
-	@Column(name = "BASE_CURRENCY")
 	private String baseCurrency;
 
-	@Column(name = "BASE_CURRENCY_LONG")
 	private String baseCurrencyLong;
 
-	@Column(name = "MARKET_CURRENCY")
 	private String marketCurrency;
 
-	@Column(name = "MARKET_CURRENCY_LONG")
 	private String marketCurrencyLong;
 
-	@Column(name = "IS_ACTIVE")
 	private boolean isActive;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_DATE")
 	private Date createDate;
 
-	@Column(name = "LOGO_URL")
 	private String logoUrl;
-
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "coin")
-	private List<OrderBook> orderBook;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getMarketName() {
 		return marketName;
@@ -122,14 +82,6 @@ public class Coin {
 
 	public void setLogoUrl(String logoUrl) {
 		this.logoUrl = logoUrl;
-	}
-
-	public List<OrderBook> getOrderBook() {
-		return orderBook;
-	}
-
-	public void setOrderBook(List<OrderBook> orderBook) {
-		this.orderBook = orderBook;
 	}
 
 }

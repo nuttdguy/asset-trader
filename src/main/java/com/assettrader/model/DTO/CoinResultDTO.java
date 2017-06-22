@@ -1,38 +1,20 @@
 package com.assettrader.model.DTO;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class CoinResultDTO {
+
+@JsonIgnoreProperties( {"success", "message" })
+public class CoinResultDTO  {
 	
-	private boolean success;
 	
-	private String message;
-	
-	private List<CoinDTO> result;
+	private CoinDTO[] result;
 
-	public boolean isSuccess() {
-		return success;
-	}
-
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public List<CoinDTO> getResult() {
+	public CoinDTO[] getResult() {
 		return result;
 	}
 
-	public void setResult(List<CoinDTO> result) {
+	public void setResult(CoinDTO[] result) {
 		this.result = result;
 	}
-
 	
 }

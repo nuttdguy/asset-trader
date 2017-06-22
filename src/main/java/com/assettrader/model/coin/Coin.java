@@ -48,6 +48,14 @@ public class Coin {
 	@Column(name = "LOGO_URL")
 	private String logoUrl;
 
+	@Column(name = "MIN_TRADE_SIZE")
+	private String MinTradeSize;
+
+	@Column(name = "CREATED")
+	private Date Created;
+
+	@Column(name = "NOTICE")
+	private String Notice;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "coin")
 	private List<OrderBook> orderBook;
@@ -122,6 +130,30 @@ public class Coin {
 
 	public void setLogoUrl(String logoUrl) {
 		this.logoUrl = logoUrl;
+	}
+
+	public String getMinTradeSize() {
+		return MinTradeSize;
+	}
+
+	public void setMinTradeSize(String minTradeSize) {
+		MinTradeSize = minTradeSize;
+	}
+
+	public Date getCreated() {
+		return Created;
+	}
+
+	public void setCreated(Date created) {
+		Created = created;
+	}
+
+	public String getNotice() {
+		return Notice;
+	}
+
+	public void setNotice(String notice) {
+		Notice = notice;
 	}
 
 	public List<OrderBook> getOrderBook() {

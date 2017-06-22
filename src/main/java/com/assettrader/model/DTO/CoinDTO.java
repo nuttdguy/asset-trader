@@ -2,86 +2,136 @@ package com.assettrader.model.DTO;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(value = { "success", "message", "result" })
 public class CoinDTO {
 
-	private String marketName;
+	private String MarketName;
 
-	private String baseCurrency;
+	private String BaseCurrency;
 
-	private String baseCurrencyLong;
+	private String BaseCurrencyLong;
 
-	private String marketCurrency;
+	private String MarketCurrency;
 
-	private String marketCurrencyLong;
+	private String MarketCurrencyLong;
 
-	private boolean isActive;
+	private boolean IsActive;
 
-	private Date createDate;
+	private Date CreateDate;
 
-	private String logoUrl;
+	private String LogoUrl;
+
+	private String MinTradeSize;
+
+	private Date Created;
+
+	private String Notice;
+
+	private boolean IsSponsored;
 
 	public String getMarketName() {
-		return marketName;
+		return MarketName;
 	}
 
 	public void setMarketName(String marketName) {
-		this.marketName = marketName;
+		MarketName = marketName;
 	}
 
 	public String getBaseCurrency() {
-		return baseCurrency;
+		return BaseCurrency;
 	}
 
 	public void setBaseCurrency(String baseCurrency) {
-		this.baseCurrency = baseCurrency;
+		BaseCurrency = baseCurrency;
 	}
 
 	public String getBaseCurrencyLong() {
-		return baseCurrencyLong;
+		return BaseCurrencyLong;
 	}
 
 	public void setBaseCurrencyLong(String baseCurrencyLong) {
-		this.baseCurrencyLong = baseCurrencyLong;
+		BaseCurrencyLong = baseCurrencyLong;
 	}
 
 	public String getMarketCurrency() {
-		return marketCurrency;
+		return MarketCurrency;
 	}
 
 	public void setMarketCurrency(String marketCurrency) {
-		this.marketCurrency = marketCurrency;
+		MarketCurrency = marketCurrency;
 	}
 
 	public String getMarketCurrencyLong() {
-		return marketCurrencyLong;
+		return MarketCurrencyLong;
 	}
 
 	public void setMarketCurrencyLong(String marketCurrencyLong) {
-		this.marketCurrencyLong = marketCurrencyLong;
+		MarketCurrencyLong = marketCurrencyLong;
 	}
 
-	public boolean isActive() {
-		return isActive;
+	public boolean isIsActive() {
+		return IsActive;
 	}
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
+	public void setIsActive(boolean isActive) {
+		IsActive = isActive;
 	}
 
 	public Date getCreateDate() {
-		return createDate;
+		return CreateDate;
 	}
 
 	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+		CreateDate = createDate;
 	}
 
 	public String getLogoUrl() {
-		return logoUrl;
+		return LogoUrl;
 	}
 
 	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
+		LogoUrl = logoUrl;
+	}
+
+	public String getMinTradeSize() {
+		return MinTradeSize;
+	}
+
+	public void setMinTradeSize(String minTradeSize) {
+		MinTradeSize = minTradeSize;
+	}
+
+	public Date getCreated() {
+		return Created;
+	}
+
+	public void setCreated(Date created) {
+		Created = created;
+	}
+
+	public String getNotice() {
+		return Notice;
+	}
+
+	public void setNotice(String notice) {
+		Notice = notice;
+	}
+
+	public boolean isIsSponsored() {
+		return IsSponsored;
+	}
+
+	public void setIsSponsored(boolean isSponsored) {
+		IsSponsored = isSponsored;
+	}
+
+	@Override
+	public String toString() {
+		return "CoinDTO [MarketName=" + MarketName + ", BaseCurrency=" + BaseCurrency + ", BaseCurrencyLong="
+				+ BaseCurrencyLong + ", MarketCurrency=" + MarketCurrency + ", MarketCurrencyLong=" + MarketCurrencyLong
+				+ ", IsActive=" + IsActive + ", CreateDate=" + CreateDate + ", LogoUrl=" + LogoUrl + "]";
 	}
 
 }

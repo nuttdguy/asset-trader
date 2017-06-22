@@ -31,6 +31,9 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 	
+	<!-- Beans for service implementations -->
+	<bean id="coinDTOService" class="com.assettrader.serviceImpl.CoinDTOServiceImpl" />
+	
 	<!-- DataSource -->
  	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="${trader.db.driver}" />

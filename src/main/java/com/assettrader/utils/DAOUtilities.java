@@ -35,9 +35,4 @@ public class DAOUtilities {
 		return connection;		
 	}
 	
-	
-	public static CoinDTODao coinDTODao() {
-		return new CoinDTODaoImpl();
-	}
-
 }

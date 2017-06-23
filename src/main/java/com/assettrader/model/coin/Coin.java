@@ -9,18 +9,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.assettrader.data.entities.ids.CoinId;
 
 @Entity
 @Table(name = "COIN")
+@IdClass(CoinId.class)
 public class Coin {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "COIN_ID")
-	private long id;
+	private Long id;
 
+	@Id
 	@Column(name = "MARKET_NAME")
 	private String marketName;
 
@@ -39,7 +45,7 @@ public class Coin {
 	@Column(name = "IS_ACTIVE")
 	private boolean isActive;
 
-	@Column(name = "CREATE_DATE")
+	@Transient
 	private Date createDate;
 
 	@Column(name = "LOGO_URL")
@@ -47,7 +53,6 @@ public class Coin {
 
 	@Column(name = "MIN_TRADE_SIZE")
 	private String MinTradeSize;
-
 
 	@Column(name = "CREATED")
 	private Date Created;
@@ -62,7 +67,7 @@ public class Coin {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

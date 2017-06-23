@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.assettrader.model.coin.Coin;
 import com.assettrader.service.CoinDTOService;
 
-@Controller
+@RestController
 @RequestMapping("/coins")
 public class HomeProfileController {
 
@@ -22,9 +23,6 @@ public class HomeProfileController {
 	public String getCoin(Model model) {
 
 		List<Coin> coinList = coinDTOService.getMarkets();
-		
-		// TODO, PERSIST GET-MARKETS RESULT OF API RESULTS TO DATABASE
-		
 		
 		model.addAttribute("coinList", coinList);
 		return "hello";

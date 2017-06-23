@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -31,7 +33,9 @@ public class MarketHistory {
 	private String orderType;
 	
 	@ManyToOne
-	@JoinColumn( name = "COIN_ID" )
+	@JoinColumns({
+		@JoinColumn(name = "COIN_ID" ),
+		@JoinColumn(name = "MARKET_NAME") })
 	private Coin coin;
 
 	public long getId() {

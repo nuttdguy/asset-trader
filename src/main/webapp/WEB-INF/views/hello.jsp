@@ -21,7 +21,7 @@
 					<th>Base Currency Long</th>
 					<th>Market Currency</th>
 					<th>Market Currency Long</th>
-					<th>Create Date</th>
+					<th>Created</th>
 					<th>Logo</th>
 					<th>Min Trade Size</th>
 				</tr>
@@ -34,7 +34,7 @@
 						<th><c:out value="${item.baseCurrencyLong}" /></th>
 						<th><c:out value="${item.marketCurrency}" /></th>
 						<th><c:out value="${item.marketCurrencyLong}" /></th>
-						<th><c:out value="${item.createDate}" /></th>
+						<th><c:out value="${item.created}" /></th>
 						<th><img 
 							style="height: 44px; width: 44px;" 
 							src=<c:out value="${item.logoUrl}"/> />

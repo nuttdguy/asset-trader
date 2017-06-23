@@ -60,9 +60,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			String sql = "INSERT INTO COIN"
 					+ "(MARKET_NAME, CREATED, MIN_TRADE_SIZE, "
 					+ "NOTICE, BASE_CURRENCY, BASE_CURRENCY_LONG, "
-					+ "CREATE_DATE, COIN_ID, IS_ACTIVE, LOGO_URL, "
+					+ "IS_ACTIVE, LOGO_URL, "
 					+ "MARKET_CURRENCY, MARKET_CURRENCY_LONG) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			statement = connection.prepareStatement(sql);
 			
 			for (Coin coin : coinList) {
@@ -72,12 +72,10 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				statement.setString(4, coin.getNotice());
 				statement.setString(5, coin.getBaseCurrency());
 				statement.setString(6, coin.getBaseCurrencyLong());
-				statement.setDate(7, coin.getCreateDate());
-				statement.setLong(8, coin.getId());
-				statement.setBoolean(9, coin.isActive());
-				statement.setString(10, coin.getLogoUrl());
-				statement.setString(11, coin.getMarketCurrency());
-				statement.setString(12, coin.getMarketCurrencyLong());
+				statement.setBoolean(7, coin.isActive());
+				statement.setString(8, coin.getLogoUrl());
+				statement.setString(9, coin.getMarketCurrency());
+				statement.setString(10, coin.getMarketCurrencyLong());
 				
 				statement.execute();
 			}

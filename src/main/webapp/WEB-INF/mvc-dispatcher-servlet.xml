@@ -32,7 +32,7 @@
 	</bean>
 	
 	<!-- Beans for service implementations -->
-	<bean id="coinDTOService" class="com.assettrader.serviceImpl.CoinDTOServiceImpl" />
+ 	<bean id="coinDTOService" class="com.assettrader.serviceImpl.CoinDTOServiceImpl" />
 	<bean id="coinDTODao" class="com.assettrader.daoImpl.CoinDTODaoImpl" />
 	
 	<!-- DataSource -->

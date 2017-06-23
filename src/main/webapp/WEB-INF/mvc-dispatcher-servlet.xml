@@ -33,6 +33,7 @@
 	
 	<!-- Beans for service implementations -->
 	<bean id="coinDTOService" class="com.assettrader.serviceImpl.CoinDTOServiceImpl" />
+	<bean id="coinDTODao" class="com.assettrader.daoImpl.CoinDTODaoImpl" />
 	
 	<!-- DataSource -->
  	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">

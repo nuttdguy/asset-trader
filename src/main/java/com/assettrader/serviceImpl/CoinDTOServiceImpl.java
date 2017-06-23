@@ -5,11 +5,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.assettrader.dao.CoinDTODao;
 import com.assettrader.model.DTO.CoinDTO;
 import com.assettrader.model.DTO.CoinResultDTO;
 import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coin.Currency;
+import com.assettrader.model.coin.MarketHistory;
+import com.assettrader.model.coin.MarketSummary;
+import com.assettrader.model.coin.OrderBook;
+import com.assettrader.model.coin.Ticker;
 import com.assettrader.service.CoinDTOService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -24,7 +31,12 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 	private static final String PUBLIC_URL = "https://bittrex.com/api/v1.1/public/getmarkets";
 	
-	public List<Coin> refreshCoinMarketsURLImpl() {
+	@Autowired
+	CoinDTODao coinDTODao;
+	
+	//==||  METHODS :: TO REQUEST DATA FROM API END-POINT
+	//================================================
+	public List<Coin> getMarkets() {
 
 		List<Coin> coinList = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -46,6 +58,9 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 			for (CoinDTO coinDTO : result.get(0).getResult()) {
 				coinList.add(coinDTOToCoin(coinDTO)); 
 			}
+			
+			// PERSIST DATA TO DATABASE
+			coinDTODao.saveGetMarkets(coinList);
 			return coinList;
 
 		} catch (IOException e) {
@@ -56,6 +71,46 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 	}
 
+	@Override
+	public List<Currency> getCurrencies() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MarketSummary> getMarketSummaries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MarketSummary getMarketSummary(String marketName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Ticker getTicker(String marketName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MarketHistory> getMarketHistory(String marketName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<OrderBook> getOrderBook(String marketName, String buyOrSell) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	//==||  METHODS :: FOR DATA-TRANSFER  
+	//================================================
+	
 	Coin coinDTOToCoin(CoinDTO coinDTO) {
 
 		Coin coin = new Coin();
@@ -72,4 +127,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		coin.setNotice(coinDTO.getNotice());
 		return coin;
 	}
+
+	
+	
 }

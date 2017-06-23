@@ -1,6 +1,6 @@
 package com.assettrader.model.coin;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,18 +11,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "COIN")
 public class Coin {
 
-	@Column(name = "COIN_ID")
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "COIN_ID")
 	private long id;
 
-	@Id
 	@Column(name = "MARKET_NAME")
 	private String marketName;
 
@@ -41,7 +39,6 @@ public class Coin {
 	@Column(name = "IS_ACTIVE")
 	private boolean isActive;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE")
 	private Date createDate;
 
@@ -50,6 +47,7 @@ public class Coin {
 
 	@Column(name = "MIN_TRADE_SIZE")
 	private String MinTradeSize;
+
 
 	@Column(name = "CREATED")
 	private Date Created;

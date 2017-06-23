@@ -21,9 +21,10 @@ public class HomeProfileController {
 	@RequestMapping(value = "/getmarket", method = RequestMethod.GET)
 	public String getCoin(Model model) {
 
-		List<Coin> coinList = coinDTOService.refreshCoinMarketsURLImpl();
+		List<Coin> coinList = coinDTOService.getMarkets();
 		
-		// TODO, PERSIST RESULT OF API RESULTS TO DATABASE
+		// TODO, PERSIST GET-MARKETS RESULT OF API RESULTS TO DATABASE
+		
 		
 		model.addAttribute("coinList", coinList);
 		return "hello";

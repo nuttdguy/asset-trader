@@ -1,6 +1,6 @@
 package com.assettrader.model.DTO;
 
-import java.util.Date;
+import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

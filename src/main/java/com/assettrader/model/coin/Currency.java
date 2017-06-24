@@ -2,6 +2,7 @@ package com.assettrader.model.coin;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,39 +11,45 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table( name = "CURRENCY")
+@Table(name = "CURRENCY")
 public class Currency {
 
 	@Id
-	@Column( name = "CURRENCY_ID")
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@Column(name = "CURRENCY_ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private long id;
-	
-	@Column( name = "CURRENCY_LONG")
-	private double currencyLong;
-	
-	@Column( name = "MIN_CONFIRMATION")
-	private short minConfirmation;
-	
-	@Column( name = "TX_FEE")
-	private double txFee;
-	
-	@Column( name = "IS_ACTIVE")
-	private boolean isActive;
-	
-	@Column( name = "COIN_TYPE")
-	private String coinType;
-	
-	@Column( name = "BASE_ADDRESS")
-	private double baseAddress;
 
-	@ManyToOne
+	@Column(name = "CURRENCY")
+	private String currency;
+
+	@Column(name = "CURRENCY_LONG")
+	private String currencyLong;
+
+	@Column(name = "MIN_CONFIRMATION")
+	private short minConfirmation;
+
+	@Column(name = "TX_FEE")
+	private double txFee;
+
+	@Column(name = "IS_ACTIVE")
+	private boolean isActive;
+
+	@Column(name = "COIN_TYPE")
+	private String coinType;
+
+	@Column(name = "BASE_ADDRESS")
+	private String baseAddress;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({ 
-		@JoinColumn(name = "COIN_ID"),
-		@JoinColumn(name = "MARKET_NAME")})
+		@JoinColumn(name = "COIN_ID", insertable=false, updatable=false), 
+		@JoinColumn(name = "MARKET_NAME", insertable=false, updatable=false)})
 	private Coin coin;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -51,11 +58,19 @@ public class Currency {
 		this.id = id;
 	}
 
-	public double getCurrencyLong() {
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getCurrencyLong() {
 		return currencyLong;
 	}
 
-	public void setCurrencyLong(double currencyLong) {
+	public void setCurrencyLong(String currencyLong) {
 		this.currencyLong = currencyLong;
 	}
 
@@ -91,11 +106,11 @@ public class Currency {
 		this.coinType = coinType;
 	}
 
-	public double getBaseAddress() {
+	public String getBaseAddress() {
 		return baseAddress;
 	}
 
-	public void setBaseAddress(double baseAddress) {
+	public void setBaseAddress(String baseAddress) {
 		this.baseAddress = baseAddress;
 	}
 
@@ -107,5 +122,4 @@ public class Currency {
 		this.coin = coin;
 	}
 
-	
 }

@@ -1,10 +1,10 @@
-package com.assettrader.model.DTO;
+package com.assettrader.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties( {"success", "message" })
-public class CoinResultDTO  {
+public class CoinResultDTO<T>  {
 	
 	
 	private CoinDTO[] result;

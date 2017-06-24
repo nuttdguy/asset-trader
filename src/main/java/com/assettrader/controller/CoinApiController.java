@@ -7,33 +7,36 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
+import com.assettrader.DTO.service.CoinDTOService;
 import com.assettrader.model.coin.Coin;
-import com.assettrader.service.CoinDTOService;
+import com.assettrader.model.coin.Currency;
 
-@RestController
+@Controller
 @RequestMapping("/coins")
-public class HomeProfileController {
+public class CoinApiController {
 
 	@Autowired
 	public CoinDTOService coinDTOService;
 
-	@RequestMapping(value = "/getmarket", method = RequestMethod.GET)
+	@RequestMapping(value = "/getmarkets", method = RequestMethod.GET)
 	public String getCoin(Model model) {
 
 		List<Coin> coinList = coinDTOService.getMarkets();
 		
 		model.addAttribute("coinList", coinList);
-		return "hello";
+		return "coinlist";
 	}
+	
+	@RequestMapping(value = "/getcurrencies", method = RequestMethod.GET)
+	private String getCurrencies(Model model) {
 		
-	
-	//////////////////////////////////////////////////////////////
-	// TRYING METHODS FOR GETTING DATA FROM THE API ENDPOINT
-	// TODO - CREATE A DTO TO ENTITY CLASS TO MAP RESULT TO OBJECT & VICE VERSA
-	// TODO - CREATE A DTO TO ENTITY CLASS FOR LIST OF OBJECTS, CHECK DEPTH OF JSON OBJECT, LOOP THROUGH IN ORDER TO ASSIGN RESULTS
-	
+		List<Currency> currencyList = coinDTOService.getCurrencies();
+		model.addAttribute("currencyList", currencyList);
+		
+		return "currencyview";
+	}
+			
 
 	// What should be displayed to user in their Home Profile
 	// = I want to be able to see my username so that I know its my account

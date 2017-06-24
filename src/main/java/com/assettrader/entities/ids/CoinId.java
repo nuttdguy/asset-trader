@@ -1,4 +1,4 @@
-package com.assettrader.data.entities.ids;
+package com.assettrader.entities.ids;
 
 import java.io.Serializable;
 

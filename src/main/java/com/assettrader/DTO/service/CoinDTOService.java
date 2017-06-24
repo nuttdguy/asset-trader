@@ -1,4 +1,4 @@
-package com.assettrader.service;
+package com.assettrader.DTO.service;
 
 import java.util.List;
 

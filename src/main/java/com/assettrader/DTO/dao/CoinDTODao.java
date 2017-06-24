@@ -1,4 +1,4 @@
-package com.assettrader.dao;
+package com.assettrader.DTO.dao;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.assettrader.serviceImpl;
+package com.assettrader.DTO.service;
 
 import java.io.IOException;
 import java.net.URL;
@@ -8,16 +8,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.assettrader.dao.CoinDTODao;
-import com.assettrader.model.DTO.CoinDTO;
-import com.assettrader.model.DTO.CoinResultDTO;
+import com.assettrader.DTO.CoinDTO;
+import com.assettrader.DTO.CoinResultDTO;
+import com.assettrader.DTO.CurrencyDTO;
+import com.assettrader.DTO.CurrencyResultDTO;
+import com.assettrader.DTO.dao.CoinDTODao;
 import com.assettrader.model.coin.Coin;
 import com.assettrader.model.coin.Currency;
 import com.assettrader.model.coin.MarketHistory;
 import com.assettrader.model.coin.MarketSummary;
 import com.assettrader.model.coin.OrderBook;
 import com.assettrader.model.coin.Ticker;
-import com.assettrader.service.CoinDTOService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,7 +30,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Service
 public class CoinDTOServiceImpl implements CoinDTOService {
 
-	private static final String PUBLIC_URL = "https://bittrex.com/api/v1.1/public/getmarkets";
+	private static final String PUBLIC_URL = "https://bittrex.com/api/v1.1/public";
+	private static final String GET_MARKETS = "/getmarkets";
+	private static final String GET_CURRENCIES = "/getcurrencies";
+	private static final String GET_MARKET_SUMMARIES = "/getmarketsummaries";
+	private static final String GET_TICKER = "/getticker";
+	private static final String GET_MARKET_SUMMARY = "/getmarketsummary";
+	private static final String GET_ORDER_BOOK = "/getorderbook";
 	
 	@Autowired
 	CoinDTODao coinDTODao;
@@ -39,17 +46,10 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	public List<Coin> getMarkets() {
 
 		List<Coin> coinList = null;
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		mapper.configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true);
-		mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-		mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-		mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+		ObjectMapper mapper = initMapper();
 
 		try {
-			URL url = new URL(PUBLIC_URL);
+			URL url = new URL(PUBLIC_URL + GET_MARKETS);
 			List<CoinResultDTO> result = mapper.readValue(url, 
 					new TypeReference<List<CoinResultDTO>>() {
 			});
@@ -59,12 +59,13 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				coinList.add(coinDTOToCoin(coinDTO)); 
 			}
 			
-			// PERSIST DATA TO DATABASE
-			coinDTODao.saveGetMarkets(coinList);
-			return coinList;
+			coinDTODao.saveGetMarkets(coinList); // PERSIST DATA TO DATABASE
+			return coinList; // RETURN MAPPED RESULT TO UI TO DISPLAY
 
 		} catch (IOException e) {
 			System.out.println("IOException: " + e.getMessage());
+		} finally {
+			
 		}
 
 		return coinList;
@@ -73,7 +74,27 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 	@Override
 	public List<Currency> getCurrencies() {
-		// TODO Auto-generated method stub
+		List<Currency> currencyList = null;
+		ObjectMapper mapper = initMapper();
+		
+		try {
+			URL url = new URL(PUBLIC_URL + GET_CURRENCIES);
+			List<CurrencyResultDTO> jsonList = mapper.readValue(
+					url, new TypeReference<List<CurrencyResultDTO>>() {				
+			});
+			
+			currencyList = new ArrayList<>();
+			for (CurrencyDTO currency : jsonList.get(0).getResult()) {
+				currencyList.add(currencyDTOToCoin(currency));
+			}
+			
+			coinDTODao.saveGetCurrencies(currencyList);
+			return currencyList;
+		} catch(IOException io) {
+			System.out.println("IOException getting currencyList " + io.getMessage());
+		}
+		
+		
 		return null;
 	}
 
@@ -111,7 +132,19 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	//==||  METHODS :: FOR DATA-TRANSFER  
 	//================================================
 	
-	Coin coinDTOToCoin(CoinDTO coinDTO) {
+	private ObjectMapper initMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		mapper.configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true);
+		mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+		mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+		mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+		return mapper;
+	}
+	
+	private Coin coinDTOToCoin(CoinDTO coinDTO) {
 
 		Coin coin = new Coin();
 		coin.setMarketName(coinDTO.getMarketName());
@@ -128,6 +161,18 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return coin;
 	}
 
+	private Currency currencyDTOToCoin(CurrencyDTO currencyDTO) {
+		
+		Currency currency = new Currency();
+		currency.setCurrency(currencyDTO.getCurrency());
+		currency.setCurrencyLong(currencyDTO.getCurrencyLong());
+		currency.setMinConfirmation(currencyDTO.getMinConfirmation());
+		currency.setTxFee(currencyDTO.getTxFee());
+		currency.setActive(currencyDTO.isIsActive());
+		currency.setCoinType(currencyDTO.getCoinType());
+		currency.setBaseAddress(currencyDTO.getBaseAddress());
+		return currency;
+	}
 	
 	
 }

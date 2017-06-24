@@ -1,10 +1,10 @@
-package com.assettrader.model.DTO;
+package com.assettrader.DTO;
 
 import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(value = { "success", "message", "result" })
+@JsonIgnoreProperties(value = { "success", "message", "result", "id" })
 public class CoinDTO {
 
 	private String MarketName;

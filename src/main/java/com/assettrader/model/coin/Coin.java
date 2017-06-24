@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.assettrader.data.entities.ids.CoinId;
+import com.assettrader.entities.ids.CoinId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "COIN")
@@ -24,6 +26,7 @@ public class Coin {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "COIN_ID")
+	@JsonIgnore
 	private Long id;
 
 	@Id
@@ -60,8 +63,11 @@ public class Coin {
 	@Column(name = "NOTICE")
 	private String Notice;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "coin")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
 	private List<OrderBook> orderBook;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
+	private List<Currency> currencyList;
 
 	public long getId() {
 		return id;
@@ -165,6 +171,14 @@ public class Coin {
 
 	public void setOrderBook(List<OrderBook> orderBook) {
 		this.orderBook = orderBook;
+	}
+
+	public List<Currency> getCurrencyList() {
+		return currencyList;
+	}
+
+	public void setCurrencyList(List<Currency> currencyList) {
+		this.currencyList = currencyList;
 	}
 
 }

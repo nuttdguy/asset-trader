@@ -6,11 +6,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Coin List</title>
 </head>
 <body>
 
-	<h1>Hello, template resolver is configured!</h1>
+	<h1>Coin List</h1>
 
 	<c:if test="${not empty coinList}">
 		<table class="table table-hover table-bordered">

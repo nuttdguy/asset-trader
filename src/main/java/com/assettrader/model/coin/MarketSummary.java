@@ -1,6 +1,6 @@
 package com.assettrader.model.coin;
 
-import java.util.Date;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,50 +11,56 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table( name = "MARKET_SUMMARY")
+@Table(name = "MARKET_SUMMARY")
 public class MarketSummary {
 
 	@Id
-	@Column( name = "MARKET_SUMMARY_ID")
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@Column(name = "MARKET_SUMMARY_ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private long id;
-	
-	@Column( name = "HIGH")
+
+	@Column(name = "MARKET_NAME")
+	private String marketName;
+
+	@Column(name = "HIGH")
 	private double high;
-	
-	@Column( name = "LOW")
+
+	@Column(name = "LOW")
 	private double low;
-	
-	@Column( name = "VOLUME")
+
+	@Column(name = "VOLUME")
 	private double volume;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "TIME_STAMP")
+
+	@Column(name = "TIME_STAMP")
 	private Date timeStamp;
-	
-	@Column( name = "OPEN_BUY_ORDERS")
+
+	@Column(name = "BID")
+	private double bid;
+
+	@Column(name = "ASK")
+	private double ask;
+
+	@Column(name = "OPEN_BUY_ORDERS")
 	private int openBuyOrders;
-	
-	@Column( name = "OPEN_SELL_ORDERS")
+
+	@Column(name = "OPEN_SELL_ORDERS")
 	private int openSellOrders;
-	
-	@Column( name = "PREV_DAY")
+
+	@Column(name = "PREV_DAY")
 	private int prevDay;
-	
-	@Column( name = "CREATED")
+
+	@Column(name = "CREATED")
 	private Date created;
-	
-	@Column( name = "DISPLAY_MARKET_NAME")
-	private String displayMarketName;
-	
+
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "COIN_ID"),
-		@JoinColumn(name = "MARKET_NAME") })
+	@JoinColumns({ 
+		@JoinColumn(name = "COIN_ID",  insertable=false, updatable=false), 
+		@JoinColumn(name = "MARKET_NAME",  insertable=false, updatable=false) })
 	private Coin coin;
 
 	public long getId() {
@@ -63,6 +69,14 @@ public class MarketSummary {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getMarketName() {
+		return marketName;
+	}
+
+	public void setMarketName(String marketName) {
+		this.marketName = marketName;
 	}
 
 	public double getHigh() {
@@ -97,6 +111,22 @@ public class MarketSummary {
 		this.timeStamp = timeStamp;
 	}
 
+	public double getBid() {
+		return bid;
+	}
+
+	public void setBid(double bid) {
+		this.bid = bid;
+	}
+
+	public double getAsk() {
+		return ask;
+	}
+
+	public void setAsk(double ask) {
+		this.ask = ask;
+	}
+
 	public int getOpenBuyOrders() {
 		return openBuyOrders;
 	}
@@ -127,14 +157,6 @@ public class MarketSummary {
 
 	public void setCreated(Date created) {
 		this.created = created;
-	}
-
-	public String getDisplayMarketName() {
-		return displayMarketName;
-	}
-
-	public void setDisplayMarketName(String displayMarketName) {
-		this.displayMarketName = displayMarketName;
 	}
 
 	public Coin getCoin() {

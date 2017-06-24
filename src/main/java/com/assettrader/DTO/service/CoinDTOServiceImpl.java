@@ -12,6 +12,8 @@ import com.assettrader.DTO.CoinDTO;
 import com.assettrader.DTO.CoinResultDTO;
 import com.assettrader.DTO.CurrencyDTO;
 import com.assettrader.DTO.CurrencyResultDTO;
+import com.assettrader.DTO.MarketSummariesDTO;
+import com.assettrader.DTO.MarketSummariesResultDTO;
 import com.assettrader.DTO.dao.CoinDTODao;
 import com.assettrader.model.coin.Coin;
 import com.assettrader.model.coin.Currency;
@@ -26,7 +28,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-
 @Service
 public class CoinDTOServiceImpl implements CoinDTOService {
 
@@ -37,12 +38,15 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	private static final String GET_TICKER = "/getticker";
 	private static final String GET_MARKET_SUMMARY = "/getmarketsummary";
 	private static final String GET_ORDER_BOOK = "/getorderbook";
-	
+	private static final String MARKET_PREFIX = "?market=";
+	private static final String ORDER_PREFIX = "type=";
+
 	@Autowired
 	CoinDTODao coinDTODao;
-	
-	//==||  METHODS :: TO REQUEST DATA FROM API END-POINT
-	//================================================
+
+	// ==|| METHODS :: TO REQUEST DATA FROM API END-POINT
+	// ================================================
+	@SuppressWarnings("rawtypes")
 	public List<Coin> getMarkets() {
 
 		List<Coin> coinList = null;
@@ -50,22 +54,21 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 		try {
 			URL url = new URL(PUBLIC_URL + GET_MARKETS);
-			List<CoinResultDTO> result = mapper.readValue(url, 
-					new TypeReference<List<CoinResultDTO>>() {
+			List<CoinResultDTO> result = mapper.readValue(url, new TypeReference<List<CoinResultDTO>>() {
 			});
-			
+
 			coinList = new ArrayList<>();
 			for (CoinDTO coinDTO : result.get(0).getResult()) {
-				coinList.add(coinDTOToCoin(coinDTO)); 
+				coinList.add(coinDTOToCoin(coinDTO));
 			}
-			
+
 			coinDTODao.saveGetMarkets(coinList); // PERSIST DATA TO DATABASE
 			return coinList; // RETURN MAPPED RESULT TO UI TO DISPLAY
 
 		} catch (IOException e) {
 			System.out.println("IOException: " + e.getMessage());
 		} finally {
-			
+
 		}
 
 		return coinList;
@@ -76,38 +79,74 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	public List<Currency> getCurrencies() {
 		List<Currency> currencyList = null;
 		ObjectMapper mapper = initMapper();
-		
+
 		try {
 			URL url = new URL(PUBLIC_URL + GET_CURRENCIES);
-			List<CurrencyResultDTO> jsonList = mapper.readValue(
-					url, new TypeReference<List<CurrencyResultDTO>>() {				
+			List<CurrencyResultDTO> jsonList = mapper.readValue(url, new TypeReference<List<CurrencyResultDTO>>() {
 			});
-			
+
 			currencyList = new ArrayList<>();
-			for (CurrencyDTO currency : jsonList.get(0).getResult()) {
-				currencyList.add(currencyDTOToCoin(currency));
+			for (CurrencyDTO currencyDTO : jsonList.get(0).getResult()) {
+				currencyList.add(currencyDTOToCoin(currencyDTO));
 			}
-			
+
 			coinDTODao.saveGetCurrencies(currencyList);
 			return currencyList;
-		} catch(IOException io) {
+		} catch (IOException io) {
 			System.out.println("IOException getting currencyList " + io.getMessage());
 		}
-		
-		
-		return null;
+
+		return currencyList;
 	}
 
 	@Override
 	public List<MarketSummary> getMarketSummaries() {
-		// TODO Auto-generated method stub
-		return null;
+		List<MarketSummary> marketSummaryList = null;
+		ObjectMapper mapper = initMapper();
+
+		try {
+			URL url = new URL(PUBLIC_URL + GET_MARKET_SUMMARIES);
+			List<MarketSummariesResultDTO> jsonList = mapper.readValue(url,
+					new TypeReference<List<MarketSummariesResultDTO>>() {
+			});
+			
+			marketSummaryList = new ArrayList<>();
+			for (MarketSummariesDTO marketDTO : jsonList.get(0).getResult()) {
+				marketSummaryList.add(marketSummariesDTOToMarketSummary(marketDTO));
+			}
+			
+			coinDTODao.saveGetMarketSummaries(marketSummaryList);
+			return marketSummaryList;
+
+		} catch (IOException io) {
+			System.out.println("IOException getting market summaries" + io.getMessage());
+		}
+
+		return marketSummaryList;
 	}
 
 	@Override
 	public MarketSummary getMarketSummary(String marketName) {
-		// TODO Auto-generated method stub
-		return null;
+		MarketSummary marketSummary = null;
+		ObjectMapper mapper = initMapper();
+		
+		try {
+			URL url = new URL(PUBLIC_URL + GET_MARKET_SUMMARY + MARKET_PREFIX + marketName);
+			MarketSummariesResultDTO marketDTO = mapper.readValue(url, MarketSummariesResultDTO.class);
+			
+			marketSummary = new MarketSummary();
+			for(MarketSummariesDTO market : marketDTO.getResult()) {
+				marketSummary = marketSummariesDTOToMarketSummary(market);
+			}
+			
+			coinDTODao.saveGetMarketSummary(marketSummary);		
+			return marketSummary;
+			
+		} catch (IOException io) {
+			System.out.println("IOException getting market summary " + io.getMessage());
+		}
+		
+		return marketSummary;
 	}
 
 	@Override
@@ -127,11 +166,10 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	//==||  METHODS :: FOR DATA-TRANSFER  
-	//================================================
-	
+
+	// ==|| METHODS :: FOR DATA-TRANSFER
+	// ================================================
+
 	private ObjectMapper initMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
@@ -143,7 +181,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 		return mapper;
 	}
-	
+
 	private Coin coinDTOToCoin(CoinDTO coinDTO) {
 
 		Coin coin = new Coin();
@@ -162,7 +200,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 
 	private Currency currencyDTOToCoin(CurrencyDTO currencyDTO) {
-		
+
 		Currency currency = new Currency();
 		currency.setCurrency(currencyDTO.getCurrency());
 		currency.setCurrencyLong(currencyDTO.getCurrencyLong());
@@ -173,6 +211,37 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		currency.setBaseAddress(currencyDTO.getBaseAddress());
 		return currency;
 	}
-	
+
+	private MarketSummary marketSummariesDTOToMarketSummary(MarketSummariesDTO marketSummaryDTO) {
+		
+		MarketSummary market = new MarketSummary();
+		market.setMarketName(marketSummaryDTO.getMarketName());
+		market.setHigh(marketSummaryDTO.getHigh());
+		market.setLow(marketSummaryDTO.getLow());
+		market.setVolume(marketSummaryDTO.getVolume());
+		market.setTimeStamp(marketSummaryDTO.getTimeStamp());
+		market.setBid(marketSummaryDTO.getBid());
+		market.setAsk(marketSummaryDTO.getAsk());
+		market.setOpenBuyOrders(marketSummaryDTO.getOpenBuyOrders());
+		market.setOpenSellOrders(marketSummaryDTO.getOpenSellOrders());
+		market.setPrevDay(marketSummaryDTO.getPrevDay());
+		market.setCreated(marketSummaryDTO.getCreated());
+		
+		return market;
+	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

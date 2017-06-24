@@ -67,9 +67,18 @@ public class Coin {
 	private List<OrderBook> orderBook;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
-	private List<Currency> currencyList;
+	private List<Currency> currencies;
 
-	public long getId() {
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
+	private List<MarketSummary> marketSummaries;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
+	private List<MarketHistory> marketHistories;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
+	private List<Ticker> tickers;
+
+	public Long getId() {
 		return id;
 	}
 
@@ -173,12 +182,36 @@ public class Coin {
 		this.orderBook = orderBook;
 	}
 
-	public List<Currency> getCurrencyList() {
-		return currencyList;
+	public List<Currency> getCurrencies() {
+		return currencies;
 	}
 
-	public void setCurrencyList(List<Currency> currencyList) {
-		this.currencyList = currencyList;
+	public void setCurrencies(List<Currency> currencies) {
+		this.currencies = currencies;
+	}
+
+	public List<MarketSummary> getMarketSummaries() {
+		return marketSummaries;
+	}
+
+	public void setMarketSummaries(List<MarketSummary> marketSummaries) {
+		this.marketSummaries = marketSummaries;
+	}
+
+	public List<MarketHistory> getMarketHistories() {
+		return marketHistories;
+	}
+
+	public void setMarketHistories(List<MarketHistory> marketHistories) {
+		this.marketHistories = marketHistories;
+	}
+
+	public List<Ticker> getTickers() {
+		return tickers;
+	}
+
+	public void setTickers(List<Ticker> tickers) {
+		this.tickers = tickers;
 	}
 
 }

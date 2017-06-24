@@ -12,11 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table( name = "MARKET_SUMMARY")
+@Table( name = "MARKET_HISTORY")
 public class MarketHistory {
 
 	@Id
-	@Column( name = "MARKET_SUMMARY_ID")
+	@Column( name = "MARKET_HISTORY_ID")
 	@GeneratedValue( strategy = GenerationType.IDENTITY )
 	private long id;
 	
@@ -34,8 +34,8 @@ public class MarketHistory {
 	
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name = "COIN_ID" ),
-		@JoinColumn(name = "MARKET_NAME") })
+		@JoinColumn(name = "COIN_ID", insertable = false, updatable = true),
+		@JoinColumn(name = "MARKET_NAME", insertable = false, updatable = true) })
 	private Coin coin;
 
 	public long getId() {

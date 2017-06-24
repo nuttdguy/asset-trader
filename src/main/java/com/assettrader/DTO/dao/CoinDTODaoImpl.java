@@ -107,7 +107,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			for (Currency currency : currencyList) {
-				statement.setString(1, currency.getBaseAddress() );
+				statement.setString(1, currency.getBaseAddress());
 				statement.setString(2, currency.getCoinType());
 				statement.setString(3, currency.getCurrencyLong());
 				statement.setString(4,  currency.getCurrency());
@@ -120,8 +120,6 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	                System.out.println("Key returned from getGeneratedKeys():"
 	                        + rs.getInt(1) + " == " + rs.getString(1));
 	            } 
-				
-				System.out.println();
 			}
 			
 			
@@ -134,13 +132,81 @@ public class CoinDTODaoImpl implements CoinDTODao {
 
 	@Override
 	public void saveGetMarketSummaries(List<MarketSummary> marketSummaryList) {
-		// TODO Auto-generated method stub
+		
+		try {
+			connection = DAOUtilities.getConnection();
+			String sql = "INSERT INTO MARKET_SUMMARY"
+					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME)"
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+			
+			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			for (MarketSummary market : marketSummaryList) {
+				statement.setDouble(1, market.getAsk());
+				statement.setDouble(2, market.getBid());
+				statement.setDate(3, market.getCreated());
+				statement.setDouble(4, market.getHigh());
+				statement.setDouble(5, market.getLow());
+				statement.setString(6, market.getMarketName());
+				statement.setInt(7, market.getOpenBuyOrders());
+				statement.setInt(8, market.getOpenSellOrders());
+				statement.setInt(9, market.getPrevDay());
+				statement.setDate(10, market.getTimeStamp());
+				statement.setDouble(11, market.getVolume());
+				statement.executeUpdate();
+				rs = statement.getGeneratedKeys();
+	            while (rs.next()) {
+	                System.out.println("Key returned from getGeneratedKeys():"
+	                        + rs.getInt(1) + " == " + rs.getString(1));
+	            } 
+			}
+			
+		} catch (SQLException sx) {
+			System.out.println("Error inserting market-summaries " + sx.getMessage() );
+		} finally {
+			closeResources();
+		}
 		
 	}
 
 	@Override
 	public void saveGetMarketSummary(List<MarketSummary> marketSummary) {
-		// TODO Auto-generated method stub
+		
+		try {
+			connection = DAOUtilities.getConnection();
+			String sql = "INSERT INTO MARKET_SUMMARY"
+					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME)"
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+			
+			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			for (MarketSummary market : marketSummary) {
+				statement.setDouble(1, market.getAsk());
+				statement.setDouble(2, market.getBid());
+				statement.setDate(3, market.getCreated());
+				statement.setDouble(4, market.getHigh());
+				statement.setDouble(5, market.getLow());
+				statement.setString(6, market.getMarketName());
+				statement.setInt(7, market.getOpenBuyOrders());
+				statement.setInt(8, market.getOpenSellOrders());
+				statement.setInt(9, market.getPrevDay());
+				statement.setDate(10, market.getTimeStamp());
+				statement.setDouble(11, market.getVolume());
+				statement.executeUpdate();
+				rs = statement.getGeneratedKeys();
+	            while (rs.next()) {
+	                System.out.println("Key returned from getGeneratedKeys():"
+	                        + rs.getInt(1) + " == " + rs.getString(1));
+	            } 
+			}
+			
+		} catch (SQLException sx) {
+			System.out.println("Error inserting market-summaries " + sx.getMessage() );
+		} finally {
+			closeResources();
+		}
 		
 	}
 	

@@ -2,23 +2,62 @@ package com.assettrader.controller;
 
 import java.util.List;
 
+import javax.xml.ws.soap.AddressingFeature.Responses;
+
+import org.jboss.logging.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import com.assettrader.DTO.CoinResultDTO;
 import com.assettrader.DTO.service.CoinDTOService;
 import com.assettrader.model.coin.Coin;
 import com.assettrader.model.coin.Currency;
+import com.assettrader.model.coin.MarketSummary;
+import com.assettrader.model.coin.OrderBook;
+import com.assettrader.model.coin.Ticker;
 
 @Controller
+//@RestController
 @RequestMapping("/coins")
 public class CoinApiController {
 
 	@Autowired
 	public CoinDTOService coinDTOService;
 
+	// FOR REST IMPLEMENTATION - TESTING
+//	@RequestMapping(value = "/getmarkets", method = RequestMethod.GET)
+//	public List<Coin> getCoin(Model model) {
+//
+//		List<Coin> coinList = coinDTOService.getMarkets();
+//		
+//		return coinList;
+//	}
+	
+//	// FOR REST IMPLEMENTAION USING SPRING API
+//	@RequestMapping(value = "/getmarkets",    method = RequestMethod.GET)
+//	public String getCoin() {
+//
+//		final String url = "https://bittrex.com/api/v1.1/public/getmarkets";
+//		RestTemplate restTemplate = new RestTemplate();
+//
+//		CoinResultDTO coinList = restTemplate.getForObject(url, CoinResultDTO.class);
+//		
+//		// List<Coin> coinList = coinResponse.getBody();
+//		// model.addAttribute("coinList", coinList);
+//		
+//		return "coinlist";
+//	}
+	
 	@RequestMapping(value = "/getmarkets", method = RequestMethod.GET)
 	public String getCoin(Model model) {
 
@@ -37,6 +76,54 @@ public class CoinApiController {
 		return "currencyview";
 	}
 			
+	
+	@RequestMapping(value = "/getmarketsummaries", method = RequestMethod.GET)
+	private String getMarketSummaries(Model model) {
+		
+		List<MarketSummary> marketSummariesList = coinDTOService.getMarketSummaries();
+		model.addAttribute("marketSummaries", marketSummariesList);
+		
+		return "marketsummariesview";
+	}
+	
+	
+	@RequestMapping(value = "/getmarketsummary", method = RequestMethod.GET)
+	private String getMarketSummary(Model model ) {
+		
+		// TODO - Add param to get market-name for passing into API request
+		String marketName = "BTC-LTC";
+		MarketSummary marketSummary = coinDTOService.getMarketSummary(marketName);
+		model.addAttribute("marketSummary", marketSummary);
+		
+		return "marketsummary";
+	}
+	
+	
+	@RequestMapping(value = "/getOrderBook", method = RequestMethod.GET)
+	private String getOrderBook(Model model) {
+		
+		// TODO - add param to get orderbook for a market-name, buy/sell/both
+		String marketName = "BTC-LTC";
+		String orderType = "BUY";
+		
+		List<OrderBook> orderBooks = coinDTOService.getOrderBook(marketName, orderType);
+		model.addAttribute("orderbook", orderBooks);
+		
+		return "orderbooks";
+	}
+
+	
+	@RequestMapping(value = "/getTicker", method= RequestMethod.GET)
+	private String getTicker(Model model) {
+		
+		// TODO - Add param to get market-name
+		String marketName = "BTC-LTC";
+		Ticker ticker = coinDTOService.getTicker(marketName);
+		model.addAttribute("ticker", ticker);
+		
+		return "ticker";
+	}
+	
 
 	// What should be displayed to user in their Home Profile
 	// = I want to be able to see my username so that I know its my account

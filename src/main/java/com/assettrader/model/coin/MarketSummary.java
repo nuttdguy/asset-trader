@@ -58,9 +58,7 @@ public class MarketSummary {
 	private Date created;
 
 	@ManyToOne
-	@JoinColumns({ 
-		@JoinColumn(name = "COIN_ID",  insertable=false, updatable=false), 
-		@JoinColumn(name = "MARKET_NAME",  insertable=false, updatable=false) })
+	@JoinColumn(name = "MARKET_NAME",  insertable=false, updatable=false)
 	private Coin coin;
 
 	public long getId() {

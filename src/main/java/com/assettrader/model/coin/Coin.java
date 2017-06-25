@@ -10,22 +10,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.assettrader.entities.ids.CoinId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "COIN")
-@IdClass(CoinId.class)
 public class Coin {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "COIN_ID")
+
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "COIN_ID", columnDefinition="serial")
 	@JsonIgnore
 	private Long id;
 

@@ -4,11 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.assettrader.DTO.dao.CoinDTODao;
-import com.assettrader.DTO.dao.CoinDTODaoImpl;
-import com.assettrader.DTO.service.CoinDTOService;
-import com.assettrader.DTO.service.CoinDTOServiceImpl;
-
 public class DAOUtilities {
 	
 	private static final String CONNECTION_USERNAME = "assettrader_user";

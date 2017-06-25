@@ -1,24 +1,34 @@
 package com.assettrader.model.coin;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.assettrader.entities.ids.MarketHistoryId;
+import com.assettrader.model.utils.OrderType;
+
 @Entity
 @Table( name = "MARKET_HISTORY")
+@IdClass(MarketHistoryId.class)
 public class MarketHistory {
 
-	@Id
-	@Column( name = "MARKET_HISTORY_ID")
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@GeneratedValue( strategy = GenerationType.TABLE )
+	@Column( name = "MARKET_HISTORY_ID", columnDefinition="serial")
 	private long id;
+	
+	@Id
+	@Column( name = "ORDER_ID")
+	private long orderId;
 	
 	@Column( name = "PRICE")
 	private double price;
@@ -29,13 +39,19 @@ public class MarketHistory {
 	@Column( name = "FILL_TYPE")
 	private String fillType;
 	
-	@Column(name = "ORDER_TYPE")
-	private String orderType;
+	@Column( name = "QUANTITY")
+	private double quantity;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORDER_TYPE")
+	private OrderType orderType;
+	
+	@Id
+	@Column( name = "TIME_STAMP")
+	private Date timeStamp;
+
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "COIN_ID", insertable = false, updatable = true),
-		@JoinColumn(name = "MARKET_NAME", insertable = false, updatable = true) })
+	@JoinColumn(name = "MARKET_NAME", insertable = false, updatable = true)
 	private Coin coin;
 
 	public long getId() {
@@ -44,6 +60,14 @@ public class MarketHistory {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
 	}
 
 	public double getPrice() {
@@ -70,12 +94,28 @@ public class MarketHistory {
 		this.fillType = fillType;
 	}
 
-	public String getOrderType() {
+	public double getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(double quantity) {
+		this.quantity = quantity;
+	}
+
+	public OrderType getOrderType() {
 		return orderType;
 	}
 
-	public void setOrderType(String orderType) {
+	public void setOrderType(OrderType orderType) {
 		this.orderType = orderType;
+	}
+
+	public Date getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(Date timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
 	public Coin getCoin() {

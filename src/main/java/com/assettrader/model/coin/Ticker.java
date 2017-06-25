@@ -1,5 +1,7 @@
 package com.assettrader.model.coin;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,29 +11,33 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
-@Table( name = "TICKER" )
+@Table(name = "TICKER")
 public class Ticker {
 
 	@Id
-	@Column( name = "TICKER_ID" )
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@Column(name = "TICKER_ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
-	@Column( name = "BID" )
+
+	@Column(name = "BID")
 	private double bid;
-	
-	@Column( name = "ASK" )
+
+	@Column(name = "ASK")
 	private double ask;
-	
-	@Column( name = "LAST" )
+
+	@Column(name = "LAST")
 	private double last;
-	
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "TIME_STAMP")
+	private Date timeStamp;
+
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "COIN_ID"),
-		@JoinColumn(name = "MARKET_NAME") })
+	@JoinColumn(name = "MARKET_NAME", insertable = true, updatable = false)
 	private Coin coin;
 
 	public long getId() {
@@ -73,7 +79,13 @@ public class Ticker {
 	public void setCoin(Coin coin) {
 		this.coin = coin;
 	}
-	
-	
+
+	public Date getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(Date timeStamp) {
+		this.timeStamp = timeStamp;
+	}
 
 }

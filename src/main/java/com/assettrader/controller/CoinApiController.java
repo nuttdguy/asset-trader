@@ -23,6 +23,7 @@ import com.assettrader.DTO.CoinResultDTO;
 import com.assettrader.DTO.service.CoinDTOService;
 import com.assettrader.model.coin.Coin;
 import com.assettrader.model.coin.Currency;
+import com.assettrader.model.coin.MarketHistory;
 import com.assettrader.model.coin.MarketSummary;
 import com.assettrader.model.coin.OrderBook;
 import com.assettrader.model.coin.Ticker;
@@ -122,7 +123,18 @@ public class CoinApiController {
 		Ticker ticker = coinDTOService.getTicker(marketName);
 		model.addAttribute("ticker", ticker);
 		
-		return "ticker";
+		return "ticker-view";
+	}
+	
+	@RequestMapping(value = "/getmarkethistory", method= RequestMethod.GET)
+	private String getMarketHistory(Model model) {
+		
+		// TODO - Add param to get market-name
+		String marketName = "BTC-XEM";
+		List<MarketHistory> marketHistory = coinDTOService.getMarketHistory(marketName);
+		model.addAttribute("marketHistory", marketHistory);
+		
+		return "market-history-view";
 	}
 	
 

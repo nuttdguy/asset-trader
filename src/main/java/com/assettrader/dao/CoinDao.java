@@ -10,9 +10,12 @@ public interface CoinDao {
 	// TODO, add parameters according to API endpoint
 	String getCoinMarketName(String coinMarketName);
 	String getCoinMarketNameLong(String coinMarketName);
+	Long getCoinMarketId(String marketName);
+	String getMarketName(String marketName);
+	String getMarketNameByCurrencyShortName(String currencyShortName);
+	
 	String getCoinMarketCurrency(String coinMarketName);
 	String getCoinBaseCurrency(String coinMarketName);
-	String getMarketName(String coinMarketName);
 	String getCoinLogo(String coinMarketName);
 	
 	Double getBidPriceLast(String coinMarketName);

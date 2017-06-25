@@ -26,9 +26,7 @@ public class CoinFavorite {
 	private UserProfile userProfile;
 
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "COIN_ID"),
-		@JoinColumn(name = "MARKET_NAME")})
+	@JoinColumn(name = "MARKET_NAME")
 	private Coin coin;
 
 	public Long getId() {

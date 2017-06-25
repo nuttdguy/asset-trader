@@ -1,9 +1,11 @@
 package com.assettrader.DTO.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transaction;
@@ -36,7 +38,39 @@ public class CoinDTODaoImpl implements CoinDTODao {
 
 	@Override
 	public void saveGetMarketSummary(MarketSummary marketSummary) {
-		// TODO Auto-generated method stub
+
+		try {
+			connection = DAOUtilities.getConnection();
+			String sql = "INSERT INTO MARKET_SUMMARY"
+					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME)"
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+			
+			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			statement.setDouble(1, marketSummary.getAsk());
+			statement.setDouble(2, marketSummary.getBid());
+			statement.setDate(3, marketSummary.getCreated());
+			statement.setDouble(4, marketSummary.getHigh());
+			statement.setDouble(5, marketSummary.getLow());
+			statement.setString(6, marketSummary.getMarketName());
+			statement.setInt(7, marketSummary.getOpenBuyOrders());
+			statement.setInt(8, marketSummary.getOpenSellOrders());
+			statement.setInt(9, marketSummary.getPrevDay());
+			statement.setDate(10, marketSummary.getTimeStamp());
+			statement.setDouble(11, marketSummary.getVolume());
+			statement.executeUpdate();
+			rs = statement.getGeneratedKeys();
+            while (rs.next()) {
+                System.out.println("Key returned from getGeneratedKeys():"
+                        + rs.getInt(1) + " == " + rs.getString(1));
+            } 
+			
+		} catch (SQLException sx) {
+			System.out.println("Error inserting market-summaries " + sx.getMessage() );
+		} finally {
+			closeResources();
+		}
 		
 	}
 
@@ -48,7 +82,37 @@ public class CoinDTODaoImpl implements CoinDTODao {
 
 	@Override
 	public void saveGetOrderBook(List<OrderBook> orderBook) {
-		// TODO Auto-generated method stub
+		
+		try {
+			connection = DAOUtilities.getConnection();
+			String sql = "INSERT INTO ORDER_BOOK "
+					+ "(ORDER_BOOK_DATETIME, ORDER_TYPE, QUANTITY, RATE)"
+					+ " VALUES(NOW(), ?, ?, ?)";
+			
+			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			// TODO - FIX DATE-TIME FORMAT ERROR
+			for (OrderBook order : orderBook) {
+				
+				statement.setString(1, order.getOrderType().toString());
+				statement.setDouble(2, order.getQuantity());
+				statement.setDouble(3, order.getRate());
+				statement.executeUpdate();
+				rs = statement.getGeneratedKeys();
+				
+	            while (rs.next()) {
+	                System.out.println("Key returned from getGeneratedKeys():"
+	                        + rs.getInt(1) + " == " + rs.getString(1));
+	            } 
+			}
+			
+			
+		} catch (SQLException sex) {
+			System.out.println("Error inserting into order-books");
+		} finally {
+			closeResources();
+		}
+		
 	}
 
 	@Override

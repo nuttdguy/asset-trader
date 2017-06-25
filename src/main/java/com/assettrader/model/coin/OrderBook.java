@@ -1,9 +1,12 @@
 package com.assettrader.model.coin;
 
+
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,30 +15,38 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.assettrader.model.utils.OrderType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table( name = "ORDER_BOOK" )
+@Table(name = "ORDER_BOOK")
 public class OrderBook {
 
 	@Id
-	@Column( name = "ORDER_BOOK_ID")
-	@GeneratedValue( strategy = GenerationType.IDENTITY )
+	@Column(name = "ORDER_BOOK_ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private long id;
-	
-	@Column( name = "QUANTITY" )
-	private int quantity;
-	
-	@Column( name = "RATE" )
+
+	@Column(name = "QUANTITY")
+	private double quantity;
+
+	@Column(name = "RATE")
 	private double rate;
-	
-	@Column( name = "ORDER_BOOK_DATETIME" )
-	public Date orderBookDateTime;
-	
+
+	@Column(name = "ORDER_BOOK_DATETIME")
+	private Date orderBookDateTime;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ORDER_TYPE")
+	private OrderType orderType;
+
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "COIN_ID" ),
-		@JoinColumn(name = "MARKET_NAME") })
+	@JoinColumns({ 
+		@JoinColumn(name = "COIN_ID", insertable=false, updatable=false ), 
+		@JoinColumn(name = "MARKET_NAME", insertable=false, updatable=false) })
 	private Coin coin;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -44,11 +55,11 @@ public class OrderBook {
 		this.id = id;
 	}
 
-	public int getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 
@@ -58,6 +69,14 @@ public class OrderBook {
 
 	public void setRate(double rate) {
 		this.rate = rate;
+	}
+
+	public OrderType getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(OrderType orderType) {
+		this.orderType = orderType;
 	}
 
 	public Date getOrderBookDateTime() {
@@ -75,7 +94,5 @@ public class OrderBook {
 	public void setCoin(Coin coin) {
 		this.coin = coin;
 	}
-	
-	
 
 }

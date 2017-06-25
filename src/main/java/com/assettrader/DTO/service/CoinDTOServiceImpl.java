@@ -2,18 +2,26 @@ package com.assettrader.DTO.service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.assettrader.DTO.BuyDTO;
 import com.assettrader.DTO.CoinDTO;
 import com.assettrader.DTO.CoinResultDTO;
 import com.assettrader.DTO.CurrencyDTO;
 import com.assettrader.DTO.CurrencyResultDTO;
 import com.assettrader.DTO.MarketSummariesDTO;
 import com.assettrader.DTO.MarketSummariesResultDTO;
+import com.assettrader.DTO.OrderBookDTO;
+import com.assettrader.DTO.ResultDTO;
+import com.assettrader.DTO.SellDTO;
 import com.assettrader.DTO.dao.CoinDTODao;
 import com.assettrader.model.coin.Coin;
 import com.assettrader.model.coin.Currency;
@@ -21,6 +29,8 @@ import com.assettrader.model.coin.MarketHistory;
 import com.assettrader.model.coin.MarketSummary;
 import com.assettrader.model.coin.OrderBook;
 import com.assettrader.model.coin.Ticker;
+import com.assettrader.model.utils.OrderType;
+import com.assettrader.utils.DAOUtilities;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,7 +49,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	private static final String GET_MARKET_SUMMARY = "/getmarketsummary";
 	private static final String GET_ORDER_BOOK = "/getorderbook";
 	private static final String MARKET_PREFIX = "?market=";
-	private static final String ORDER_PREFIX = "type=";
+	private static final String ORDER_PREFIX = "&type=";
 
 	@Autowired
 	CoinDTODao coinDTODao;
@@ -52,6 +62,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		List<Coin> coinList = null;
 		ObjectMapper mapper = initMapper();
 
+		
 		try {
 			URL url = new URL(PUBLIC_URL + GET_MARKETS);
 			List<CoinResultDTO> result = mapper.readValue(url, new TypeReference<List<CoinResultDTO>>() {
@@ -59,7 +70,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 			coinList = new ArrayList<>();
 			for (CoinDTO coinDTO : result.get(0).getResult()) {
-				coinList.add(coinDTOToCoin(coinDTO));
+				coinList.add(DTOToCoin(coinDTO));
 			}
 
 			coinDTODao.saveGetMarkets(coinList); // PERSIST DATA TO DATABASE
@@ -87,7 +98,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 			currencyList = new ArrayList<>();
 			for (CurrencyDTO currencyDTO : jsonList.get(0).getResult()) {
-				currencyList.add(currencyDTOToCoin(currencyDTO));
+				currencyList.add(DTOToCoin(currencyDTO));
 			}
 
 			coinDTODao.saveGetCurrencies(currencyList);
@@ -112,7 +123,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 			
 			marketSummaryList = new ArrayList<>();
 			for (MarketSummariesDTO marketDTO : jsonList.get(0).getResult()) {
-				marketSummaryList.add(marketSummariesDTOToMarketSummary(marketDTO));
+				marketSummaryList.add(DTOToMarketSummary(marketDTO));
 			}
 			
 			coinDTODao.saveGetMarketSummaries(marketSummaryList);
@@ -136,7 +147,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 			
 			marketSummary = new MarketSummary();
 			for(MarketSummariesDTO market : marketDTO.getResult()) {
-				marketSummary = marketSummariesDTOToMarketSummary(market);
+				marketSummary = DTOToMarketSummary(market);
 			}
 			
 			coinDTODao.saveGetMarketSummary(marketSummary);		
@@ -146,6 +157,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 			System.out.println("IOException getting market summary " + io.getMessage());
 		}
 		
+		coinDTODao.saveGetMarketSummary(marketSummary);
 		return marketSummary;
 	}
 
@@ -163,8 +175,36 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 	@Override
 	public List<OrderBook> getOrderBook(String marketName, String buyOrSell) {
-		// TODO Auto-generated method stub
-		return null;
+		List<OrderBook> orderBookList = null;
+		ObjectMapper mapper = initMapper();
+		
+		try {
+			URL url = new URL(PUBLIC_URL + GET_ORDER_BOOK + MARKET_PREFIX + marketName + ORDER_PREFIX + buyOrSell);
+			List<ResultDTO<OrderBookDTO>> jsonList = mapper.readValue(url,
+					new TypeReference<List<ResultDTO<OrderBookDTO>>>() {				
+			});
+			
+			orderBookList = new ArrayList<>();
+			for (OrderBookDTO orderDTO : jsonList.get(0).getResult()) {
+				// Loop assumes BUY and SELL orders are the same //
+				// Run through loop to add buy/sell/time statuses
+				for (BuyDTO buyDTO : orderDTO.getBuy()) {
+					orderBookList.add(DTOToOrderBook(buyDTO));
+				}
+				for (SellDTO sellDTO : orderDTO.getSell()) {
+					orderBookList.add(DTOToOrderBook(sellDTO));
+				}				
+			}					
+			
+			// Save data to database
+			coinDTODao.saveGetOrderBook(orderBookList);
+			return orderBookList; 
+			
+		} catch (IOException io) {
+			System.out.println("IoException getting order book " + io.getMessage());
+		}
+		
+		return orderBookList;
 	}
 
 	// ==|| METHODS :: FOR DATA-TRANSFER
@@ -182,7 +222,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return mapper;
 	}
 
-	private Coin coinDTOToCoin(CoinDTO coinDTO) {
+	private Coin DTOToCoin(CoinDTO coinDTO) {
 
 		Coin coin = new Coin();
 		coin.setMarketName(coinDTO.getMarketName());
@@ -199,7 +239,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return coin;
 	}
 
-	private Currency currencyDTOToCoin(CurrencyDTO currencyDTO) {
+	private Currency DTOToCoin(CurrencyDTO currencyDTO) {
 
 		Currency currency = new Currency();
 		currency.setCurrency(currencyDTO.getCurrency());
@@ -212,7 +252,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return currency;
 	}
 
-	private MarketSummary marketSummariesDTOToMarketSummary(MarketSummariesDTO marketSummaryDTO) {
+	private MarketSummary DTOToMarketSummary(MarketSummariesDTO marketSummaryDTO) {
 		
 		MarketSummary market = new MarketSummary();
 		market.setMarketName(marketSummaryDTO.getMarketName());
@@ -230,6 +270,29 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return market;
 	}
 	
+	private OrderBook DTOToOrderBook(BuyDTO buyDTO) {
+		
+		OrderBook orderBook = new OrderBook();
+		Date date = new Date();
+		
+		orderBook.setQuantity(buyDTO.getQuantity());
+		orderBook.setRate(buyDTO.getRate());
+		orderBook.setOrderBookDateTime(date);
+		orderBook.setOrderType(OrderType.BUY);
+		return orderBook;
+	}
+	
+	private OrderBook DTOToOrderBook(SellDTO sellDTO) {
+		
+		OrderBook orderBook = new OrderBook();
+		Date date = new Date();
+		
+		orderBook.setQuantity(sellDTO.getQuantity());
+		orderBook.setRate(sellDTO.getRate());
+		orderBook.setOrderBookDateTime(date);
+		orderBook.setOrderType(OrderType.SELL);
+		return orderBook;
+	}
 }
 
 

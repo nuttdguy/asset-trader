@@ -6,6 +6,7 @@ import javax.xml.ws.soap.AddressingFeature.Responses;
 
 import org.jboss.logging.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -95,25 +96,25 @@ public class CoinApiController {
 		MarketSummary marketSummary = coinDTOService.getMarketSummary(marketName);
 		model.addAttribute("marketSummary", marketSummary);
 		
-		return "marketsummary";
+		return "marketsummaryview";
 	}
 	
 	
-	@RequestMapping(value = "/getOrderBook", method = RequestMethod.GET)
+	@RequestMapping(value = "/getorderbook", method = RequestMethod.GET)
 	private String getOrderBook(Model model) {
 		
 		// TODO - add param to get orderbook for a market-name, buy/sell/both
 		String marketName = "BTC-LTC";
-		String orderType = "BUY";
+		String orderType = "both";
 		
 		List<OrderBook> orderBooks = coinDTOService.getOrderBook(marketName, orderType);
-		model.addAttribute("orderbook", orderBooks);
+		model.addAttribute("orderbooks", orderBooks);
 		
-		return "orderbooks";
+		return "orderbookview";
 	}
 
 	
-	@RequestMapping(value = "/getTicker", method= RequestMethod.GET)
+	@RequestMapping(value = "/getticker", method= RequestMethod.GET)
 	private String getTicker(Model model) {
 		
 		// TODO - Add param to get market-name

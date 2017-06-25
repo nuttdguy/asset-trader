@@ -16,6 +16,7 @@ public class DAOUtilities {
 	private static final String URL = "jdbc:mysql://localhost:3306/assettrader";
 	private static Connection connection;
 	
+
 	public static synchronized Connection getConnection() throws SQLException {
 		if (connection == null) {
 			

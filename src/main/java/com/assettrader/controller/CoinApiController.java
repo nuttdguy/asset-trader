@@ -30,85 +30,12 @@ import com.assettrader.model.coin.MarketSummary;
 import com.assettrader.model.coin.OrderBook;
 import com.assettrader.model.coin.Ticker;
 
-//@Controller
 @RestController
 @RequestMapping("/coins")
 public class CoinApiController {
 
-	@Autowired
-	public CoinDTOService coinDTOService;
-
+	// TODO - CONSTRUCT A CLASS TO HANDLE/FORWARD A RESPONSE THAT CAN BE ITERATED THROUGH FROM CLIENT
 	
-	@RequestMapping(value = "/getmarkets", method = RequestMethod.GET)
-	public List<Coin> getCoin(Model model) {
-
-		List<Coin> coinList = coinDTOService.getMarkets();
-		
-		model.addAttribute("coinList", coinList);
-		return coinList;
-	}
-	
-	@RequestMapping(value = "/getcurrencies", method = RequestMethod.GET)
-	private List<Currency> getCurrencies(Model model) {
-		
-		List<Currency> currencyList = coinDTOService.getCurrencies();
-		model.addAttribute("currencyList", currencyList);
-		
-		return currencyList;
-	}
-			
-	
-	@RequestMapping(value = "/getmarketsummaries", method = RequestMethod.GET)
-	private List<MarketSummary> getMarketSummaries(Model model) {
-		
-		List<MarketSummary> marketSummariesList = coinDTOService.getMarketSummaries();
-		model.addAttribute("marketSummaries", marketSummariesList);
-		
-		return marketSummariesList;
-	}
-	
-	
-	@RequestMapping(value = "/getmarketsummary/{marketname}", method = RequestMethod.GET)
-	private MarketSummary getMarketSummary(Model model, @PathVariable String marketname) {
-		
-		MarketSummary marketSummary = coinDTOService.getMarketSummary(marketname);
-		model.addAttribute("marketSummary", marketSummary);
-		
-		return marketSummary;
-	}
-	
-	
-	@RequestMapping(value = "/getorderbook/{marketname}&{ordertype}", method = RequestMethod.GET)
-	private List<OrderBook> getOrderBook(Model model, @PathVariable String marketname, @PathVariable String ordertype) {
-				
-		List<OrderBook> orderBooks = coinDTOService.getOrderBook(marketname, ordertype);
-		model.addAttribute("orderbooks", orderBooks);
-		
-		return orderBooks;
-	}
-
-	
-	@RequestMapping(value = "/getticker/{marketname}", method= RequestMethod.GET)
-	private Ticker getTicker(Model model, @PathVariable String marketname) {
-		
-		Ticker ticker = coinDTOService.getTicker(marketname);
-		model.addAttribute("ticker", ticker);
-		
-		return ticker;
-	}
-	
-	@RequestMapping(value = "/getmarkethistory/{marketname}", method= RequestMethod.GET)
-	private List<MarketHistory> getMarketHistory(Model model, @PathVariable String marketname) {
-		
-		// TODO - Add param to get market-name
-		// String marketName = "BTC-XEM";
-		List<MarketHistory> marketHistory = coinDTOService.getMarketHistory(marketname);
-		model.addAttribute("marketHistory", marketHistory);
-		
-		return marketHistory;
-	}
-	
-
 	// What should be displayed to user in their Home Profile
 	// = I want to be able to see my username so that I know its my account
 	// = I want to view my account balance for (a single account)
@@ -128,5 +55,94 @@ public class CoinApiController {
 	// 2. Get the getAccountBalances(LocalDate dateStart, LocalDate dateEnd); //
 	// use default values
 	// 3. Get
+	
+	private static int FIRST_PERSIST = 0;
+	
+	@Autowired
+	public CoinDTOService coinDTOService;
+
+	
+	@RequestMapping(value = "/getmarkets", method = RequestMethod.GET)
+	public List<Coin> getCoin(Model model) {
+		
+		if (FIRST_PERSIST == 0) {
+			FIRST_PERSIST++;
+			return coinDTOService.loadApplicationBootingEndPoints();
+		}
+
+		return coinDTOService.getMarkets();
+	}
+	
+	@RequestMapping(value = "/getcurrencies", method = RequestMethod.GET)
+	private List<Currency> getCurrencies(Model model) {
+		
+		if (FIRST_PERSIST == 0) {
+			coinDTOService.loadApplicationBootingEndPoints();
+			FIRST_PERSIST++;
+		}
+		
+		return coinDTOService.getCurrencies();
+
+	}
+			
+	
+	@RequestMapping(value = "/getmarketsummaries", method = RequestMethod.GET)
+	private List<MarketSummary> getMarketSummaries(Model model) {
+		
+		if (FIRST_PERSIST == 0) {
+			coinDTOService.loadApplicationBootingEndPoints();
+			FIRST_PERSIST++;
+		}
+		
+		return coinDTOService.getMarketSummaries();
+	}
+	
+	
+	@RequestMapping(value = "/getmarketsummary/{marketname}", method = RequestMethod.GET)
+	private MarketSummary getMarketSummary(Model model, @PathVariable String marketname) {
+		
+		if (FIRST_PERSIST == 0) {
+			coinDTOService.loadApplicationBootingEndPoints();
+			FIRST_PERSIST++;
+		}
+		
+		return coinDTOService.getMarketSummary(marketname);
+	}
+	
+	
+	@RequestMapping(value = "/getorderbook/{marketname}&{ordertype}", method = RequestMethod.GET)
+	private List<OrderBook> getOrderBook(Model model, @PathVariable String marketname, @PathVariable String ordertype) {
+			
+		if (FIRST_PERSIST == 0) {
+			coinDTOService.loadApplicationBootingEndPoints();
+			FIRST_PERSIST++;
+		}
+		
+		return coinDTOService.getOrderBook(marketname, ordertype);
+	}
+
+	
+	@RequestMapping(value = "/getticker/{marketname}", method= RequestMethod.GET)
+	private Ticker getTicker(Model model, @PathVariable String marketname) {
+		
+		if (FIRST_PERSIST == 0) {
+			coinDTOService.loadApplicationBootingEndPoints();
+			FIRST_PERSIST++;
+		}
+
+		return coinDTOService.getTicker(marketname);
+	}
+	
+	@RequestMapping(value = "/getmarkethistory/{marketname}", method= RequestMethod.GET)
+	private List<MarketHistory> getMarketHistory(Model model, @PathVariable String marketname) {
+		
+		if (FIRST_PERSIST == 0) {
+			coinDTOService.loadApplicationBootingEndPoints();
+			FIRST_PERSIST++;
+		}
+		
+		return coinDTOService.getMarketHistory(marketname);
+	}
+	
 
 }

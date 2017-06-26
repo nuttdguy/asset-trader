@@ -21,6 +21,6 @@ public interface CoinDTOService {
 	List<MarketHistory> getMarketHistory(String marketName);	
 	List<OrderBook> getOrderBook(String marketName, String buyOrSell);
 	
-	void loadAllEndPoints(List<Coin> coin, List<Currency> currency, List<MarketSummary> marketSummary, List<OrderBook> orderbook);
+	List<Coin> loadApplicationBootingEndPoints();
 
 }

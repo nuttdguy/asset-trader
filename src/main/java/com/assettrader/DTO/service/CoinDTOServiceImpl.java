@@ -60,6 +60,8 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	// ==|| METHODS :: TO REQUEST DATA FROM API END-POINT
 	// ================================================
 	
+	// TODO -- REFACTOR METHODS TO PREVENT PERSISTING DATA WHEN NOT REQUIRED
+	
 	@SuppressWarnings("rawtypes")  // WORKING REST ENDPOINT
 	public List<Coin> getMarkets() {
 
@@ -77,7 +79,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				coinList.add(DTOToCoin(coinDTO));
 			}
 
-			coinDTODao.saveGetMarkets(coinList); // PERSIST DATA TO DATABASE
+			coinDTODao.saveGetMarkets(coinList); 
 			return coinList; // RETURN MAPPED RESULT TO UI TO DISPLAY
 
 		} catch (IOException e) {
@@ -255,11 +257,12 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return orderBookList;
 	}
 	
-	@Override
-	public void loadAllEndPoints(List<Coin> coin, List<Currency> currency, List<MarketSummary> marketSummary,
-			List<OrderBook> orderbook) {
-		// TODO Auto-generated method stub
-		
+	@Override // ADD CALL TO API CONTROLLER
+	public List<Coin> loadApplicationBootingEndPoints() {
+	
+		List<Coin> coinList = getMarkets(); // GET ALL THE COIN MARKETS
+
+		return coinList;
 	}
 
 	// ==|| METHODS :: FOR DATA-TRANSFER

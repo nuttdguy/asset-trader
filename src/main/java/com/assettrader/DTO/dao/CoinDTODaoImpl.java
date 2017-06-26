@@ -58,11 +58,10 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			// FOR UPDATE
 			statement.setDouble(5, ticker.getAsk());
 			statement.executeUpdate();
-			rs = statement.getGeneratedKeys();
-            while (rs.next()) {
-                // System.out.println("Key returned from getGeneratedKeys():"
-                rs.getInt(1);
-            } 
+//			rs = statement.getGeneratedKeys();
+//            while (rs.next()) {
+//                rs.getInt(1);
+//            } 
 			
 		} catch (MySQLIntegrityConstraintViolationException cex) {
 			System.out.println("Error inserting into Ticker " + cex.getMessage());
@@ -103,11 +102,10 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			
 			statement.setDouble(13, marketSummary.getAsk());
 			statement.executeUpdate();
-			rs = statement.getGeneratedKeys();
-            while (rs.next()) {
-                // System.out.println("Key returned from getGeneratedKeys():"
-                rs.getInt(1);
-            } 
+//			rs = statement.getGeneratedKeys();
+//            while (rs.next()) {
+//                rs.getInt(1);
+//            } 
 			
 		} catch (MySQLIntegrityConstraintViolationException cex) {
 			System.out.println("Error inserting into market-summary " + cex.getMessage());
@@ -147,11 +145,11 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				// FOR UPDATE
 				statement.setString(9, marketHistory.getFillType());
 				statement.executeUpdate();
-				rs = statement.getGeneratedKeys();
-				
-	            while (rs.next()) {
-	               rs.getInt(1);
-	            } 
+//				rs = statement.getGeneratedKeys();
+//				
+//	            while (rs.next()) {
+//	               rs.getInt(1);
+//	            } 
 			}
 			
 			
@@ -188,12 +186,11 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				// FOR UPDATE
 				statement.setString(5, order.getOrderType().name());
 				statement.executeUpdate();
-				rs = statement.getGeneratedKeys();
-				
-	            while (rs.next()) {
-	               // System.out.println("Key returned from getGeneratedKeys():"
-	               rs.getInt(1);
-	            } 
+//				rs = statement.getGeneratedKeys();
+//				
+//	            while (rs.next()) {
+//	               rs.getInt(1);
+//	            } 
 			}
 			
 			
@@ -238,12 +235,11 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				
 				statement.setString(11, coin.getMinTradeSize());
 				statement.execute();
-				rs = statement.getGeneratedKeys();
-				
-	            while (rs.next()) {
-	                System.out.println("Key returned from getGeneratedKeys():"
-	                        + rs.getInt(1) + " == " + rs.getString(1));
-	            } 
+//				rs = statement.getGeneratedKeys();
+//				
+//	            while (rs.next()) {
+//	            	rs.getInt(1);
+//	            } 
 				
 				System.out.println();
 			}
@@ -263,7 +259,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			connection = DAOUtilities.getConnection();
 			String sql = "INSERT INTO CURRENCY"
 					+ "(BASE_ADDRESS, COIN_TYPE, "
-					+ "CURRENCY_LONG, CURRENCY, IS_ACTIVE, MIN_CONFIRMATION, TX_FEE, MARKET_NAME)"
+					+ "CURRENCY_LONG, CURRENCY_SHORT_NAME, IS_ACTIVE, MIN_CONFIRMATION, TX_FEE, MARKET_NAME)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "BASE_ADDRESS = ?";
@@ -271,13 +267,13 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			for (Currency currency : currencyList) {
-				String marketName = coinDAO.getMarketNameByCurrencyShortName(currency.getCurrency());
+				String marketName = coinDAO.getMarketNameByCurrencyShortName(currency.getCurrencyShort());
 				
 				if (!marketName.equals("NOT FOUND")) {
 					statement.setString(1, currency.getBaseAddress());
 					statement.setString(2, currency.getCoinType());
 					statement.setString(3, currency.getCurrencyLong());
-					statement.setString(4,  currency.getCurrency());
+					statement.setString(4,  currency.getCurrencyShort());
 					statement.setBoolean(5, currency.isActive());
 					statement.setShort(6, currency.getMinConfirmation());
 					statement.setDouble(7, currency.getTxFee());
@@ -333,11 +329,10 @@ public class CoinDTODaoImpl implements CoinDTODao {
 					// FOR UPDATE
 					statement.setDouble(12, market.getAsk());
 					statement.executeUpdate();
-					rs = statement.getGeneratedKeys();
-		            while (rs.next()) {
-		                System.out.println("Key returned from getGeneratedKeys():"
-		                        + rs.getInt(1) + " == " + rs.getString(1));
-		            } 
+//					rs = statement.getGeneratedKeys();
+//		            while (rs.next()) {
+//		                	rs.getInt(1);
+//		            } 
 				}
 			}
 			
@@ -380,11 +375,10 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				
 				statement.setDouble(12, market.getAsk());
 				statement.executeUpdate();
-				rs = statement.getGeneratedKeys();
-	            while (rs.next()) {
-	                System.out.println("Key returned from getGeneratedKeys():"
-	                        + rs.getInt(1) + " == " + rs.getString(1));
-	            } 
+//				rs = statement.getGeneratedKeys();
+//	            while (rs.next()) {
+//	            	rs.getInt(1);
+//	            } 
 			}
 			
 		} catch (MySQLIntegrityConstraintViolationException cex) {

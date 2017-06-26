@@ -17,14 +17,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "CURRENCY")
 public class Currency {
 
-	@Id
-	@Column(name = "CURRENCY_ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "CURRENCY_ID", columnDefinition="serial")
 	@JsonIgnore
 	private long id;
 
-	@Column(name = "CURRENCY")
-	private String currency;
+	@Id
+	@Column(name = "CURRENCY_SHORT_NAME")
+	private String currencyShort;
 
 	@Column(name = "CURRENCY_LONG")
 	private String currencyLong;
@@ -56,12 +56,12 @@ public class Currency {
 		this.id = id;
 	}
 
-	public String getCurrency() {
-		return currency;
+	public String getCurrencyShort() {
+		return currencyShort;
 	}
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
+	public void setCurrencyShort(String currencyShort) {
+		this.currencyShort = currencyShort;
 	}
 
 	public String getCurrencyLong() {

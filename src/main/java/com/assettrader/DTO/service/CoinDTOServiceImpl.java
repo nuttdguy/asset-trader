@@ -59,7 +59,8 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 	// ==|| METHODS :: TO REQUEST DATA FROM API END-POINT
 	// ================================================
-	@SuppressWarnings("rawtypes")
+	
+	@SuppressWarnings("rawtypes")  // WORKING REST ENDPOINT
 	public List<Coin> getMarkets() {
 
 		List<Coin> coinList = null;
@@ -89,7 +90,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 	}
 
-	@Override
+	@Override // WORKING REST ENDPOINT
 	public List<Currency> getCurrencies() {
 		List<Currency> currencyList = null;
 		ObjectMapper mapper = initMapper();
@@ -113,7 +114,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return currencyList;
 	}
 
-	@Override
+	@Override // WORKING REST ENDPOINT
 	public List<MarketSummary> getMarketSummaries() {
 		List<MarketSummary> marketSummaryList = null;
 		ObjectMapper mapper = initMapper();
@@ -139,7 +140,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return marketSummaryList;
 	}
 
-	@Override
+	@Override 
 	public MarketSummary getMarketSummary(String marketName) {
 		MarketSummary marketSummary = null;
 		ObjectMapper mapper = initMapper();
@@ -164,7 +165,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return marketSummary;
 	}
 
-	@Override
+	@Override // WORKING REST ENDPOINT
 	public Ticker getTicker(String marketName) {
 		Ticker ticker = null;
 		ObjectMapper mapper = initMapper();
@@ -236,8 +237,6 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 			
 			orderBookList = new ArrayList<>();
 			for (OrderBookDTO orderDTO : jsonList.get(0).getResult()) {
-				// Loop assumes BUY and SELL orders are the same //
-				// Run through loop to add buy/sell/time statuses
 				for (BuyDTO buyDTO : orderDTO.getBuy()) {
 					orderBookList.add(DTOToOrderBook(buyDTO, marketName));
 				}
@@ -246,7 +245,6 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				}				
 			}					
 			
-			// Save data to database
 			coinDTODao.saveGetOrderBook(orderBookList);
 			return orderBookList; 
 			
@@ -318,6 +316,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		market.setMarketName(marketSummaryDTO.getMarketName());
 		market.setHigh(marketSummaryDTO.getHigh());
 		market.setLow(marketSummaryDTO.getLow());
+		market.setBaseVolume(marketSummaryDTO.getBaseVolume());
 		market.setVolume(marketSummaryDTO.getVolume());
 		market.setTimeStamp(marketSummaryDTO.getTimeStamp());
 		market.setBid(marketSummaryDTO.getBid());

@@ -32,6 +32,9 @@ public class MarketSummary {
 
 	@Column(name = "LOW")
 	private double low;
+	
+	@Column(name = "BASE_VOLUME")
+	private double baseVolume;
 
 	@Column(name = "VOLUME")
 	private double volume;
@@ -91,6 +94,14 @@ public class MarketSummary {
 
 	public void setLow(double low) {
 		this.low = low;
+	}
+
+	public double getBaseVolume() {
+		return baseVolume;
+	}
+
+	public void setBaseVolume(double baseVolume) {
+		this.baseVolume = baseVolume;
 	}
 
 	public double getVolume() {

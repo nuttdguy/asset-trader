@@ -44,7 +44,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			connection = DAOUtilities.getConnection();
 			String sql = "INSERT INTO TICKER"
 					+ "(ASK, BID, LAST, TIME_STAMP, MARKET_NAME)"
-					+ "VALUES(?, ?, ?, NOW(), ?); ";
+					+ "VALUES(?, ?, ?, NOW(), ?) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "ASK = ?";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
@@ -53,6 +55,8 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			statement.setDouble(3, ticker.getLast());
 			statement.setString(4, ticker.getCoin().getMarketName());
 			
+			// FOR UPDATE
+			statement.setDouble(5, ticker.getAsk());
 			statement.executeUpdate();
 			rs = statement.getGeneratedKeys();
             while (rs.next()) {
@@ -70,29 +74,34 @@ public class CoinDTODaoImpl implements CoinDTODao {
 		
 	}
 
-	@Override
+	@Override // TODO - FIX CONSTRAINT, IS ALLOWING MULTIPLE RECORDS
 	public void saveGetMarketSummary(MarketSummary marketSummary) {
 
 		try {
 			connection = DAOUtilities.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
-					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
+					+ "(ASK, BASE_VOLUME, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+					+ " ON DUPLICATE KEY UPDATE "
+					+ " ASK = ? ";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			statement.setDouble(1, marketSummary.getAsk());
-			statement.setDouble(2, marketSummary.getBid());
-			statement.setDate(3, marketSummary.getCreated());
-			statement.setDouble(4, marketSummary.getHigh());
-			statement.setDouble(5, marketSummary.getLow());
-			statement.setString(6, marketSummary.getMarketName());
-			statement.setInt(7, marketSummary.getOpenBuyOrders());
-			statement.setInt(8, marketSummary.getOpenSellOrders());
-			statement.setInt(9, marketSummary.getPrevDay());
-			statement.setDate(10, marketSummary.getTimeStamp());
-			statement.setDouble(11, marketSummary.getVolume());
+			statement.setDouble(2, marketSummary.getBaseVolume());
+			statement.setDouble(3, marketSummary.getBid());
+			statement.setDate(4, marketSummary.getCreated());
+			statement.setDouble(5, marketSummary.getHigh());
+			statement.setDouble(6, marketSummary.getLow());
+			statement.setString(7, marketSummary.getMarketName());
+			statement.setInt(8, marketSummary.getOpenBuyOrders());
+			statement.setInt(9, marketSummary.getOpenSellOrders());
+			statement.setInt(10, marketSummary.getPrevDay());
+			statement.setDate(11, marketSummary.getTimeStamp());
+			statement.setDouble(12, marketSummary.getVolume());
+			
+			statement.setDouble(13, marketSummary.getAsk());
 			statement.executeUpdate();
 			rs = statement.getGeneratedKeys();
             while (rs.next()) {
@@ -163,16 +172,21 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			connection = DAOUtilities.getConnection();
 			String sql = "INSERT INTO ORDER_BOOK "
 					+ "(ORDER_BOOK_DATETIME, ORDER_TYPE, QUANTITY, RATE, MARKET_NAME)"
-					+ " VALUES(NOW(), ?, ?, ?, ?)";
+					+ " VALUES(NOW(), ?, ?, ?, ?) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "ORDER_TYPE = ?";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			for (OrderBook order : orderBook) {
 				
-				statement.setString(1, order.getOrderType().toString());
+				statement.setString(1, order.getOrderType().name());
 				statement.setDouble(2, order.getQuantity());
 				statement.setDouble(3, order.getRate());
 				statement.setString(4, order.getCoin().getMarketName());
+				
+				// FOR UPDATE
+				statement.setString(5, order.getOrderType().name());
 				statement.executeUpdate();
 				rs = statement.getGeneratedKeys();
 				
@@ -203,7 +217,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 					+ "NOTICE, BASE_CURRENCY, BASE_CURRENCY_LONG, "
 					+ "IS_ACTIVE, LOGO_URL, "
 					+ "MARKET_CURRENCY, MARKET_CURRENCY_LONG) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "MIN_TRADE_SIZE = ?";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
@@ -218,7 +234,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				statement.setBoolean(7, coin.isActive());
 				statement.setString(8, coin.getLogoUrl());
 				statement.setString(9, coin.getMarketCurrency());
-				statement.setString(10, coin.getMarketCurrencyLong());				
+				statement.setString(10, coin.getMarketCurrencyLong());		
+				
+				statement.setString(11, coin.getMinTradeSize());
 				statement.execute();
 				rs = statement.getGeneratedKeys();
 				
@@ -246,7 +264,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			String sql = "INSERT INTO CURRENCY"
 					+ "(BASE_ADDRESS, COIN_TYPE, "
 					+ "CURRENCY_LONG, CURRENCY, IS_ACTIVE, MIN_CONFIRMATION, TX_FEE, MARKET_NAME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?) ";
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "BASE_ADDRESS = ?";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
@@ -262,6 +282,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 					statement.setShort(6, currency.getMinConfirmation());
 					statement.setDouble(7, currency.getTxFee());
 					statement.setString(8, marketName);
+					
+					// FOR UPDATE
+					statement.setString(9, currency.getBaseAddress());
 					statement.executeUpdate();
 				}
 			}
@@ -275,7 +298,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 		}
 	}
 
-	@Override
+	@Override // TODO - CONSTRAINT ALLOWS DUPLICATE RECORDS ??
 	public void saveGetMarketSummaries(List<MarketSummary> marketSummaryList) {
 		
 		try {
@@ -283,7 +306,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "ASK = ? ";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
@@ -304,6 +329,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 					statement.setInt(9, market.getPrevDay());
 					statement.setDate(10, market.getTimeStamp());
 					statement.setDouble(11, market.getVolume());
+					
+					// FOR UPDATE
+					statement.setDouble(12, market.getAsk());
 					statement.executeUpdate();
 					rs = statement.getGeneratedKeys();
 		            while (rs.next()) {
@@ -331,7 +359,9 @@ public class CoinDTODaoImpl implements CoinDTODao {
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+					+ "ON DUPLICATE KEY UPDATE"
+					+ " ASK = ? ";
 			
 			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
@@ -347,6 +377,8 @@ public class CoinDTODaoImpl implements CoinDTODao {
 				statement.setInt(9, market.getPrevDay());
 				statement.setDate(10, market.getTimeStamp());
 				statement.setDouble(11, market.getVolume());
+				
+				statement.setDouble(12, market.getAsk());
 				statement.executeUpdate();
 				rs = statement.getGeneratedKeys();
 	            while (rs.next()) {

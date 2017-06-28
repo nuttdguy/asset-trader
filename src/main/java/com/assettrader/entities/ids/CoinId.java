@@ -2,29 +2,22 @@ package com.assettrader.entities.ids;
 
 import java.io.Serializable;
 
+import com.assettrader.model.utils.ExchangeName;
+
 public class CoinId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
-
 	private String marketName;
+	private ExchangeName exchange;
 
 	public CoinId() {
-		
-	}
-	
-	public CoinId(Long id, String marketName) {
-		this.id = id;
-		this.marketName = marketName;
-	}
-	
-	public long getId() {
-		return id;
+
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public CoinId(String marketName, ExchangeName exchange) {
+		this.marketName = marketName;
+		this.exchange = exchange;
 	}
 
 	public String getMarketName() {
@@ -34,6 +27,13 @@ public class CoinId implements Serializable {
 	public void setMarketName(String marketName) {
 		this.marketName = marketName;
 	}
-	
-	
+
+	public ExchangeName getExchange() {
+		return exchange;
+	}
+
+	public void setExchange(ExchangeName exchange) {
+		this.exchange = exchange;
+	}
+
 }

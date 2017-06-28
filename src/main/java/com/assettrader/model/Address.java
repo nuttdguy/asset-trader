@@ -22,7 +22,6 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	// Owning-side of relationship; requires @JoinColumn
 	@ManyToOne
 	@JoinColumn(name = "USER_PROFILE_ID")
 	private UserProfile userProfile;

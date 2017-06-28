@@ -7,16 +7,20 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.assettrader.model.coin.Coin;
 
 @Entity
 @Table(name = "USER_PROFILE")
@@ -38,14 +42,12 @@ public class UserProfile extends Person {
 	@Column(name = "IS_ACTIVE")
 	private boolean isActive;
 	
-	@ManyToMany
-	@JoinTable( name = "COIN_FAVORITE",
-				joinColumns=@JoinColumn( name = "USER_PROFILE_ID"),
-				inverseJoinColumns=@JoinColumn(name="COIN_FAVORITE_ID"))
-	private List<CoinFavorite> favorites;
+	// TODO -- CHANGE MAPPING TO @MANYTOMANY USER_COIN_FAVORITE TABLE
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
+	private List<Favorite> coinFavorites = new ArrayList<>();
 
 	// non-owning-side, requires mappedby field name and cascade all
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
 	private List<Address> address = new ArrayList<>();
 
 	public Long getId() {
@@ -88,4 +90,29 @@ public class UserProfile extends Person {
 		this.address = address;
 	}
 
+	public List<Favorite> getCoinFavorites() {
+		return coinFavorites;
+	}
+
+	public void setCoinFavorites(List<Favorite> coinFavorites) {
+		this.coinFavorites = coinFavorites;
+	}
+
+
 }
+
+
+
+//@JoinTable(name = "ARC_EMPLOYEE_OF_BAR"
+//, joinColumns = {@JoinColumn(name = "BAR_ID")}
+//, inverseJoinColumns = {@JoinColumn(name = "EMPLOYEE_ID")}
+//, uniqueConstraints = {@UniqueConstraint(name = "ARC_UK_EMPLOYEE_OF_BAR", columnNames = {"EMPLOYEE_ID", "BAR_ID"})}
+//, foreignKey = @ForeignKey(name = "ARC_FK_BAR_OF_EMPLOYEE")
+//, inverseForeignKey = @ForeignKey(name = "ARC_FK_EMPLOYEE_OF_BAR"))
+
+
+
+
+
+
+

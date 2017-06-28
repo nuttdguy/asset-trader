@@ -1,4 +1,4 @@
-package com.assettrader.DTO.service;
+package com.assettrader.service.DTO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,25 +12,26 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.assettrader.DTO.BuyDTO;
-import com.assettrader.DTO.CoinDTO;
-import com.assettrader.DTO.CoinResultDTO;
-import com.assettrader.DTO.CurrencyDTO;
-import com.assettrader.DTO.CurrencyResultDTO;
-import com.assettrader.DTO.MarketHistoryDTO;
-import com.assettrader.DTO.MarketSummariesDTO;
-import com.assettrader.DTO.MarketSummariesResultDTO;
-import com.assettrader.DTO.OrderBookDTO;
-import com.assettrader.DTO.ResultDTO;
-import com.assettrader.DTO.SellDTO;
-import com.assettrader.DTO.TickerDTO;
-import com.assettrader.DTO.dao.CoinDTODao;
+import com.assettrader.dao.DTO.CoinDTODao;
+import com.assettrader.model.DTO.BuyDTO;
+import com.assettrader.model.DTO.CoinDTO;
+import com.assettrader.model.DTO.CoinResultDTO;
+import com.assettrader.model.DTO.CurrencyDTO;
+import com.assettrader.model.DTO.CurrencyResultDTO;
+import com.assettrader.model.DTO.MarketHistoryDTO;
+import com.assettrader.model.DTO.MarketSummariesDTO;
+import com.assettrader.model.DTO.MarketSummariesResultDTO;
+import com.assettrader.model.DTO.OrderBookDTO;
+import com.assettrader.model.DTO.ResultDTO;
+import com.assettrader.model.DTO.SellDTO;
+import com.assettrader.model.DTO.TickerDTO;
 import com.assettrader.model.coin.Coin;
 import com.assettrader.model.coin.Currency;
 import com.assettrader.model.coin.MarketHistory;
 import com.assettrader.model.coin.MarketSummary;
 import com.assettrader.model.coin.OrderBook;
 import com.assettrader.model.coin.Ticker;
+import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.model.utils.OrderType;
 import com.assettrader.utils.DAOUtilities;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -61,9 +62,10 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	// ================================================
 	
 	// TODO -- REFACTOR METHODS TO PREVENT PERSISTING DATA WHEN NOT REQUIRED
+	// TODO -- VERIFY PK, FK RELATIONSHIP MAPPINGS - FIX IF NECCESSARY
 	
 	@SuppressWarnings("rawtypes")  // WORKING REST ENDPOINT
-	public List<Coin> getMarkets() {
+	public List<Coin> getCoinMarkets(String exchange) {
 
 		List<Coin> coinList = null;
 		ObjectMapper mapper = initMapper();
@@ -75,10 +77,11 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 
 			coinList = new ArrayList<>();
 			for (CoinDTO coinDTO : result.get(0).getResult()) {
-				coinList.add(DTOToCoin(coinDTO));
+				coinList.add(DTOToCoin(coinDTO, exchange));
 			}
 
-			coinDTODao.saveGetMarkets(coinList); 
+			// TODO - ADD LOGIC TO PREVENT RELOADING COIN MARKET DATA
+			coinDTODao.saveGetMarkets(coinList, exchange); 
 			return coinList; // RETURN MAPPED RESULT TO UI TO DISPLAY
 
 		} catch (IOException e) {
@@ -92,7 +95,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 
 	@Override // WORKING REST ENDPOINT
-	public List<Currency> getCurrencies() {
+	public List<Currency> getCurrencies(String exchange) {
 		List<Currency> currencyList = null;
 		ObjectMapper mapper = initMapper();
 
@@ -106,7 +109,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				currencyList.add(DTOToCoin(currencyDTO));
 			}
 
-			coinDTODao.saveGetCurrencies(currencyList);
+			coinDTODao.saveGetCurrencies(currencyList, exchange);
 			return currencyList;
 		} catch (IOException io) {
 			System.out.println("IOException getting currencyList " + io.getMessage());
@@ -116,7 +119,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 
 	@Override // WORKING REST ENDPOINT
-	public List<MarketSummary> getMarketSummaries() {
+	public List<MarketSummary> getMarketSummaries(String exchange) {
 		List<MarketSummary> marketSummaryList = null;
 		ObjectMapper mapper = initMapper();
 
@@ -131,7 +134,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				marketSummaryList.add(DTOToMarketSummary(marketDTO));
 			}
 			
-			coinDTODao.saveGetMarketSummaries(marketSummaryList);
+			coinDTODao.saveGetMarketSummaries(marketSummaryList, exchange);
 			return marketSummaryList;
 
 		} catch (IOException io) {
@@ -142,7 +145,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 
 	@Override 
-	public MarketSummary getMarketSummary(String marketName) {
+	public MarketSummary getMarketSummary(String marketName, String exchange) {
 		MarketSummary marketSummary = null;
 		ObjectMapper mapper = initMapper();
 		
@@ -155,19 +158,18 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				marketSummary = DTOToMarketSummary(market);
 			}
 			
-			coinDTODao.saveGetMarketSummary(marketSummary);		
+			coinDTODao.saveGetMarketSummary(marketSummary, exchange);		
 			return marketSummary;
 			
 		} catch (IOException io) {
 			System.out.println("IOException getting market summary " + io.getMessage());
 		}
 		
-		coinDTODao.saveGetMarketSummary(marketSummary);
 		return marketSummary;
 	}
 
 	@Override // WORKING REST ENDPOINT
-	public Ticker getTicker(String marketName) {
+	public Ticker getTicker(String marketName, String exchange) {
 		Ticker ticker = null;
 		ObjectMapper mapper = initMapper();
 		
@@ -190,7 +192,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				ticker.setTimeStamp(date);
 			}
 			
-			coinDTODao.saveGetTicker(ticker);
+			coinDTODao.saveGetTicker(ticker, exchange);
 			return ticker;
 			
 		} catch(IOException io) {
@@ -201,7 +203,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 
 	@Override
-	public List<MarketHistory> getMarketHistory(String marketName) {
+	public List<MarketHistory> getMarketHistory(String marketName, String exchange) {
 		List<MarketHistory> marketHistoryList = null;
 		ObjectMapper mapper = initMapper();
 		
@@ -217,7 +219,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 					marketHistoryList.add(DTOToMarketHistory(marketHistoryDTO, marketName));
 			}
 			
-			coinDTODao.saveGetMarketHistory(marketHistoryList);
+			coinDTODao.saveGetMarketHistory(marketHistoryList, exchange);
 			return marketHistoryList;
 			
 		} catch (IOException iox) {
@@ -228,7 +230,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 
 	@Override
-	public List<OrderBook> getOrderBook(String marketName, String buyOrSell) {
+	public List<OrderBook> getOrderBook(String marketName, String buyOrSell, String exchange) {
 		List<OrderBook> orderBookList = null;
 		ObjectMapper mapper = initMapper();
 		
@@ -249,7 +251,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 				}				
 			}		
 		
-			coinDTODao.saveGetOrderBook(orderBookList);
+			coinDTODao.saveGetOrderBook(orderBookList, exchange);
 			return orderBookList; 
 			
 		} catch (IOException io) {
@@ -260,11 +262,11 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	}
 	
 	@Override // ADD CALL TO API CONTROLLER
-	public List<Coin> loadApplicationBootingEndPoints() {
+	public List<Coin> loadApplicationBootingEndPoints(String exchange) {
 	
-		List<Coin> coinList = getMarkets(); // GET ALL THE COIN MARKETS
-		getMarketSummaries();  // NEED THE MARKET-NAMES
-		getCurrencies();
+		List<Coin> coinList = getCoinMarkets(exchange); // GET ALL THE COIN MARKETS
+		getMarketSummaries(exchange);  // NEED THE MARKET-NAMES
+		getCurrencies(exchange);
 
 		
 		List<String> coinName = new ArrayList<>();
@@ -274,17 +276,17 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		}
 		
 		for (String marketName : coinName) {
-			getMarketHistory(marketName);
+			getMarketHistory(marketName, exchange);
 		}	
 		System.out.println("------- MARKET-HISTORY IS DONE LOADING -----------");
 		
 		for (String marketName : coinName) {
-			getOrderBook(marketName, "both");
+			getOrderBook(marketName, OrderType.BOTH.name().toLowerCase(), exchange);
 		}
 		System.out.println("------- ORDER BOOK IS DONE LOADING ----------");
 		
 		for (String marketName : coinName) {
-			getTicker(marketName);
+			getTicker(marketName, exchange);
 		}
 		System.out.println("------- TICKER IS DONE LOADING ----------");
 		
@@ -307,7 +309,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		return mapper;
 	}
 
-	private Coin DTOToCoin(CoinDTO coinDTO) {
+	private Coin DTOToCoin(CoinDTO coinDTO, String exchange) {
 
 		Coin coin = new Coin();
 		coin.setMarketName(coinDTO.getMarketName());
@@ -321,6 +323,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 		coin.setMinTradeSize(coinDTO.getMinTradeSize());
 		coin.setCreated(coinDTO.getCreated());
 		coin.setNotice(coinDTO.getNotice());
+		coin.setExchange(exchange);	// EXCHANGE NAME VALIDATION OCCURS IN CONTROLLER & FRONT-END ENUM
 		return coin;
 	}
 

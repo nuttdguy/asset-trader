@@ -1,4 +1,4 @@
-package com.assettrader.DTO;
+package com.assettrader.model.DTO;
 
 public class TickerDTO {
 

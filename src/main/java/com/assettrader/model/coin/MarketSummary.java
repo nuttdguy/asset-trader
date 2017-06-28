@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,7 +25,7 @@ public class MarketSummary {
 	@JsonIgnore
 	private long id;
 
-	@Column(name = "MARKET_NAME")
+	@Transient
 	private String marketName;
 
 	@Column(name = "HIGH")
@@ -61,7 +62,9 @@ public class MarketSummary {
 	private Date created;
 
 	@ManyToOne
-	@JoinColumn(name = "MARKET_NAME",  insertable=false, updatable=false)
+	@JoinColumns({
+		@JoinColumn(name = "MARKET_NAME", referencedColumnName="MARKET_NAME", insertable=true, updatable=false),
+		@JoinColumn(name = "EXCHANGE", referencedColumnName="EXCHANGE", insertable=true, updatable=false) })
 	private Coin coin;
 
 	public long getId() {

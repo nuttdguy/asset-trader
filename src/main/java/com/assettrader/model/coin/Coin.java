@@ -10,25 +10,35 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.assettrader.entities.ids.CoinId;
+import com.assettrader.model.Favorite;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "COIN")
+@IdClass(CoinId.class)
 public class Coin {
 
-
 	@GeneratedValue(strategy = GenerationType.TABLE)
-	@Column(name = "COIN_ID", columnDefinition="serial")
+	@Column(name = "COIN_ID", columnDefinition = "serial")
 	@JsonIgnore
 	private Long id;
 
 	@Id
 	@Column(name = "MARKET_NAME")
 	private String marketName;
+
+	@Id
+	@Column(name = "EXCHANGE")
+	private String exchange;
 
 	@Column(name = "BASE_CURRENCY")
 	private String baseCurrency;
@@ -74,6 +84,13 @@ public class Coin {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
 	private List<Ticker> tickers;
+
+	@ManyToMany(cascade=CascadeType.ALL)
+	@JoinTable( name = "USER_COIN_FAVORITE",
+				joinColumns={ @JoinColumn(name = "MARKET_NAME", insertable=true, updatable=true),
+								@JoinColumn(name = "EXCHANGE", insertable=true, updatable=true) },
+				inverseJoinColumns= @JoinColumn( name = "FAVORITE_ID"))
+	private List<Favorite> userFavorites;
 
 	public Long getId() {
 		return id;
@@ -129,6 +146,14 @@ public class Coin {
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public String getExchange() {
+		return exchange;
+	}
+
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
 	}
 
 	public Date getCreateDate() {
@@ -210,5 +235,15 @@ public class Coin {
 	public void setTickers(List<Ticker> tickers) {
 		this.tickers = tickers;
 	}
+
+	public List<Favorite> getUserFavorites() {
+		return userFavorites;
+	}
+
+	public void setUserFavorites(List<Favorite> userFavorites) {
+		this.userFavorites = userFavorites;
+	}
+
+
 
 }

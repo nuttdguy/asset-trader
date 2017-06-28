@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -51,7 +52,9 @@ public class MarketHistory {
 	private Date timeStamp;
 
 	@ManyToOne
-	@JoinColumn(name = "MARKET_NAME", insertable = false, updatable = true)
+	@JoinColumns({
+		@JoinColumn(name = "MARKET_NAME", referencedColumnName="MARKET_NAME", insertable=true, updatable=false),
+		@JoinColumn(name = "EXCHANGE", referencedColumnName="EXCHANGE", insertable=true, updatable=false) })
 	private Coin coin;
 
 	public long getId() {

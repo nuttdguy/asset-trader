@@ -6,6 +6,7 @@ tmp/
 *.swp
 *~.nib
 local.properties
+*.properties
 .settings/
 .loadpath
 .recommenders
@@ -27,6 +28,7 @@ local.properties
 .target
 
 # Package Files #
+BittrexKeyUtil.java
 *.jar
 *.war
 *.ear

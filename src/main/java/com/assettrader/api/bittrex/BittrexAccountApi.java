@@ -27,13 +27,17 @@ public interface BittrexAccountApi {
 	@RequestLine("GET /account/getdepositaddress?currency={currency}")
 	ApiResult<DepositAddress> getDepositAddress(@Param("currency") String currency);
 
-//	@RequestLine("GET /account/withdraw?currency={currency}&quantity={quantity}&address={address}&paymentid={paymentid}")
-//	ApiResult<WithdrawalRequested> withdraw(@Param("currency") String currency, @Param("quantity") double quantity,
-//			@Param("address") String address, @Param("paymentid") String paymentId);
-//
-//	@RequestLine("GET /account/withdraw?currency={currency}&quantity={quantity}&address={address}")
-//	ApiResult<WithdrawalRequested> withdraw(@Param("currency") String currency, @Param("quantity") double quantity,
-//			@Param("address") String address);
+	// @RequestLine("GET
+	// /account/withdraw?currency={currency}&quantity={quantity}&address={address}&paymentid={paymentid}")
+	// ApiResult<WithdrawalRequested> withdraw(@Param("currency") String
+	// currency, @Param("quantity") double quantity,
+	// @Param("address") String address, @Param("paymentid") String paymentId);
+	//
+	// @RequestLine("GET
+	// /account/withdraw?currency={currency}&quantity={quantity}&address={address}")
+	// ApiResult<WithdrawalRequested> withdraw(@Param("currency") String
+	// currency, @Param("quantity") double quantity,
+	// @Param("address") String address);
 
 	@RequestLine("GET /account/getorder?uuid={uuid}")
 	ApiResult<Order> getOrder(@Param("uuid") String uuid);

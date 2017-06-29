@@ -2,6 +2,10 @@ package com.assettrader.api.bittrex;
 
 import javax.annotation.Nullable;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+
 import com.assettrader.api.bittrex.config.ApiBuilderFactory;
 import com.assettrader.api.bittrex.config.ApiCredentials;
 
@@ -13,9 +17,11 @@ import feign.slf4j.Slf4jLogger;
 /**
  * @author contact@elbatya.de
  */
+@Service
 public class BittrexClient {
 
 	public static final String DEFAULT_BASE_URL = "https://bittrex.com/api/v1.1";
+	
 
 	private BittrexAccountApi accountApi;
 
@@ -60,15 +66,6 @@ public class BittrexClient {
 			accountApi = apiBuilder.target(BittrexAccountApi.class, baseUrl);
 		}
 	}
-
-//	public BittrexPublicApi getPublicApi() {
-//		return publicApi;
-//	}
-//
-//	public BittrexMarketApi getMarketApi() {
-//		failIfNoCredentials("You can't use the MarketAPI without credentials.");
-//		return marketApi;
-//	}
 
 	public BittrexAccountApi getAccountApi() {
 		failIfNoCredentials("You can't use the AccountAPI without credentials.");

@@ -1,4 +1,4 @@
-package com.assettrader.model.coin;
+package com.assettrader.model.coinmarket;
 
 import java.util.Date;
 

@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DAOUtilities {
+public class DAOUtils {
 	
 	private static final String CONNECTION_USERNAME = "assettrader_user";
 	private static final String CONNECTION_PASSWORD = "assettrader_password";

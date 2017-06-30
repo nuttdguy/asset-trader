@@ -15,7 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coinmarket.Coin;
 
 @Entity
 @Table(name = "FAVORITE")

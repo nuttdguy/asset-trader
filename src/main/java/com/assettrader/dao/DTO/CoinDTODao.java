@@ -2,12 +2,12 @@ package com.assettrader.dao.DTO;
 
 import java.util.List;
 
-import com.assettrader.model.coin.Coin;
-import com.assettrader.model.coin.Currency;
-import com.assettrader.model.coin.MarketHistory;
-import com.assettrader.model.coin.MarketSummary;
-import com.assettrader.model.coin.OrderBook;
-import com.assettrader.model.coin.Ticker;
+import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.coinmarket.Currency;
+import com.assettrader.model.coinmarket.MarketHistory;
+import com.assettrader.model.coinmarket.MarketSummary;
+import com.assettrader.model.coinmarket.OrderBook;
+import com.assettrader.model.coinmarket.Ticker;
 
 public interface CoinDTODao {
 

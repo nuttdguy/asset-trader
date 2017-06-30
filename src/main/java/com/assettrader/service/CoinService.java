@@ -3,7 +3,7 @@ package com.assettrader.service;
 import java.util.Date;
 import java.util.List;
 
-import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coinmarket.Coin;
 
 public interface CoinService {
 

@@ -10,8 +10,8 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.assettrader.dao.CoinDao;
-import com.assettrader.model.coin.Coin;
-import com.assettrader.utils.DAOUtilities;
+import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.utils.DAOUtils;
 
 @Repository
 public class CoinDaoImpl implements CoinDao {
@@ -23,7 +23,7 @@ public class CoinDaoImpl implements CoinDao {
 	public Long getCoinMarketId(String marketName) {
 
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "SELECT COIN_ID FROM COIN " + "WHERE MARKET_NAME = ?;";
 
 			statement = connection.prepareStatement(sql);
@@ -46,7 +46,7 @@ public class CoinDaoImpl implements CoinDao {
 	public String getCoinMarketName(String marketName) {
 
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "SELECT A.MARKET_NAME FROM COIN A " 
 						+ "WHERE A.MARKET_NAME = ?;";
 
@@ -69,7 +69,7 @@ public class CoinDaoImpl implements CoinDao {
 	@Override
 	public String getMarketNameByCurrencyShortName(String currencyShortName) {
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "SELECT A.MARKET_NAME FROM COIN A " + "WHERE A.MARKET_CURRENCY = ?;";
 
 			statement = connection.prepareStatement(sql);

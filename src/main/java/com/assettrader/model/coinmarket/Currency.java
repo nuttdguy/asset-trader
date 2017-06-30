@@ -1,4 +1,4 @@
-package com.assettrader.model.coin;
+package com.assettrader.model.coinmarket;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

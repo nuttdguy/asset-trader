@@ -20,7 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coinmarket.Coin;
 
 @Entity
 @Table(name = "USER_PROFILE")

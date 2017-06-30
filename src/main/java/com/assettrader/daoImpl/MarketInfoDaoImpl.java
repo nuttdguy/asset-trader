@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.assettrader.dao.MarketInfoDao;
 import com.assettrader.model.view.MarketInfoView;
-import com.assettrader.utils.DAOUtilities;
+import com.assettrader.utils.DAOUtils;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 @Repository
@@ -34,7 +34,7 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 		// String sqlExchangeName = exchange.toUpperCase();
 		
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "SELECT A.LOGO_URL, A.MARKET_NAME, A.MARKET_CURRENCY_LONG, A.MARKET_CURRENCY, "
 					+ "B.VOLUME, B.OPEN_BUY_ORDERS, B.OPEN_SELL_ORDERS, B.HIGH, B.LOW, "
 					+ "C.LAST "

@@ -5,7 +5,7 @@ import java.util.List;
 import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
 import com.assettrader.model.UserProfile;
-import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coinmarket.Coin;
 
 public class UserDaoImpl implements UserDao {
 

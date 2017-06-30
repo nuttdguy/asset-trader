@@ -22,7 +22,6 @@ public class BittrexClient {
 
 	public static final String DEFAULT_BASE_URL = "https://bittrex.com/api/v1.1";
 	
-
 	private BittrexAccountApi accountApi;
 
 	private boolean credentialsAvailable = true;

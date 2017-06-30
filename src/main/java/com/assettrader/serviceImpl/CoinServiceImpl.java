@@ -3,7 +3,7 @@ package com.assettrader.serviceImpl;
 import java.util.Date;
 import java.util.List;
 
-import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.service.CoinService;
 
 public class CoinServiceImpl implements CoinService {

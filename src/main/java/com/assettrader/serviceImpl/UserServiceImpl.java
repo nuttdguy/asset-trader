@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.assettrader.model.Address;
 import com.assettrader.model.UserProfile;
-import com.assettrader.model.coin.Coin;
+import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.service.UserService;
 
 public class UserServiceImpl implements UserService {

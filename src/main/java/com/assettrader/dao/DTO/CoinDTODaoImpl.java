@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.assettrader.dao.CoinDao;
-import com.assettrader.model.coin.Coin;
-import com.assettrader.model.coin.Currency;
-import com.assettrader.model.coin.MarketHistory;
-import com.assettrader.model.coin.MarketSummary;
-import com.assettrader.model.coin.OrderBook;
-import com.assettrader.model.coin.Ticker;
-import com.assettrader.utils.DAOUtilities;
+import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.coinmarket.Currency;
+import com.assettrader.model.coinmarket.MarketHistory;
+import com.assettrader.model.coinmarket.MarketSummary;
+import com.assettrader.model.coinmarket.OrderBook;
+import com.assettrader.model.coinmarket.Ticker;
+import com.assettrader.utils.DAOUtils;
 import com.mysql.jdbc.Statement;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -41,7 +41,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetTicker(Ticker ticker, String exchange) {
 		
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO TICKER"
 					+ "(ASK, BID, LAST, TIME_STAMP, MARKET_NAME, EXCHANGE)"
 					+ "VALUES(?, ?, ?, NOW(), ?, ?) "
@@ -78,7 +78,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetMarketSummary(MarketSummary marketSummary, String exchange) {
 
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BASE_VOLUME, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE)"
@@ -123,7 +123,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetMarketHistory(List<MarketHistory> marketHistoryList, String exchange) {
 		
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_HISTORY "
 					+ "(FILL_TYPE, ORDER_ID, ORDER_TYPE, PRICE,"
 					+ " QUANTITY, TIME_STAMP, TOTAL, EXCHANGE, MARKET_NAME)"
@@ -170,7 +170,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetOrderBook(List<OrderBook> orderBook, String exchange) {
 		
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO ORDER_BOOK "
 					+ "(ORDER_BOOK_DATETIME, ORDER_TYPE, QUANTITY, RATE, EXCHANGE, MARKET_NAME)"
 					+ " VALUES(NOW(), ?, ?, ?, ?, ?) "
@@ -212,7 +212,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetMarkets(List<Coin> coinList, String exchange) {
 
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO COIN"
 					+ "(EXCHANGE, MARKET_NAME, CREATED, MIN_TRADE_SIZE, "
 					+ "NOTICE, BASE_CURRENCY, BASE_CURRENCY_LONG, "
@@ -261,7 +261,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	@Override
 	public void saveGetCurrencies(List<Currency> currencyList, String exchange) {
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO CURRENCY"
 					+ "(BASE_ADDRESS, COIN_TYPE, "
 					+ "CURRENCY_LONG, CURRENCY_SHORT_NAME, IS_ACTIVE, MIN_CONFIRMATION, "
@@ -305,7 +305,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetMarketSummaries(List<MarketSummary> marketSummaryList, String exchange) {
 		
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE)"
@@ -358,7 +358,7 @@ public class CoinDTODaoImpl implements CoinDTODao {
 	public void saveGetMarketSummary(List<MarketSummary> marketSummary, String exchange) {
 		
 		try {
-			connection = DAOUtilities.getConnection();
+			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE)"

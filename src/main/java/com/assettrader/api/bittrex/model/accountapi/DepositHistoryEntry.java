@@ -27,10 +27,9 @@ public class DepositHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -8357674342951584523L;
 
-	@Id
-	@GeneratedValue( strategy=GenerationType.IDENTITY)
-	@Column( name = "DEPOSIT_HISTORY_ID")
-    private String id;
+	@GeneratedValue( strategy=GenerationType.TABLE)
+	@Column( name = "DEPOSIT_HISTORY_ID", columnDefinition="SERIAL")
+    private Long id;
 	
 	@Column( name = "CONFIRMATIONS" )
     private Integer confirmations;
@@ -48,6 +47,7 @@ public class DepositHistoryEntry implements Serializable {
 	@Column( name = "CRYPTO_ADDRESS" )
     private String cryptoAddress;
 		
+	@Id
 	@Column( name = "TX_ID" )
     private String txId;
 		
@@ -86,11 +86,11 @@ public class DepositHistoryEntry implements Serializable {
 		@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=false, updatable=false)})
 	private Account account;
 	
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -234,15 +234,88 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 	@Override
 	public ApiResult<List<WithdrawalHistoryEntry>> saveAllWithdrawalHistory(
 			ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO) {
-		// TODO Auto-generated method stub
-		return null;
+
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "INSERT IGNORE INTO WITHDRAWAL_HISTORY_ENTRY( "
+					+ "PAYMENT_UUID, ADDRESS, AMOUNT, AUTHORIZED, CANCELED, " // 5
+					+ "CURRENCY, INVALID_ADDRESS, OPENED, PENDING_PAYMENT, TX_COST, " // 5
+					+ "TX_ID, EXCHANGE_NAME, USER_PROFILE_ID ) " // 3
+					+ "VALUES("
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ?) ";
+			
+			List<WithdrawalHistoryEntry> withdrawList = withdrawalHistoryDTO.getResult();
+			
+			for (WithdrawalHistoryEntry entry : withdrawList) {
+				
+				statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);		
+				statement.setString(1, entry.getPaymentUuid());
+				statement.setString(2, entry.getAddress());
+				statement.setString(3, entry.getAmount());
+				statement.setBoolean(4, entry.getAuthorized());
+				statement.setBoolean(5, entry.getCanceled());
+				statement.setString(6, entry.getCurrency());
+				statement.setBoolean(7, entry.getInvalidAddress());
+				statement.setTimestamp(8, new Timestamp(entry.getOpened().getTime()));
+				statement.setBoolean(9, entry.getPendingPayment());
+				statement.setDouble(10, entry.getTxCost());
+				statement.setString(11, entry.getTxId());
+				statement.setString(12, ExchangeName.BITTREX.name());
+				statement.setLong(13, 1); // TODO, CHANGE FOR WHEN USER ENROLLS
+				
+				statement.execute();
+				statement.clearParameters();
+				
+			}
+			
+			System.out.println("Successfully persisted WITHDRAWAL HISTORY RECORDS");
+		} catch (SQLException se) {
+			System.out.println("SQL Exception: " + se.getMessage());
+		}
+		
+		return withdrawalHistoryDTO;
 	}
 
 	@Override
 	public ApiResult<List<DepositHistoryEntry>> saveAllDepositHistory(
 			ApiResult<List<DepositHistoryEntry>> depositHistoryDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "INSERT IGNORE INTO DEPOSIT_HISTORY_ENTRY( "
+					+ "AMOUNT, CONFIRMATIONS, CRYPTO_ADDRESS, CURRENCY," // 4
+					+ "LAST_UPDATED, TX_ID, EXCHANGE_NAME, USER_PROFILE_ID) " // 4
+					+ "VALUES("
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ? )";
+			
+			List<DepositHistoryEntry> depositList = depositHistoryDTO.getResult();
+			
+			for (DepositHistoryEntry entry : depositList) {
+				statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+				
+				statement.setDouble(1, entry.getAmount());
+				statement.setInt(2, entry.getConfirmations());
+				statement.setString(3, entry.getCryptoAddress());
+				statement.setString(4, entry.getCurrency());
+				statement.setTimestamp(5, new Timestamp(entry.getLastUpdated().getTime()));
+				statement.setString(6, entry.getTxId());
+				statement.setString(7, ExchangeName.BITTREX.name());
+				statement.setLong(8, 1); // TODO -- CHANGE AFTER IMPLEMENTING USER-LOGIN
+				
+				statement.execute();
+				statement.clearParameters();
+			}
+			
+			System.out.println("Successfully persisted DEPOSIT HISTORY RECORDS");
+		} catch (SQLException se) {
+			System.out.println("SQL Exception: " + se.getMessage());
+		}
+		
+		
+		return depositHistoryDTO;
 	}
 
 

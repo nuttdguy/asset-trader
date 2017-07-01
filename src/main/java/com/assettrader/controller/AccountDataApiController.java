@@ -81,6 +81,7 @@ public class AccountDataApiController {
 		ApiResult<List<OrderHistoryEntry>> orderHistoryDTO =
 				initBittrexClient().getAccountApi().getOrderHistory();
 		
+		// IS PERSISTING PROPERLY
 		return accountDataServiceDTO.saveAllOrderHistoryEntry(orderHistoryDTO);
 	}
 	
@@ -92,16 +93,18 @@ public class AccountDataApiController {
 		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO = 
 				initBittrexClient().getAccountApi().getWithdrawalHistory();
 		
+		// IS PERSISTING PROPERLY
 		return accountDataServiceDTO.saveAllWithdrawalHistory(withdrawalHistoryDTO);
 	}
 	
 	// IS WORKING
-	@RequestMapping(value = "/account/withdrawhistory/{marketname}", method = RequestMethod.GET )
-	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory(@PathVariable String marketname) {
+	@RequestMapping(value = "/account/withdrawhistory/{currency}", method = RequestMethod.GET )
+	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory(@PathVariable String currency) {
 		
 		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO =
-				initBittrexClient().getAccountApi().getWithdrawalHistory(marketname);
+				initBittrexClient().getAccountApi().getWithdrawalHistory(currency);
 		
+		// IS PERSISTING PROPERLY
 		return accountDataServiceDTO.saveAllWithdrawalHistory(withdrawalHistoryDTO);
 	}
 	
@@ -111,6 +114,7 @@ public class AccountDataApiController {
 		ApiResult<List<DepositHistoryEntry>> depositHistoryDTO =
 				initBittrexClient().getAccountApi().getDepositHistory(marketname);
 		
+		//
 		return accountDataServiceDTO.saveAllDepositHistory(depositHistoryDTO);
 	}
 	

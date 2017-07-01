@@ -36,7 +36,7 @@
 	<bean id="coinDTODao" class="com.assettrader.DTO.dao.CoinDTODaoImpl" /> -->
 	
 	<!-- DataSource -->
-<!--  	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="${trader.db.driver}" />
 		<property name="jdbcUrl" value="${trader.db.url}" />
 		<property name="user" value="${database.username}" />
@@ -46,10 +46,10 @@
 		<property name="minPoolSize" value="${connection.minPoolSize}" />
 		<property name="maxPoolSize" value="${connection.maxPoolSize}" />
 		<property name="maxIdleTime" value="${connection.maxIdleTime}" />
-	</bean> -->
+	</bean>
 
 	<!-- Hibernate SessionFactory -->
-<!-- 	<bean id="sessionFactory"
+	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
  		<property name="hibernateProperties">
@@ -61,13 +61,13 @@
 			</props>
 		</property>
 		<property name="packagesToScan" value="${trader.model.package}"></property>
-	</bean> -->
+	</bean>
 
 	<!-- Transaction -->
-<!-- 	<bean id="transactionManager"
+	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
- 	<tx:annotation-driven transaction-manager="transactionManager" /> -->
+ 	<tx:annotation-driven transaction-manager="transactionManager" />
 </beans>

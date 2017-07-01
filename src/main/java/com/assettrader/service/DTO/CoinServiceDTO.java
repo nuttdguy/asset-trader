@@ -9,7 +9,7 @@ import com.assettrader.model.coinmarket.MarketSummary;
 import com.assettrader.model.coinmarket.OrderBook;
 import com.assettrader.model.coinmarket.Ticker;
 
-public interface CoinDTOService {
+public interface CoinServiceDTO {
 
 	List<Coin> getCoinMarkets(String exchange);
 	List<Currency> getCurrencies(String exchange);

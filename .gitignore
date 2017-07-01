@@ -36,6 +36,9 @@ BittrexKeyUtil.java
 
 .DS_Store
 
+# Database seed data
+*.sql
+
 # Maven
 log/
 target/

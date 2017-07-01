@@ -2,6 +2,7 @@ package com.assettrader.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,21 +16,24 @@ import com.assettrader.api.bittrex.model.accountapi.DepositHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
+import com.assettrader.service.DTO.AccountDataServiceDTO;
 import com.assettrader.utils.BittrexKeyUtil;
 
 @RestController
-public class AccountDataController {
+public class AccountDataApiController {
 	
+	@Autowired
+	private AccountDataServiceDTO accountDataServiceDTO;
 	
 	// IS WORKING
 	@RequestMapping(value = "/account/balances", method = RequestMethod.GET)
 	public ApiResult<List<Balance>> getBalances() {
 
-		ApiResult<List<Balance>> balances = 
+		ApiResult<List<Balance>> balanceApiDTO = 
 				initBittrexClient().getAccountApi().getBalances();
 		
-		// TODO - ADD RESULT TO DATABASE
-		return balances;
+		// IS PERSISTING PROPERLY
+		return accountDataServiceDTO.saveAllAccountBalancesDTO(balanceApiDTO);
 	}
 	
 	
@@ -37,87 +41,78 @@ public class AccountDataController {
 	@RequestMapping(value = "/account/balances/{currency}", method = RequestMethod.GET)
 	public ApiResult<Balance> getBalanceByCurrency(@PathVariable String currency) {
 		
-
-		ApiResult<Balance> balance = 
+		ApiResult<Balance> balanceApiDTO = 
 				initBittrexClient().getAccountApi().getBalance(currency);
 		
-		// TODO - ADD RESULT TO DATABASE
-		return balance;
+		return accountDataServiceDTO.saveAccountBalanceDTO(balanceApiDTO);
 	}
 	
 	// IS WORKING
 	@RequestMapping(value = "/account/deposit/address/{currency}", method = RequestMethod.GET)
 	public ApiResult<DepositAddress> getDepositAddressByCurrency(@PathVariable String currency) {
 		
-		ApiResult<DepositAddress> depositAddress = 
+		ApiResult<DepositAddress> depositAddressDTO = 
 				initBittrexClient().getAccountApi().getDepositAddress(currency);
 		
-		// TODO -- PERSIST TO DATABASE
-		return depositAddress;
+		return accountDataServiceDTO.saveDepositAddressDTO(depositAddressDTO);
 	}
 	
 	// IS WORKING
 	@RequestMapping(value = "/account/orderhistory/{marketname}", method = RequestMethod.GET )
 	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@PathVariable String marketname) {
 		
-		ApiResult<List<OrderHistoryEntry>> orderHistory =
+		ApiResult<List<OrderHistoryEntry>> orderHistoryDTO =
 				initBittrexClient().getAccountApi().getOrderHistory(marketname);
 		
-		// TODO -- PERSIST TO DATABASE
-		return orderHistory;
+		return accountDataServiceDTO.saveAllOrderHistoryEntry(orderHistoryDTO);
 	}
 
 	// IS WORKING
 	@RequestMapping(value = "/account/orderhistory", method = RequestMethod.GET )
 	public ApiResult<List<OrderHistoryEntry>> getOrderHistory() {
 		
-		ApiResult<List<OrderHistoryEntry>> orderHistory =
+		ApiResult<List<OrderHistoryEntry>> orderHistoryDTO =
 				initBittrexClient().getAccountApi().getOrderHistory();
 		
-		// TODO -- PERSIST TO DATABASE
-		return orderHistory;
+		return accountDataServiceDTO.saveAllOrderHistoryEntry(orderHistoryDTO);
 	}
 	
 	// IS WORKING
 	@RequestMapping(value = "/account/withdrawhistory", method = RequestMethod.GET )
 	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory() {
 		
-		ApiResult<List<WithdrawalHistoryEntry>> withdrawHistory = 
+		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO = 
 				initBittrexClient().getAccountApi().getWithdrawalHistory();
 		
-		// TODO -- PERSIST TO DATABASE
-		return withdrawHistory;
+		return accountDataServiceDTO.saveAllWithdrawalHistory(withdrawalHistoryDTO);
 	}
 	
 	// IS WORKING
 	@RequestMapping(value = "/account/withdrawhistory/{marketname}", method = RequestMethod.GET )
 	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory(@PathVariable String marketname) {
 		
-		ApiResult<List<WithdrawalHistoryEntry>> withdrawHistory =
+		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO =
 				initBittrexClient().getAccountApi().getWithdrawalHistory(marketname);
 		
-		// TODO -- PERSIST TO DATABASE
-		return withdrawHistory;
+		return accountDataServiceDTO.saveAllWithdrawalHistory(withdrawalHistoryDTO);
 	}
 	
 	@RequestMapping(value = "/account/deposithistory/{marketname}", method = RequestMethod.GET )
 	public ApiResult<List<DepositHistoryEntry>> getDepositHistory(@PathVariable String marketname) {
 		
-		ApiResult<List<DepositHistoryEntry>> depositHistory =
+		ApiResult<List<DepositHistoryEntry>> depositHistoryDTO =
 				initBittrexClient().getAccountApi().getDepositHistory(marketname);
 		
-		// TODO -- PERSIST TO DATABASE
-		return depositHistory;
+		return accountDataServiceDTO.saveAllDepositHistory(depositHistoryDTO);
 	}
 	
-	@RequestMapping(value = "/account/deposit", method = RequestMethod.GET )
+	@RequestMapping(value = "/account/deposithistory", method = RequestMethod.GET )
 	public ApiResult<List<DepositHistoryEntry>> getDepositHistory() {
 		
-		ApiResult<List<DepositHistoryEntry>> depositHistory =
+		ApiResult<List<DepositHistoryEntry>> depositHistoryDTO =
 				initBittrexClient().getAccountApi().getDepositHistory();
 		
-		// TODO -- PERSIST TO DATABASE
-		return depositHistory;
+		return accountDataServiceDTO.saveAllDepositHistory(depositHistoryDTO);
 	}
 	
 	//========================================================================

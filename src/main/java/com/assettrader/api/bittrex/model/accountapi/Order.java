@@ -1,39 +1,117 @@
 package com.assettrader.api.bittrex.model.accountapi;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
-public class Order {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-	private String accountId;
+import com.assettrader.model.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "ORDERS")
+public class Order implements Serializable {
+
+	private static final long serialVersionUID = 349867175439622084L;
+
+	@JsonIgnore
+	@GeneratedValue( strategy=GenerationType.TABLE)
+	@Column( name = "ORDER_ID", columnDefinition="serial" )
+	private String orderId;
+	
+	@Id
+	@Column( name = "ORDER_UUID" )
 	private String orderUuid;
+	
+	@Column( name = "EXCHANGE_CURRENCY_MARKET" )
 	private String exchange;
+	
+	@Column( name = "ORDER_TYPE" )
 	private String type;
+	
+	@Column( name = "ORDER_QUANTITY" )
 	private Double quantity;
+	
+	@Column( name = "ORDER_QUANTITY_REMAINING" )
 	private Double quantityRemaining;
+	
+	@Column( name = "STOP_LIMIT" ) 
 	private Double limit;
+	
+	@Column( name = "IN_RESERVED" )
 	private Double reserved;
+	
+	@Column( name = "IN_RESERVE_REMAINING" )
 	private Double reserveRemaining;
+	
+	@Column( name = "COMMISSION_RESERVED" )
 	private Double commissionReserved;
+	
+	@Column( name = "COMMISSION_RESERVED_REMANING" )
 	private Double commissionReserveRemaining;
+	
+	@Column( name = "COMMISSION_PAID" )
 	private Double commissionPaid;
+	
+	@Column( name = "PRICE" )
 	private Double price;
+	
+	@Column( name = "PRICE_PER_UNIT" )
 	private Double pricePerUnit;
-	private LocalDateTime opened;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "DATE_OPENED" )
+	private Date opened;
+	
+	@Column( name = "DATE_CLOSED" )
 	private Boolean closed;
+	
+	@Column( name = "IS_OPEN" )
 	private Boolean isOpen;
+	
+	@Column( name = "SENTINEL" )
 	private String sentinel;
+	
+	@Column( name = "CANCEL_INITIATED" )
 	private Boolean cancelInitiated;
+	
+	@Column( name = "IMMEDIATE_OR_CANCEL" )
 	private Boolean immediateOrCancel;
+	
+	@Column( name = "IS_CONDITIONAL" )
 	private Boolean isConditional;
+	
+	@Column( name = "CONDITIONS_OF_EXCHANGE" )
 	private String condition;
+	
+	@Column( name = "CONDITION_OF_EXCHANGE_TARGET" )
 	private String conditionTarget;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
+		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false),
+		@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=false, updatable=false)})
+	private Account account;
 
-	public String getAccountId() {
-		return accountId;
+	public String getOrderId() {
+		return orderId;
 	}
 
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 
 	public String getOrderUuid() {
@@ -140,11 +218,11 @@ public class Order {
 		this.pricePerUnit = pricePerUnit;
 	}
 
-	public LocalDateTime getOpened() {
+	public Date getOpened() {
 		return opened;
 	}
 
-	public void setOpened(LocalDateTime opened) {
+	public void setOpened(Date opened) {
 		this.opened = opened;
 	}
 
@@ -160,8 +238,8 @@ public class Order {
 		return isOpen;
 	}
 
-	public void setIsOpen(Boolean open) {
-		isOpen = open;
+	public void setIsOpen(Boolean isOpen) {
+		this.isOpen = isOpen;
 	}
 
 	public String getSentinel() {
@@ -192,8 +270,8 @@ public class Order {
 		return isConditional;
 	}
 
-	public void setIsConditional(Boolean conditional) {
-		isConditional = conditional;
+	public void setIsConditional(Boolean isConditional) {
+		this.isConditional = isConditional;
 	}
 
 	public String getCondition() {
@@ -210,6 +288,14 @@ public class Order {
 
 	public void setConditionTarget(String conditionTarget) {
 		this.conditionTarget = conditionTarget;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 }

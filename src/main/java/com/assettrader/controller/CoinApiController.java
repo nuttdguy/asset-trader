@@ -19,7 +19,7 @@ import com.assettrader.model.coinmarket.MarketHistory;
 import com.assettrader.model.coinmarket.MarketSummary;
 import com.assettrader.model.coinmarket.OrderBook;
 import com.assettrader.model.coinmarket.Ticker;
-import com.assettrader.service.DTO.CoinDTOService;
+import com.assettrader.service.DTO.CoinServiceDTO;
 
 @RestController
 @RequestMapping("/coins")
@@ -30,7 +30,7 @@ public class CoinApiController {
 	private static int FIRST_PERSIST = 0;
 	
 	@Autowired
-	public CoinDTOService coinDTOService;
+	public CoinServiceDTO coinDTOService;
 
 	
 	@RequestMapping(value = "/getmarkets/{exchange}", method = RequestMethod.GET)

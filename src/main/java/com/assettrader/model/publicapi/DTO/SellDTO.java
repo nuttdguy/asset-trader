@@ -1,13 +1,13 @@
-package com.assettrader.model.DTO;
+package com.assettrader.model.publicapi.DTO;
 
 import java.util.Date;
 
-public class BuyDTO {
+public class SellDTO {
 
 	private double Quantity;
 
 	private double Rate;
-	
+
 	private Date date;
 
 	public double getQuantity() {
@@ -33,5 +33,5 @@ public class BuyDTO {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+
 }

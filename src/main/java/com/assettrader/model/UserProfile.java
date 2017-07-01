@@ -42,11 +42,12 @@ public class UserProfile extends Person {
 	@Column(name = "IS_ACTIVE")
 	private boolean isActive;
 	
-	// TODO -- CHANGE MAPPING TO @MANYTOMANY USER_COIN_FAVORITE TABLE
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
+	private List<Account> account;
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
 	private List<Favorite> coinFavorites = new ArrayList<>();
 
-	// non-owning-side, requires mappedby field name and cascade all
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
 	private List<Address> address = new ArrayList<>();
 
@@ -96,6 +97,14 @@ public class UserProfile extends Person {
 
 	public void setCoinFavorites(List<Favorite> coinFavorites) {
 		this.coinFavorites = coinFavorites;
+	}
+
+	public List<Account> getAccount() {
+		return account;
+	}
+
+	public void setAccount(List<Account> account) {
+		this.account = account;
 	}
 
 

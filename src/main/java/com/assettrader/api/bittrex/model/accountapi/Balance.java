@@ -1,69 +1,150 @@
 package com.assettrader.api.bittrex.model.accountapi;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
-public class Balance {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-    private String currency;
-    private Double balance;
-    private Double available;
-    private Double pending;
-    private String cryptoAddress;
-    private Boolean requested;
-    private String uuid;
+import com.assettrader.model.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    public String getCurrency() {
-        return currency;
-    }
+@Entity
+@Table(name = "BALANCE")
+public class Balance implements Serializable {
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
+	private static final long serialVersionUID = -2617907704243030480L;
 
-    public Double getBalance() {
-        return balance;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "BALANCE_ID")
+	@JsonIgnore
+	private Double id;
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
+	@Column(name = "CURRENCY")
+	private String currency;
 
-    public Double getAvailable() {
-        return available;
-    }
+	@Column(name = "ACCOUNT_BALANCE")
+	private Double balance;
 
-    public void setAvailable(Double available) {
-        this.available = available;
-    }
+	@Column(name = "AVAILABLE")
+	private Double available;
 
-    public Double getPending() {
-        return pending;
-    }
+	@Column(name = "PENDING")
+	private Double pending;
 
-    public void setPending(Double pending) {
-        this.pending = pending;
-    }
+	@Column(name = "CRYPTO_ADDRESS")
+	private String cryptoAddress;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "BALANCE_DATE")
+	private Date balanceDate;
+	
+	@JsonIgnore
+	@Transient
+	private Boolean requested;
 
-    public String getCryptoAddress() {
-        return cryptoAddress;
-    }
+	@JsonIgnore
+	@Transient
+	private String uuid;
 
-    public void setCryptoAddress(String cryptoAddress) {
-        this.cryptoAddress = cryptoAddress;
-    }
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
+		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false),
+		@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=false, updatable=false)})
+	private Account account;
 
-    public Boolean getRequested() {
-        return requested;
-    }
+	public String getCurrency() {
+		return currency;
+	}
 
-    public void setRequested(Boolean requested) {
-        this.requested = requested;
-    }
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
 
-    public String getUuid() {
-        return uuid;
-    }
+	public Double getBalance() {
+		return balance;
+	}
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public Double getAvailable() {
+		return available;
+	}
+
+	public void setAvailable(Double available) {
+		this.available = available;
+	}
+
+	public Double getPending() {
+		return pending;
+	}
+
+	public void setPending(Double pending) {
+		this.pending = pending;
+	}
+
+	public String getCryptoAddress() {
+		return cryptoAddress;
+	}
+
+	public void setCryptoAddress(String cryptoAddress) {
+		this.cryptoAddress = cryptoAddress;
+	}
+
+	public Boolean getRequested() {
+		return requested;
+	}
+
+	public void setRequested(Boolean requested) {
+		this.requested = requested;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Double getId() {
+		return id;
+	}
+
+	public void setId(Double id) {
+		this.id = id;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public Date getBalanceDate() {
+		return balanceDate;
+	}
+
+	public void setBalanceDate(Date balanceDate) {
+		this.balanceDate = balanceDate;
+	}
+
 }

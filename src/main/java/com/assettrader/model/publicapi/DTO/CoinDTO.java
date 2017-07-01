@@ -1,4 +1,4 @@
-package com.assettrader.model.DTO;
+package com.assettrader.model.publicapi.DTO;
 
 import java.sql.Date;
 

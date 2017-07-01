@@ -12,25 +12,25 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.assettrader.dao.DTO.CoinDTODao;
-import com.assettrader.model.DTO.BuyDTO;
-import com.assettrader.model.DTO.CoinDTO;
-import com.assettrader.model.DTO.CoinResultDTO;
-import com.assettrader.model.DTO.CurrencyDTO;
-import com.assettrader.model.DTO.CurrencyResultDTO;
-import com.assettrader.model.DTO.MarketHistoryDTO;
-import com.assettrader.model.DTO.MarketSummariesDTO;
-import com.assettrader.model.DTO.MarketSummariesResultDTO;
-import com.assettrader.model.DTO.OrderBookDTO;
-import com.assettrader.model.DTO.ResultDTO;
-import com.assettrader.model.DTO.SellDTO;
-import com.assettrader.model.DTO.TickerDTO;
+import com.assettrader.dao.DTO.CoinDaoDTO;
 import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.coinmarket.Currency;
 import com.assettrader.model.coinmarket.MarketHistory;
 import com.assettrader.model.coinmarket.MarketSummary;
 import com.assettrader.model.coinmarket.OrderBook;
 import com.assettrader.model.coinmarket.Ticker;
+import com.assettrader.model.publicapi.DTO.BuyDTO;
+import com.assettrader.model.publicapi.DTO.CoinDTO;
+import com.assettrader.model.publicapi.DTO.CoinResultDTO;
+import com.assettrader.model.publicapi.DTO.CurrencyDTO;
+import com.assettrader.model.publicapi.DTO.CurrencyResultDTO;
+import com.assettrader.model.publicapi.DTO.MarketHistoryDTO;
+import com.assettrader.model.publicapi.DTO.MarketSummariesDTO;
+import com.assettrader.model.publicapi.DTO.MarketSummariesResultDTO;
+import com.assettrader.model.publicapi.DTO.OrderBookDTO;
+import com.assettrader.model.publicapi.DTO.ResultDTO;
+import com.assettrader.model.publicapi.DTO.SellDTO;
+import com.assettrader.model.publicapi.DTO.TickerDTO;
 import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.model.utils.OrderType;
 import com.assettrader.utils.DAOUtils;
@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Service
-public class CoinDTOServiceImpl implements CoinDTOService {
+public class CoinServiceDTOImpl implements CoinServiceDTO {
 
 	private static final String PUBLIC_URL = "https://bittrex.com/api/v1.1/public";
 	private static final String GET_MARKETS = "/getmarkets";
@@ -56,7 +56,7 @@ public class CoinDTOServiceImpl implements CoinDTOService {
 	private static final String ORDER_PREFIX = "&type=";
 
 	@Autowired
-	CoinDTODao coinDTODao;
+	CoinDaoDTO coinDTODao;
 
 	// ==|| METHODS :: TO REQUEST DATA FROM API END-POINT
 	// ================================================

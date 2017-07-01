@@ -27,7 +27,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 
 @Service
-public class CoinDTODaoImpl implements CoinDTODao {
+public class CoinDaoDTOImpl implements CoinDaoDTO {
 
 	Connection connection = null;
 	PreparedStatement statement = null;

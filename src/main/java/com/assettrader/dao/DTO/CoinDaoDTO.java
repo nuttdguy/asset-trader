@@ -9,7 +9,7 @@ import com.assettrader.model.coinmarket.MarketSummary;
 import com.assettrader.model.coinmarket.OrderBook;
 import com.assettrader.model.coinmarket.Ticker;
 
-public interface CoinDTODao {
+public interface CoinDaoDTO {
 
 	public void saveGetTicker(Ticker ticker, String exchange);
 	public void saveGetMarketSummary(MarketSummary marketSummary, String exchange);

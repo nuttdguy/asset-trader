@@ -1,25 +1,98 @@
 package com.assettrader.api.bittrex.model.accountapi;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-public class OrderHistoryEntry {
+import com.assettrader.model.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Entity
+@Table(name = "ORDER_HISTORY_ENTRY")
+public class OrderHistoryEntry implements Serializable {
+
+	private static final long serialVersionUID = -3261426735268961664L;
+
+	@JsonIgnore
+	@GeneratedValue( strategy=GenerationType.IDENTITY )
+	@Column( name = "ORDER_HISTORY_ID" )
+	private Long id;
+	
+	@Id
+	@Column( name = "ORDER_UUID")
 	private String orderUuid;
+	
+	@Column( name = "EXCHANGE_CURRENCY_MARKET")
 	private String exchange;
-	private LocalDateTime timeStamp;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "TIME_STAMP")
+	private Date timeStamp;
+	
+	@Column( name = "ORDER_TYPE")
 	private String orderType;
+	
+	@Column( name = "STOP_LIMIT" )
 	private Double limit;
+	
+	@Column( name = "QUANTITY" )
 	private Double quantity;
+	
+	@Column( name = "QUANTITY_REMAINING")
 	private Double quantityRemaining;
+	
+	@Column( name = "COMMISSION")
 	private Double commission;
+	
+	@Column( name = "PRICE" )
 	private Double price;
+	
+	@Column( name = "PRICE_PER_UNIT" )
 	private Double pricePerUnit;
+	
+	@Column( name = "IS_CONDITIONAL" )
 	private Boolean isConditional;
+	
+	@Column( name = "CONDITIONS_OF_EXCHANGE" )
 	private String condition;
+	
+	@Column( name = "CONDITION_OF_EXCHANGE_TARGET" )
 	private String conditionTarget;
+	
+	@Column( name = "IMMEDIATE_OR_CANCEL" )
 	private Boolean immediateOrCancel;
-	private LocalDateTime closed;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "CLOSED" )
+	private Date closed;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
+		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false),
+		@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=false, updatable=false)})
+	private Account account;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getOrderUuid() {
 		return orderUuid;
@@ -37,11 +110,11 @@ public class OrderHistoryEntry {
 		this.exchange = exchange;
 	}
 
-	public LocalDateTime getTimeStamp() {
+	public Date getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(LocalDateTime timeStamp) {
+	public void setTimeStamp(Date timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
@@ -141,11 +214,21 @@ public class OrderHistoryEntry {
 		isConditional = conditional;
 	}
 
-	public LocalDateTime getClosed() {
+	public Date getClosed() {
 		return closed;
 	}
 
-	public void setClosed(LocalDateTime closed) {
+	public void setClosed(Date closed) {
 		this.closed = closed;
 	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+	
+	
 }

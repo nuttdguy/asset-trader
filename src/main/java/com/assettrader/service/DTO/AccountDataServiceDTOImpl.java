@@ -40,6 +40,11 @@ public class AccountDataServiceDTOImpl implements AccountDataServiceDTO {
 	}
 
 	@Override
+	public ApiResult<List<OrderHistoryEntry>> saveAllOrderHistoryEntry(
+			ApiResult<List<OrderHistoryEntry>> orderHistoryDTO, String currency) {
+		return accountDataDaoDTO.saveAllOrderHistoryEntry(orderHistoryDTO, currency);
+	}
+	@Override
 	public ApiResult<List<WithdrawalHistoryEntry>> saveAllWithdrawalHistory(
 			ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO) {
 		return accountDataDaoDTO.saveAllWithdrawalHistory(withdrawalHistoryDTO);

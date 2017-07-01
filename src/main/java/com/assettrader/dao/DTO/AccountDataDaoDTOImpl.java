@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,14 +17,14 @@ import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
 import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.utils.DAOUtils;
-import com.assettrader.utils.DateTimePersistenceConverter;
+import com.assettrader.utils.LocalDateTimePersistenceConverter;
 
 @Repository
 public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 	
 	private Connection connection = null;
 	private PreparedStatement statement = null;
-	private DateTimePersistenceConverter localDateTimeConverter = new DateTimePersistenceConverter();
+	private LocalDateTimePersistenceConverter dateConverter = new LocalDateTimePersistenceConverter();
 
 	
 	@Override
@@ -34,7 +32,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "INSERT INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
+			String sql = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
 					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME, USER_PROFILE_ID) "
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?) ";
 			
@@ -46,7 +44,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setDouble(1, entry.getAvailable());
 				statement.setDouble(2, entry.getBalance());
 				
-				statement.setTimestamp(3, localDateTimeConverter.convertToDatabaseColumn(LocalDateTime.now()));
+				statement.setTimestamp(3, dateConverter.convertToDatabaseColumn(LocalDateTime.now()));
 				statement.setString(4, entry.getCryptoAddress());
 				statement.setString(5, entry.getCurrency());
 				statement.setDouble(6, entry.getPending());
@@ -72,7 +70,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "INSERT INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
+			String sql = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
 					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME, USER_PROFILE_ID) "
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 			
@@ -80,7 +78,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 						
 			statement.setDouble(1, balanceApiDTO.getResult().getAvailable());
 			statement.setDouble(2, balanceApiDTO.getResult().getBalance());
-			statement.setTimestamp(3, localDateTimeConverter.convertToDatabaseColumn(LocalDateTime.now()));
+			statement.setTimestamp(3, dateConverter.convertToDatabaseColumn(LocalDateTime.now()));
 			
 			statement.setString(4, balanceApiDTO.getResult().getCryptoAddress());
 			statement.setString(5, balanceApiDTO.getResult().getCurrency());
@@ -103,7 +101,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "INSERT INTO DEPOSIT_ADDRESS(ADDRESS, CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID) "
+			String sql = "INSERT IGNORE INTO DEPOSIT_ADDRESS(ADDRESS, CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID) "
 					+ "VALUES(?, ?, ?, ?)";
 			
 			statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -125,9 +123,112 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 
 	@Override
 	public ApiResult<List<OrderHistoryEntry>> saveAllOrderHistoryEntry(
+			ApiResult<List<OrderHistoryEntry>> orderHistoryDTO, String marketName) {
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "INSERT IGNORE INTO ORDER_HISTORY_ENTRY( "
+					+ "ORDER_UUID, CLOSED, COMMISSION, CONDITIONS_OF_EXCHANGE, CONDITION_OF_EXCHANGE_TARGET, " // 5
+					+ "EXCHANGE_CURRENCY_MARKET, IMMEDIATE_OR_CANCEL, IS_CONDITIONAL, " // 3
+					+ "STOP_LIMIT, ORDER_TYPE, PRICE, PRICE_PER_UNIT, QUANTITY, " // 5
+					+ "QUANTITY_REMAINING, TIME_STAMP, CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID) " // 5
+					+ "VALUES("
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ? )";
+			
+			List<OrderHistoryEntry> orderHistoryList = orderHistoryDTO.getResult();
+			
+			for (OrderHistoryEntry entry : orderHistoryList) {
+				
+				statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+				statement.setString(1, entry.getOrderUuid());
+				statement.setTimestamp(2, new Timestamp(entry.getClosed().getTime() ));
+				statement.setDouble(3, entry.getCommission());
+				statement.setString(4, entry.getCondition());			
+				statement.setString(5, entry.getConditionTarget());
+				
+				statement.setString(6, entry.getExchange());
+				statement.setBoolean(7, entry.getImmediateOrCancel());
+				statement.setBoolean(8, entry.getIsConditional());
+				
+				statement.setDouble(9, entry.getLimit());
+				statement.setString(10, entry.getOrderType());
+				statement.setDouble(11, entry.getPrice());
+				statement.setDouble(12, entry.getPricePerUnit());
+				statement.setDouble(13, entry.getQuantity());
+				
+				statement.setDouble(14, entry.getQuantityRemaining());
+				statement.setTimestamp(15, new Timestamp(entry.getTimeStamp().getTime() ));				
+				statement.setString(16, marketName.substring(4).toUpperCase() );
+				statement.setString(17, ExchangeName.BITTREX.name());
+				statement.setLong(18, 1); // CHANGE WHEN USER REGISTRATION COMPLETED
+				
+				statement.execute();
+			}
+			
+			System.out.println("Successfully persisted ORDER HISTORY RECORD");
+		} catch (SQLException sex) {
+			System.out.println("SQL Exception: " + sex.getMessage() );
+		}
+		
+		return orderHistoryDTO;
+	}
+	
+
+	@Override
+	public ApiResult<List<OrderHistoryEntry>> saveAllOrderHistoryEntry(
 			ApiResult<List<OrderHistoryEntry>> orderHistoryDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "INSERT IGNORE INTO ORDER_HISTORY_ENTRY( "
+					+ "ORDER_UUID, CLOSED, COMMISSION, CONDITIONS_OF_EXCHANGE, CONDITION_OF_EXCHANGE_TARGET, " // 5
+					+ "EXCHANGE_CURRENCY_MARKET, IMMEDIATE_OR_CANCEL, IS_CONDITIONAL, " // 3
+					+ "STOP_LIMIT, ORDER_TYPE, PRICE, PRICE_PER_UNIT, QUANTITY, " // 5
+					+ "QUANTITY_REMAINING, TIME_STAMP, CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID) " // 5
+					+ "VALUES("
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ?, ?, ?, "
+					+ "?, ?, ? )";
+			
+			List<OrderHistoryEntry> orderHistoryList = orderHistoryDTO.getResult();
+			
+			for (OrderHistoryEntry entry : orderHistoryList) {
+				
+				statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+				statement.setString(1, entry.getOrderUuid());
+				statement.setTimestamp(2, new Timestamp(entry.getClosed().getTime() ));
+				statement.setDouble(3, entry.getCommission());
+				statement.setString(4, entry.getCondition());			
+				statement.setString(5, entry.getConditionTarget());
+				
+				statement.setString(6, entry.getExchange());
+				statement.setBoolean(7, entry.getImmediateOrCancel());
+				statement.setBoolean(8, entry.getIsConditional());
+				
+				statement.setDouble(9, entry.getLimit());
+				statement.setString(10, entry.getOrderType());
+				statement.setDouble(11, entry.getPrice());
+				statement.setDouble(12, entry.getPricePerUnit());
+				statement.setDouble(13, entry.getQuantity());
+				
+				statement.setDouble(14, entry.getQuantityRemaining());
+				statement.setTimestamp(15, new Timestamp(entry.getTimeStamp().getTime() ));				
+				statement.setString(16, entry.getExchange().substring(4).toUpperCase() ); // GETS THE CURRENCY SHORT-NAME
+				statement.setString(17, ExchangeName.BITTREX.name());
+				statement.setLong(18, 1); // CHANGE WHEN USER REGISTRATION COMPLETED
+				
+				statement.execute();
+			}
+			
+			System.out.println("Successfully persisted ORDER HISTORY RECORD");
+		} catch (SQLException sex) {
+			System.out.println("SQL Exception: " + sex.getMessage() );
+		}
+		
+		return orderHistoryDTO;
 	}
 
 	@Override
@@ -143,6 +244,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 	
 }

@@ -1,7 +1,6 @@
 package com.assettrader.api.bittrex.model.accountapi;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -26,8 +25,8 @@ public class OrderHistoryEntry implements Serializable {
 	private static final long serialVersionUID = -3261426735268961664L;
 
 	@JsonIgnore
-	@GeneratedValue( strategy=GenerationType.IDENTITY )
-	@Column( name = "ORDER_HISTORY_ID" )
+	@GeneratedValue( strategy=GenerationType.TABLE )
+	@Column( name = "ORDER_HISTORY_ID", columnDefinition="serial" )
 	private Long id;
 	
 	@Id

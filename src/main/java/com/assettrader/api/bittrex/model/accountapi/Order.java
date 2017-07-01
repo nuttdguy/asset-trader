@@ -38,16 +38,16 @@ public class Order implements Serializable {
 	private String exchange;
 	
 	@Column( name = "ORDER_TYPE" )
-	private String type;
+	private String orderType;
+	
+	@Column( name = "STOP_LIMIT" ) 
+	private Double limit;
 	
 	@Column( name = "ORDER_QUANTITY" )
 	private Double quantity;
 	
 	@Column( name = "ORDER_QUANTITY_REMAINING" )
 	private Double quantityRemaining;
-	
-	@Column( name = "STOP_LIMIT" ) 
-	private Double limit;
 	
 	@Column( name = "IN_RESERVED" )
 	private Double reserved;
@@ -131,11 +131,11 @@ public class Order implements Serializable {
 	}
 
 	public String getType() {
-		return type;
+		return orderType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setType(String orderType) {
+		this.orderType = orderType;
 	}
 
 	public Double getQuantity() {

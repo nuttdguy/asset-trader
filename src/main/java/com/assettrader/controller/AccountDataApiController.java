@@ -13,11 +13,15 @@ import com.assettrader.api.bittrex.config.ApiCredentials;
 import com.assettrader.api.bittrex.model.accountapi.Balance;
 import com.assettrader.api.bittrex.model.accountapi.DepositAddress;
 import com.assettrader.api.bittrex.model.accountapi.DepositHistoryEntry;
+import com.assettrader.api.bittrex.model.accountapi.Order;
 import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
 import com.assettrader.service.DTO.AccountDataServiceDTO;
 import com.assettrader.utils.BittrexKeyUtil;
+
+import feign.Param;
+import feign.RequestLine;
 
 @RestController
 public class AccountDataApiController {
@@ -55,17 +59,19 @@ public class AccountDataApiController {
 		ApiResult<DepositAddress> depositAddressDTO = 
 				initBittrexClient().getAccountApi().getDepositAddress(currency);
 		
+		// IS PERSISTING PROPERLY
 		return accountDataServiceDTO.saveDepositAddressDTO(depositAddressDTO);
 	}
 	
 	// IS WORKING
-	@RequestMapping(value = "/account/orderhistory/{marketname}", method = RequestMethod.GET )
-	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@PathVariable String marketname) {
+	@RequestMapping(value = "/account/orderhistory/{market}", method = RequestMethod.GET )
+	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@PathVariable String market) {
 		
 		ApiResult<List<OrderHistoryEntry>> orderHistoryDTO =
-				initBittrexClient().getAccountApi().getOrderHistory(marketname);
+				initBittrexClient().getAccountApi().getOrderHistory(market);
 		
-		return accountDataServiceDTO.saveAllOrderHistoryEntry(orderHistoryDTO);
+		// IS PERSISTING PROPERLY
+		return accountDataServiceDTO.saveAllOrderHistoryEntry(orderHistoryDTO, market);
 	}
 
 	// IS WORKING
@@ -77,6 +83,7 @@ public class AccountDataApiController {
 		
 		return accountDataServiceDTO.saveAllOrderHistoryEntry(orderHistoryDTO);
 	}
+	
 	
 	// IS WORKING
 	@RequestMapping(value = "/account/withdrawhistory", method = RequestMethod.GET )

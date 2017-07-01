@@ -44,10 +44,11 @@ public class AccountDataApiController {
 		ApiResult<Balance> balanceApiDTO = 
 				initBittrexClient().getAccountApi().getBalance(currency);
 		
+		// IS PERSISTING PROPERLY
 		return accountDataServiceDTO.saveAccountBalanceDTO(balanceApiDTO);
 	}
 	
-	// IS WORKING
+	// IS WORKING 
 	@RequestMapping(value = "/account/deposit/address/{currency}", method = RequestMethod.GET)
 	public ApiResult<DepositAddress> getDepositAddressByCurrency(@PathVariable String currency) {
 		

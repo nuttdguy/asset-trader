@@ -58,7 +58,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.clearParameters();
 			}
 			
-			System.out.println("Successfully persisted ALL ACCOUNT BALANCE INSERTS");
+			System.out.println("Successfully persisted ALL ACCOUNT BALANCE RECORDS");
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
 		}
@@ -89,7 +89,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			statement.setLong(8, 1); // TODO - TEST USER CAN BE ADDED TO DATABASE AND RETRIEVED		
 			
 			statement.execute();
-			System.out.println("Successfully persisted ACCOUNT BALANCE INSERT");
+			System.out.println("Successfully persisted ACCOUNT BALANCE RECORD");
 			
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
@@ -100,8 +100,27 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 
 	@Override
 	public ApiResult<DepositAddress> saveDepositAddressDTO(ApiResult<DepositAddress> depositAddressDTO) {
-		// TODO Auto-generated method stub
-		return null;
+
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "INSERT INTO DEPOSIT_ADDRESS(ADDRESS, CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID) "
+					+ "VALUES(?, ?, ?, ?)";
+			
+			statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+			
+			statement.setString(1, depositAddressDTO.getResult().getAddress() );
+			statement.setString(2, depositAddressDTO.getResult().getCurrency() );
+			statement.setString(3, ExchangeName.BITTREX.name() );
+			statement.setLong(4, 1);
+			
+			statement.execute();
+			System.out.println("Successfully persisted DEPOSIT ADDRESS RECORD");
+			
+		} catch (SQLException sex) {
+			System.out.println("SQL Exception: " + sex.getMessage() );
+		}
+		
+		return depositAddressDTO;
 	}
 
 	@Override

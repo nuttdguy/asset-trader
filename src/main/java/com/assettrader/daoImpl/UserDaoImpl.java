@@ -10,8 +10,10 @@ import org.springframework.stereotype.Repository;
 
 import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
+import com.assettrader.model.Credential;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.utils.DAOUtils;
 
 @Repository
@@ -121,9 +123,43 @@ public class UserDaoImpl implements UserDao {
 	//============================================
 	
 	@Override
-	public UserProfile loginUser(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+	public RWLoginDetail loginUser(String username, String password) {
+		
+		RWLoginDetail loginDetail = new RWLoginDetail();
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "SELECT A.*, B.USERNAME, B.TOKEN "
+					+ "FROM USER_PROFILE A "
+					+ "JOIN CREDENTIAL B "
+					+ "ON A.USER_PROFILE_ID = B.USER_PROFILE_ID "
+					+ "WHERE B.USERNAME = ? "
+					+ "AND B.PASSWORD = ?;";
+			
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, username.toUpperCase());
+			statement.setString(2, password);
+			
+			ResultSet rs = statement.executeQuery();			
+		
+			if (rs.next()) {
+				loginDetail.setFirstName(rs.getString("FIRST_NAME"));
+				loginDetail.setLastName(rs.getString("LAST_NAME"));
+				loginDetail.setId(rs.getLong("USER_PROFILE_ID"));
+				loginDetail.setActive(rs.getBoolean("IS_ACTIVE"));
+				loginDetail.setUserName(rs.getString("USERNAME"));
+				loginDetail.setActive(rs.getBoolean("IS_ACTIVE"));	
+				loginDetail.setToken(rs.getString("TOKEN"));
+			}
+			
+			return loginDetail;
+			
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		
+		return loginDetail;
 	}
 
 	@Override

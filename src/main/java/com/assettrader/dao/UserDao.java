@@ -5,6 +5,7 @@ import java.util.List;
 import com.assettrader.model.Address;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWLoginDetail;
 
 
 public interface UserDao {
@@ -20,7 +21,7 @@ public interface UserDao {
 	void deleteFavoriteCoin(int favoriteId);
 	
 	UserProfile registerUser(UserProfile newUser);
-	UserProfile loginUser(String username, String password);
+	RWLoginDetail loginUser(String username, String password);
 	UserProfile getUser(int profileId);
 	UserProfile getUser(String searchParam);
 	Address getUserAddress(int profileId);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.assettrader.model.Address;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWLoginDetail;
 
 @Service
 public interface UserService {
@@ -21,8 +22,9 @@ public interface UserService {
 	void deleteUser(UserProfile userProfile);
 	void deleteFavoriteCoin(int favoriteId);
 	
+	RWLoginDetail loginUser(String username, String password);
+	
 	UserProfile registerUser(UserProfile newUser);
-	UserProfile loginUser(String username, String password);
 	UserProfile getUser(int profileId);
 	UserProfile getUser(String searchParam);
 	Address getUserAddress(int profileId);

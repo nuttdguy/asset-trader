@@ -9,6 +9,7 @@ import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.service.UserService;
 
 
@@ -88,10 +89,10 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public UserProfile loginUser(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+	public RWLoginDetail loginUser(String username, String password) {
+		return userDao.loginUser(username, password);
 	}
+	
 
 	@Override
 	public UserProfile getUser(int profileId) {

@@ -1,22 +1,30 @@
 package com.assettrader.model.rest;
 
-public class RWRegister {
+public class RWLoginDetail {
 
+	private boolean success;
+	private String message;
 	private String firstName;
-
 	private String lastName;
-
-	private String username;
-
-	private String password;
-
 	private String token;
-
+	private String userName;
+	private Long id;
 	private boolean isActive;
 
-	private Long id;
+	public boolean isSuccess() {
+		return success;
+	}
 
-	public RWRegister() {
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public String getFirstName() {
@@ -35,22 +43,6 @@ public class RWRegister {
 		this.lastName = lastName;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getToken() {
 		return token;
 	}
@@ -59,12 +51,12 @@ public class RWRegister {
 		this.token = token;
 	}
 
-	public boolean isActive() {
-		return isActive;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public Long getId() {
@@ -73,6 +65,14 @@ public class RWRegister {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

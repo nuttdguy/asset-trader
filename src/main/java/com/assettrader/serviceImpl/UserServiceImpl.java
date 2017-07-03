@@ -18,6 +18,11 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao userDao;
 
+	
+	//============================================
+	//== CREATE
+	//============================================
+	
 	@Override
 	public UserProfile registerUser(UserProfile newUser) {
 		return userDao.registerUser(newUser);
@@ -28,6 +33,11 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	//============================================
+	//=== UPDATE
+	//============================================
 
 	@Override
 	public void updateUsername(String newUsername) {
@@ -53,6 +63,12 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	
+	//============================================
+	//=== DELETES
+	//============================================
+	
+	
 	@Override
 	public void deleteUser(UserProfile userProfile) {
 		// TODO Auto-generated method stub
@@ -65,6 +81,12 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+		
+	//============================================
+	//=== RETRIEVE
+	//============================================
+	
+	
 	@Override
 	public UserProfile loginUser(String username, String password) {
 		// TODO Auto-generated method stub
@@ -95,10 +117,15 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	
+	//============================================
+	//=== VALIDATE
+	//============================================
+	
+	
 	@Override
 	public boolean checkIfUserExists(String username) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDao.checkIfUserExists(username);
 	}
 
 }

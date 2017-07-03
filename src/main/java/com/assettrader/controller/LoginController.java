@@ -1,6 +1,8 @@
 package com.assettrader.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -56,26 +58,33 @@ public class LoginController {
 	@ResponseBody
 	public UserProfile registerUser(@RequestBody RWRegister user) {
 
-		// TODO - CHECK IF USER EXISTS
 		boolean isExist = userService.checkIfUserExists(user.getUsername());		
 		
-		if (!isExist) {
-			
-			UserProfile authenticatedUser = new UserProfile();
-			authenticatedUser.setFirstName(user.getFirstName());
-			authenticatedUser.setLastName(user.getLastName());
-			
-			Credential credential = new Credential();
-			credential.setPassword(user.getPassword());
-			credential.setUsername(user.getUsername());
-			
-			authenticatedUser.setCredentials(credential);
-			
-			authenticatedUser = userService.registerUser(authenticatedUser);
-		}
+		if (!isExist) {			
+			return userService.registerUser(registerNewUser(user));
+		} 
 		
-		System.out.println(user);
-		return null;
+		System.out.println("!!! USER IS ALREADY REGISTERED !!! ");
+		return new UserProfile();
+	}
+	
+	
+	//============================================
+	//=== HELPER
+	//============================================
+	
+	private UserProfile registerNewUser(RWRegister user) {
+		
+		UserProfile authenticatedUser = new UserProfile();
+		authenticatedUser.setFirstName(user.getFirstName());
+		authenticatedUser.setLastName(user.getLastName());
+		
+		Credential credential = new Credential();
+		credential.setPassword(user.getPassword());
+		credential.setUsername(user.getUsername());
+		
+		authenticatedUser.setCredentials(credential);
+		return authenticatedUser;
 	}
 
 }

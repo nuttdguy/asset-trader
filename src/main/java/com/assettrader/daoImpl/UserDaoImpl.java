@@ -2,6 +2,7 @@ package com.assettrader.daoImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -156,7 +157,27 @@ public class UserDaoImpl implements UserDao {
 	
 	@Override
 	public boolean checkIfUserExists(String username) {
-		// TODO Auto-generated method stub
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "SELECT B.USERNAME "
+					+ "FROM CREDENTIAL B "
+					+ "WHERE B.USERNAME = ? ;";
+			
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, username.toUpperCase());
+			
+			ResultSet rs = statement.executeQuery();
+
+			if (rs.first()) {
+				return true;
+			}
+			
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
 		return false;
 	}
 

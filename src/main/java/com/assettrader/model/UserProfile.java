@@ -16,6 +16,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +29,7 @@ public class UserProfile extends Person {
 
 	@Id
 	@Column(name = "USER_PROFILE_ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY )
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -41,15 +42,22 @@ public class UserProfile extends Person {
 
 	@Column(name = "IS_ACTIVE")
 	private boolean isActive;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
-	private List<Account> account;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
+
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
+	private Credential credentials;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
+	private List<Account> account = new ArrayList<>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
 	private List<Favorite> coinFavorites = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="userProfile")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
 	private List<Address> address = new ArrayList<>();
+	
+	public UserProfile() {
+		super();
+	}
 
 	public Long getId() {
 		return id;
@@ -83,6 +91,14 @@ public class UserProfile extends Person {
 		this.isActive = isActive;
 	}
 
+	public Credential getCredentials() {
+		return credentials;
+	}
+
+	public void setCredentials(Credential credentials) {
+		this.credentials = credentials;
+	}
+
 	public List<Address> getAddress() {
 		return address;
 	}
@@ -107,21 +123,5 @@ public class UserProfile extends Person {
 		this.account = account;
 	}
 
-
 }
-
-
-
-//@JoinTable(name = "ARC_EMPLOYEE_OF_BAR"
-//, joinColumns = {@JoinColumn(name = "BAR_ID")}
-//, inverseJoinColumns = {@JoinColumn(name = "EMPLOYEE_ID")}
-//, uniqueConstraints = {@UniqueConstraint(name = "ARC_UK_EMPLOYEE_OF_BAR", columnNames = {"EMPLOYEE_ID", "BAR_ID"})}
-//, foreignKey = @ForeignKey(name = "ARC_FK_BAR_OF_EMPLOYEE")
-//, inverseForeignKey = @ForeignKey(name = "ARC_FK_EMPLOYEE_OF_BAR"))
-
-
-
-
-
-
 

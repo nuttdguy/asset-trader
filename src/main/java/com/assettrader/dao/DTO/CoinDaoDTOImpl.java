@@ -402,6 +402,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 	}
 	
 	
+	// PRIVATE METHODS TO CLOSE OPENED RESOURCES
 	private void closeResources() {
 		try {
 			if (statement != null)

@@ -13,6 +13,8 @@ public interface CoinService {
 	String getCoinMarketCurrency(String coinMarketName);
 	String getCoinBaseCurrency(String coinMarketName);
 	String getMarketName(String coinMarketName);
+	
+	List<Coin> getAllCoinLogos();
 	String getCoinLogo(String coinMarketName);
 	
 	Double getBidPriceLast(String coinMarketName);

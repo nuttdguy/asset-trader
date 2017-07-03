@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.assettrader.model.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,6 +25,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class WithdrawalHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = 4908513899210242329L;
+	
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 
 	@JsonIgnore
 	@GeneratedValue( strategy = GenerationType.TABLE)

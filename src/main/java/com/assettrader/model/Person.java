@@ -12,6 +12,8 @@ public abstract class Person {
 	
 	@Column(name = "LAST_NAME")
 	protected String lastName;
+	
+	public Person() {}
 
 	public String getFirstName() {
 		return firstName;

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -114,8 +115,51 @@ public class CoinDaoImpl implements CoinDao {
 
 	@Override
 	public String getCoinLogo(String coinMarketName) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "SELECT LOGOURL FROM COIN WHERE LOGO_URL = ?";			
+			statement = connection.prepareStatement(sql);
+			
+			statement.setString(1, coinMarketName);
+			ResultSet rs = statement.executeQuery();
+			
+			return rs.getString("LOGO_URL");
+			
+		} catch (SQLException sex) {
+			System.out.println(
+					"Error has occured while getting LOGO-URL from coin markets " + sex.getMessage());
+		}
+		
+		return "";
+	}
+	
+	@Override
+	public List<Coin> getAllCoinLogos() {
+		List<Coin> coinLogoList = null;
+		try {
+			connection = DAOUtils.getConnection();
+			String sql = "SELECT LOGO_URL, MARKET_CURRENCY FROM COIN";	
+			
+			statement = connection.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			
+			coinLogoList = new ArrayList<>();
+			while (rs.next()){
+				Coin coin = new Coin();
+				coin.setLogoUrl(rs.getString("LOGO_URL"));
+				coin.setMarketCurrency(rs.getString("MARKET_CURRENCY"));
+				coinLogoList.add(coin);
+			}
+			
+			return coinLogoList;
+			
+		} catch (SQLException sex) {
+			System.out.println(
+					"Error has occured while getting LOGO-URL from coin markets " + sex.getMessage());
+		}
+		
+		return coinLogoList;
 	}
 
 	@Override

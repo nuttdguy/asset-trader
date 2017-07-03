@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.assettrader.model.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +24,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class OrderHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -3261426735268961664L;
+		
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 
 	@JsonIgnore
 	@GeneratedValue( strategy=GenerationType.TABLE )
@@ -91,7 +103,7 @@ public class OrderHistoryEntry implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
+	}	
 
 	public String getOrderUuid() {
 		return orderUuid;

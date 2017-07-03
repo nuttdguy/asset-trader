@@ -2,17 +2,25 @@ package com.assettrader.serviceImpl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.service.UserService;
 
+
+@Service
 public class UserServiceImpl implements UserService {
+	
+	@Autowired
+	private UserDao userDao;
 
 	@Override
-	public void registerUser(UserProfile newUser) {
-		// TODO Auto-generated method stub
-		
+	public UserProfile registerUser(UserProfile newUser) {
+		return userDao.registerUser(newUser);
 	}
 
 	@Override

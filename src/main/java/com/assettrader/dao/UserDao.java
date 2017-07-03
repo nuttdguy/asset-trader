@@ -9,7 +9,6 @@ import com.assettrader.model.coinmarket.Coin;
 
 public interface UserDao {
 
-	void registerUser(UserProfile newUser);
 	void addCoinAsFavorite(Coin coin);
 	
 	void updateUsername(String newUsername);
@@ -20,6 +19,7 @@ public interface UserDao {
 	void deleteUser(UserProfile userProfile);
 	void deleteFavoriteCoin(int favoriteId);
 	
+	UserProfile registerUser(UserProfile newUser);
 	UserProfile loginUser(String username, String password);
 	UserProfile getUser(int profileId);
 	UserProfile getUser(String searchParam);

@@ -3,10 +3,16 @@ package com.assettrader.serviceImpl;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.assettrader.dao.CoinDao;
 import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.service.CoinService;
 
 public class CoinServiceImpl implements CoinService {
+	
+	@Autowired
+	private CoinDao coinDao;
 
 	@Override
 	public String getCoinMarketName(String coinMarketName) {
@@ -38,12 +44,17 @@ public class CoinServiceImpl implements CoinService {
 		return null;
 	}
 
-	@Override
+	
+	@Override 	// ADDED IMPLEMENTATION
 	public String getCoinLogo(String coinMarketName) {
-		// TODO Auto-generated method stub
-		return null;
+		return coinDao.getCoinLogo(coinMarketName);
 	}
 
+	@Override 	// ADDED IMPLEMENTATION
+	public List<Coin> getAllCoinLogos() {
+		return coinDao.getAllCoinLogos();
+	}
+	
 	@Override
 	public Double getBidPriceLast(String coinMarketName) {
 		// TODO Auto-generated method stub

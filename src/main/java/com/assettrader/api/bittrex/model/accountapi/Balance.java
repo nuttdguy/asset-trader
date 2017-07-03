@@ -25,6 +25,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Balance implements Serializable {
 
 	private static final long serialVersionUID = -2617907704243030480L;
+	
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,7 +3,10 @@ package com.assettrader.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.assettrader.model.coinmarket.Coin;
+
 
 public interface CoinDao {
 
@@ -16,7 +19,9 @@ public interface CoinDao {
 	
 	String getCoinMarketCurrency(String coinMarketName);
 	String getCoinBaseCurrency(String coinMarketName);
+	
 	String getCoinLogo(String coinMarketName);
+	List<Coin> getAllCoinLogos();
 	
 	Double getBidPriceLast(String coinMarketName);
 	Double getBidPriceRange(String coinMarketName);

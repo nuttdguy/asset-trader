@@ -60,16 +60,16 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 
 	// ==|| METHODS :: TO REQUEST DATA FROM API END-POINT
 	// ================================================
-	
+
 	// TODO -- REFACTOR METHODS TO PREVENT PERSISTING DATA WHEN NOT REQUIRED
 	// TODO -- VERIFY PK, FK RELATIONSHIP MAPPINGS - FIX IF NECCESSARY
-	
-	@SuppressWarnings("rawtypes")  // WORKING REST ENDPOINT
+
+	@SuppressWarnings("rawtypes") // WORKING REST ENDPOINT
 	public List<Coin> getCoinMarkets(String exchange) {
 
 		List<Coin> coinList = null;
 		ObjectMapper mapper = initMapper();
-	
+
 		try {
 			URL url = new URL(PUBLIC_URL + GET_MARKETS);
 			List<CoinResultDTO> result = mapper.readValue(url, new TypeReference<List<CoinResultDTO>>() {
@@ -81,7 +81,7 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 			}
 
 			// TODO - ADD LOGIC TO PREVENT RELOADING COIN MARKET DATA
-			coinDTODao.saveGetMarkets(coinList, exchange); 
+			coinDTODao.saveGetMarkets(coinList, exchange);
 			return coinList; // RETURN MAPPED RESULT TO UI TO DISPLAY
 
 		} catch (IOException e) {
@@ -127,13 +127,13 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 			URL url = new URL(PUBLIC_URL + GET_MARKET_SUMMARIES);
 			List<MarketSummariesResultDTO> jsonList = mapper.readValue(url,
 					new TypeReference<List<MarketSummariesResultDTO>>() {
-			});
-			
+					});
+
 			marketSummaryList = new ArrayList<>();
 			for (MarketSummariesDTO marketDTO : jsonList.get(0).getResult()) {
 				marketSummaryList.add(DTOToMarketSummary(marketDTO));
 			}
-			
+
 			coinDTODao.saveGetMarketSummaries(marketSummaryList, exchange);
 			return marketSummaryList;
 
@@ -144,27 +144,27 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		return marketSummaryList;
 	}
 
-	@Override 
+	@Override
 	public MarketSummary getMarketSummary(String marketName, String exchange) {
 		MarketSummary marketSummary = null;
 		ObjectMapper mapper = initMapper();
-		
+
 		try {
 			URL url = new URL(PUBLIC_URL + GET_MARKET_SUMMARY + MARKET_PREFIX + marketName);
 			MarketSummariesResultDTO marketDTO = mapper.readValue(url, MarketSummariesResultDTO.class);
-			
+
 			marketSummary = new MarketSummary();
-			for(MarketSummariesDTO market : marketDTO.getResult()) {
+			for (MarketSummariesDTO market : marketDTO.getResult()) {
 				marketSummary = DTOToMarketSummary(market);
 			}
-			
-			coinDTODao.saveGetMarketSummary(marketSummary, exchange);		
+
+			coinDTODao.saveGetMarketSummary(marketSummary, exchange);
 			return marketSummary;
-			
+
 		} catch (IOException io) {
 			System.out.println("IOException getting market summary " + io.getMessage());
 		}
-		
+
 		return marketSummary;
 	}
 
@@ -172,15 +172,14 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 	public Ticker getTicker(String marketName, String exchange) {
 		Ticker ticker = null;
 		ObjectMapper mapper = initMapper();
-		
+
 		try {
 			URL url = new URL(PUBLIC_URL + GET_TICKER + MARKET_PREFIX + marketName);
-			ResultDTO<TickerDTO> json = mapper.readValue(url,
-					new TypeReference<ResultDTO<TickerDTO>>() {
+			ResultDTO<TickerDTO> json = mapper.readValue(url, new TypeReference<ResultDTO<TickerDTO>>() {
 			});
-			
+
 			ticker = new Ticker();
-			
+
 			for (TickerDTO t : json.getResult()) {
 				Coin coin = new Coin();
 				Date date = new Date();
@@ -191,14 +190,14 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 				ticker.getCoin().setMarketName(marketName);
 				ticker.setTimeStamp(date);
 			}
-			
+
 			coinDTODao.saveGetTicker(ticker, exchange);
 			return ticker;
-			
-		} catch(IOException io) {
+
+		} catch (IOException io) {
 			System.out.println("Error parsing json " + io.getMessage());
 		}
-		
+
 		return ticker;
 	}
 
@@ -206,26 +205,27 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 	public List<MarketHistory> getMarketHistory(String marketName, String exchange) {
 		List<MarketHistory> marketHistoryList = null;
 		ObjectMapper mapper = initMapper();
-		
+
 		try {
 			URL url = new URL(PUBLIC_URL + GET_MARKET_HISTORY + MARKET_PREFIX + marketName);
-			List<ResultDTO<MarketHistoryDTO>> jsonList = mapper.readValue(url, 
+			List<ResultDTO<MarketHistoryDTO>> jsonList = mapper.readValue(url,
 					new TypeReference<List<ResultDTO<MarketHistoryDTO>>>() {
-			});
-			
+					});
+
 			marketHistoryList = new ArrayList<>();
-			// System.out.println("------- MARKET-NAME IS ------" + marketName + "------ THIS IS NOT AN ERROR FROM MARKET-HISTORY -----------");
+			// System.out.println("------- MARKET-NAME IS ------" + marketName +
+			// "------ THIS IS NOT AN ERROR FROM MARKET-HISTORY -----------");
 			for (MarketHistoryDTO marketHistoryDTO : jsonList.get(0).getResult()) {
-					marketHistoryList.add(DTOToMarketHistory(marketHistoryDTO, marketName));
+				marketHistoryList.add(DTOToMarketHistory(marketHistoryDTO, marketName));
 			}
-			
+
 			coinDTODao.saveGetMarketHistory(marketHistoryList, exchange);
 			return marketHistoryList;
-			
+
 		} catch (IOException iox) {
 			System.out.println("IO Exception " + iox.getMessage());
 		}
-		
+
 		return marketHistoryList;
 	}
 
@@ -233,63 +233,63 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 	public List<OrderBook> getOrderBook(String marketName, String buyOrSell, String exchange) {
 		List<OrderBook> orderBookList = null;
 		ObjectMapper mapper = initMapper();
-		
+
 		try {
 			URL url = new URL(PUBLIC_URL + GET_ORDER_BOOK + MARKET_PREFIX + marketName + ORDER_PREFIX + buyOrSell);
 			List<ResultDTO<OrderBookDTO>> jsonList = mapper.readValue(url,
-					new TypeReference<List<ResultDTO<OrderBookDTO>>>() {				
-			});
-			
+					new TypeReference<List<ResultDTO<OrderBookDTO>>>() {
+					});
+
 			orderBookList = new ArrayList<>();
-			
+
 			for (OrderBookDTO orderDTO : jsonList.get(0).getResult()) {
 				for (BuyDTO buyDTO : orderDTO.getBuy()) {
 					orderBookList.add(DTOToOrderBook(buyDTO, marketName));
 				}
 				for (SellDTO sellDTO : orderDTO.getSell()) {
 					orderBookList.add(DTOToOrderBook(sellDTO, marketName));
-				}				
-			}		
-		
+				}
+			}
+
 			coinDTODao.saveGetOrderBook(orderBookList, exchange);
-			return orderBookList; 
-			
+			return orderBookList;
+
 		} catch (IOException io) {
 			System.out.println("IO Exception getting order book " + io.getMessage());
 		}
-		
+
 		return orderBookList;
 	}
-	
+
 	@Override // ADD CALL TO API CONTROLLER
 	public List<Coin> loadApplicationBootingEndPoints(String exchange) {
-	
-		List<Coin> coinList = getCoinMarkets(exchange); // GET ALL THE COIN MARKETS
-		getMarketSummaries(exchange);  // NEED THE MARKET-NAMES
+
+		List<Coin> coinList = getCoinMarkets(exchange); // GET ALL THE COIN
+														// MARKETS
+		getMarketSummaries(exchange); // NEED THE MARKET-NAMES
 		getCurrencies(exchange);
 
-		
 		List<String> coinName = new ArrayList<>();
 		for (Coin coin : coinList) {
 			if (coin.isActive())
 				coinName.add(coin.getMarketName());
 		}
-		
+
 		for (String marketName : coinName) {
 			getMarketHistory(marketName, exchange);
-		}	
+		}
 		System.out.println("------- MARKET-HISTORY IS DONE LOADING -----------");
-		
+
 		for (String marketName : coinName) {
 			getOrderBook(marketName, OrderType.BOTH.name().toLowerCase(), exchange);
 		}
 		System.out.println("------- ORDER BOOK IS DONE LOADING ----------");
-		
+
 		for (String marketName : coinName) {
 			getTicker(marketName, exchange);
 		}
 		System.out.println("------- TICKER IS DONE LOADING ----------");
-		
+
 		System.out.println("-----  LOADING AND PERSISTING INITIAL DATA IS DONE!!! ------");
 		return coinList;
 	}
@@ -319,11 +319,18 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		coin.setMarketCurrencyLong(coinDTO.getMarketCurrencyLong());
 		coin.setActive(coinDTO.isIsActive());
 		coin.setCreateDate(coinDTO.getCreateDate());
-		coin.setLogoUrl(coinDTO.getLogoUrl());
+
+		if (coinDTO.getMarketCurrency().equals("BTC")) {
+			coin.setLogoUrl("http://hd-fractals.com/wp-content/uploads/bitcoin_goldv2.png");
+		} else {
+			coin.setLogoUrl(coinDTO.getLogoUrl());
+		}
+		
 		coin.setMinTradeSize(coinDTO.getMinTradeSize());
 		coin.setCreated(coinDTO.getCreated());
 		coin.setNotice(coinDTO.getNotice());
-		coin.setExchange(exchange);	// EXCHANGE NAME VALIDATION OCCURS IN CONTROLLER & FRONT-END ENUM
+		coin.setExchange(exchange); // EXCHANGE NAME VALIDATION OCCURS IN
+									// CONTROLLER & FRONT-END ENUM
 		return coin;
 	}
 
@@ -331,7 +338,7 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 
 		Currency currency = new Currency();
 		Coin coin = new Coin();
-		
+
 		currency.setCoin(coin);
 		currency.setCurrencyShort(currencyDTO.getCurrency());
 		currency.setCurrencyLong(currencyDTO.getCurrencyLong());
@@ -344,7 +351,7 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 	}
 
 	private MarketSummary DTOToMarketSummary(MarketSummariesDTO marketSummaryDTO) {
-		
+
 		MarketSummary market = new MarketSummary();
 		market.setMarketName(marketSummaryDTO.getMarketName());
 		market.setHigh(marketSummaryDTO.getHigh());
@@ -358,37 +365,37 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		market.setOpenSellOrders(marketSummaryDTO.getOpenSellOrders());
 		market.setPrevDay(marketSummaryDTO.getPrevDay());
 		market.setCreated(marketSummaryDTO.getCreated());
-		
+
 		return market;
 	}
-	
+
 	private OrderBook DTOToOrderBook(BuyDTO buyDTO, String marketName) {
-		
+
 		OrderBook orderBook = new OrderBook();
 		Date date = new Date();
-		
+
 		orderBook.setQuantity(buyDTO.getQuantity());
 		orderBook.setRate(buyDTO.getRate());
 		orderBook.setOrderBookDateTime(date);
 		orderBook.setOrderType(OrderType.BUY);
-		
+
 		Coin coin = new Coin();
 		coin.setMarketName(marketName);
 		orderBook.setCoin(coin);
 		orderBook.getCoin().setMarketName(marketName);
 		return orderBook;
 	}
-	
+
 	private OrderBook DTOToOrderBook(SellDTO sellDTO, String marketName) {
-		
+
 		OrderBook orderBook = new OrderBook();
 		Date date = new Date();
-		
+
 		orderBook.setQuantity(sellDTO.getQuantity());
 		orderBook.setRate(sellDTO.getRate());
 		orderBook.setOrderBookDateTime(date);
 		orderBook.setOrderType(OrderType.SELL);
-		
+
 		Coin coin = new Coin();
 		coin.setMarketName(marketName);
 		orderBook.setCoin(coin);
@@ -397,13 +404,13 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 	}
 
 	private MarketHistory DTOToMarketHistory(MarketHistoryDTO marketHistoryDTO, String marketName) {
-		
+
 		MarketHistory marketHistory = new MarketHistory();
 		Coin coin = new Coin();
-		
+
 		marketHistory.setCoin(coin);
 		marketHistory.getCoin().setMarketName(marketName);
-		
+
 		marketHistory.setOrderId(marketHistoryDTO.getId());
 		marketHistory.setFillType(marketHistoryDTO.getFillType());
 		marketHistory.setOrderType(OrderType.valueOf(marketHistoryDTO.getOrderType()));
@@ -413,20 +420,5 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		marketHistory.setTimeStamp(marketHistoryDTO.getTimeStamp());
 		return marketHistory;
 	}
-	
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

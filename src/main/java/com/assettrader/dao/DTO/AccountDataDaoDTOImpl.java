@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.assettrader.api.bittrex.model.accountapi.Balance;
@@ -15,12 +16,14 @@ import com.assettrader.api.bittrex.model.accountapi.DepositHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
+import com.assettrader.dao.CoinDao;
 import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.utils.DAOUtils;
 import com.assettrader.utils.LocalDateTimePersistenceConverter;
 
 @Repository
 public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
+	
 	
 	private Connection connection = null;
 	private PreparedStatement statement = null;
@@ -59,6 +62,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			System.out.println("Successfully persisted ALL ACCOUNT BALANCE RECORDS");
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
+		} finally {
+			closeResources();
 		}
 		
 		return balanceApiDTO;
@@ -91,6 +96,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
+		} finally {
+			closeResources();
 		}
 		
 		return balanceApiDTO;
@@ -116,6 +123,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
+		} finally {
+			closeResources();
 		}
 		
 		return depositAddressDTO;
@@ -171,6 +180,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			System.out.println("Successfully persisted ORDER HISTORY RECORD");
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
+		} finally {
+			closeResources();
 		}
 		
 		return orderHistoryDTO;
@@ -226,6 +237,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			System.out.println("Successfully persisted ORDER HISTORY RECORD");
 		} catch (SQLException sex) {
 			System.out.println("SQL Exception: " + sex.getMessage() );
+		} finally {
+			closeResources();
 		}
 		
 		return orderHistoryDTO;
@@ -273,6 +286,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			System.out.println("Successfully persisted WITHDRAWAL HISTORY RECORDS");
 		} catch (SQLException se) {
 			System.out.println("SQL Exception: " + se.getMessage());
+		} finally {
+			closeResources();
 		}
 		
 		return withdrawalHistoryDTO;
@@ -312,6 +327,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			System.out.println("Successfully persisted DEPOSIT HISTORY RECORDS");
 		} catch (SQLException se) {
 			System.out.println("SQL Exception: " + se.getMessage());
+		} finally {
+			closeResources();
 		}
 		
 		
@@ -319,6 +336,25 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 	}
 
 
+	// PRIVATE METHODS TO CLOSE OPENED RESOURCES
+	private void closeResources() {
+		try {
+			if (statement != null)
+				statement.close();
+		} catch (SQLException e) {
+			System.out.println("Could not close statement!");
+			e.printStackTrace();
+		}
+		
+		try {
+			if (connection != null)
+				connection.close();
+		} catch (SQLException e) {
+			System.out.println("Could not close connection!");
+			e.printStackTrace();
+		}
+	}
+	
 
 	
 }

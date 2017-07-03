@@ -39,6 +39,8 @@ public class Credential implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_PROFILE_ID")
 	private UserProfile userProfile;
+	
+	public Credential() {}
 
 	public Long getId() {
 		return id;

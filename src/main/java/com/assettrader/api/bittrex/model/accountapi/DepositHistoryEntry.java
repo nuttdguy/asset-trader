@@ -26,6 +26,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class DepositHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -8357674342951584523L;
+	
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 
 	@GeneratedValue( strategy=GenerationType.TABLE)
 	@Column( name = "DEPOSIT_HISTORY_ID", columnDefinition="SERIAL")

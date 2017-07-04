@@ -31,11 +31,10 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 		
 		// TODO -- CHANGE BACK TO VARIABLE; TEST HARD-CODE VALUE
 		String sqlExchangeName = "BITTREX";
-		// String sqlExchangeName = exchange.toUpperCase();
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "SELECT A.LOGO_URL, A.MARKET_NAME, A.MARKET_CURRENCY_LONG, A.MARKET_CURRENCY, "
+			String sql = "SELECT A.COIN_ID, A.LOGO_URL, A.MARKET_NAME, A.MARKET_CURRENCY_LONG, A.MARKET_CURRENCY, "
 					+ "B.VOLUME, B.OPEN_BUY_ORDERS, B.OPEN_SELL_ORDERS, B.HIGH, B.LOW, "
 					+ "C.LAST "
 					+ "FROM COIN A "
@@ -51,6 +50,7 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 			marketInfoList = new ArrayList<>();
 			while(rs.next()) {
 				MarketInfoView view = new MarketInfoView();
+				view.setId(rs.getLong("COIN_ID"));
 				view.setLogo(rs.getString("LOGO_URL"));
 				view.setMarketName(rs.getString("MARKET_NAME"));
 				view.setMarketCurrency(rs.getString("MARKET_CURRENCY"));
@@ -64,23 +64,6 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 				marketInfoList.add(view);
 			}		
 			rs.close();
-			
-			// TODO - USE FOR LOOP TO GET " TOP PRICE " AFTER GETTING MARKET NAME
-//			String sqlPrice = "SELECT A.PRICE, A.MARKET_NAME "
-//					+ "FROM MARKET_HISTORY A "
-//					+ "ORDER BY A.PRICE "
-//					+ "DESC LIMIT 1 ;";
-//			
-//			statement.clearParameters();
-//			statement = connection.prepareStatement(sqlPrice);
-//			
-//			for (MarketInfoView view : marketInfoList) {
-//				rs = statement.executeQuery();
-//				while (rs.next()) {
-//					view.setPrice(rs.getDouble("PRICE"));
-//				}
-//			}
-//			rs.close();
 			
 		} catch (SQLSyntaxErrorException sqx) {
 			System.out.println("Syntax error : " + sqx.getMessage());

@@ -16,7 +16,7 @@ public class MarketInfoServiceImpl implements MarketInfoService {
 	private MarketInfoDao marketInfoDao;
 
 	@Override
-	public List<MarketInfoView> getMarketInfoService(String exchange) {
+	public List<MarketInfoView> getMarketInfo(String exchange) {
 		return marketInfoDao.getMarketInfoView(exchange);
 	}
 

@@ -2,6 +2,8 @@ package com.assettrader.model.view;
 
 public class MarketInfoView {
 
+	
+	private Long id; // IN COIN TABLE
 	private String logo; // IN COIN TABLE
 	private String marketName; // IN COIN TABLE
 	private String marketCurrencyLong; // IN COIN TABLE
@@ -20,6 +22,16 @@ public class MarketInfoView {
 	private double changePercent; // 
 	// need to perform calculation on volume per day
 
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	
 	public String getLogo() {
 		return logo;
 	}

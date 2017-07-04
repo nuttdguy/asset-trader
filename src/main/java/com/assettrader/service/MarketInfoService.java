@@ -9,6 +9,6 @@ import com.assettrader.model.view.MarketInfoView;
 
 public interface MarketInfoService {
 
-	List<MarketInfoView> getMarketInfoService(String exchange);
+	List<MarketInfoView> getMarketInfo(String exchange);
 		
 }

@@ -14,9 +14,29 @@ public class AccountDataServiceImpl implements AccountDataService {
 	@Autowired
 	public AccountDataDao accountDataDao;
 	
+	//============================================
+	//== CREATE
+	//============================================
+	
+	
+	//============================================
+	//=== UPDATE
+	//============================================
+	
+	
+	//============================================
+	//=== DELETES
+	//============================================
+	
+
+	//============================================
+	//=== RETRIEVE
+	//============================================
+	
 	@Override
 	public BittrexKeyUtil getApiKey(RWLoginDetail userDetail) {
 		return accountDataDao.getApiKey(userDetail);
 	}
+	
 
 }

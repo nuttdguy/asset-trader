@@ -14,10 +14,29 @@ public class AccountInfoServiceImpl implements AccountInfoService {
 	
 	@Autowired
 	private AccountInfoDao marketInfoDao;
+	
+	//============================================
+	//== CREATE
+	//============================================
+	
+	
+	//============================================
+	//=== UPDATE
+	//============================================
+	
+	
+	//============================================
+	//=== DELETES
+	//============================================
+	
+
+	//============================================
+	//=== RETRIEVE
+	//============================================
 
 	@Override
 	public List<AccountInfoView> getMarketInfo(String exchange) {
 		return marketInfoDao.getMarketInfoView(exchange);
 	}
-
+	
 }

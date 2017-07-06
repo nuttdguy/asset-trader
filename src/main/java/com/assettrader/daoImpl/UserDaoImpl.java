@@ -141,46 +141,12 @@ public class UserDaoImpl implements UserDao {
 	//=== UPDATE
 	//============================================
 	
-	@Override
-	public void updateUsername(String newUsername) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updatePassword(String newPassword) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateUserAddress(Address newAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateIsActive() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	
 	//============================================
 	//=== DELETES
 	//============================================
 	
-	@Override
-	public void deleteUser(UserProfile userProfile) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteFavoriteCoin(int favoriteId) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	
 	//============================================
@@ -227,29 +193,6 @@ public class UserDaoImpl implements UserDao {
 		return loginDetail;
 	}
 
-	@Override
-	public UserProfile getUser(int profileId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UserProfile getUser(String searchParam) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Address getUserAddress(int profileId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Coin> getUserFavoriteCoins(int profileId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	
 	//============================================

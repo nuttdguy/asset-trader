@@ -2,11 +2,8 @@ package com.assettrader.service.DTO;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Time;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +28,7 @@ import com.assettrader.model.publicapi.DTO.OrderBookDTO;
 import com.assettrader.model.publicapi.DTO.ResultDTO;
 import com.assettrader.model.publicapi.DTO.SellDTO;
 import com.assettrader.model.publicapi.DTO.TickerDTO;
-import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.model.utils.OrderType;
-import com.assettrader.utils.DAOUtils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -329,7 +324,7 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		coin.setMinTradeSize(coinDTO.getMinTradeSize());
 		coin.setCreated(coinDTO.getCreated());
 		coin.setNotice(coinDTO.getNotice());
-		coin.setExchange(exchange); // EXCHANGE NAME VALIDATION OCCURS IN
+		coin.setExchangeName(exchange); // EXCHANGE NAME VALIDATION OCCURS IN
 									// CONTROLLER & FRONT-END ENUM
 		return coin;
 	}

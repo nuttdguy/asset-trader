@@ -22,10 +22,6 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "USER_PROFILE_ID")
-	private UserProfile userProfile;
-
 	@Column(name = "STREET_ADDRESS")
 	private String streetAddress;
 
@@ -39,6 +35,10 @@ public class Address {
 	@Column(name = "ZIP")
 	private String zip;
 
+	@ManyToOne
+	@JoinColumn(name = "USER_PROFILE_ID")
+	private UserProfile userProfile;
+	
 	public Long getId() {
 		return id;
 	}

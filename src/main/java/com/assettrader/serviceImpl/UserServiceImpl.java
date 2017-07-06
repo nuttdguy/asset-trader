@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
+import com.assettrader.model.Credential;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.service.UserService;
 
@@ -30,11 +33,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void addCoinAsFavorite(Coin coin) {
-		// TODO Auto-generated method stub
-		
+	public boolean saveCoinAsFavorite(RWFavorite userFav) {
+		return userDao.saveCoinAsFavorite(userFav);
 	}
 	
+	@Override
+	public boolean saveApiKey(RWApiCredential credential) {
+		return userDao.saveApiKey(credential);
+	}
 	
 	//============================================
 	//=== UPDATE
@@ -128,5 +134,7 @@ public class UserServiceImpl implements UserService {
 	public boolean checkIfUserExists(String username) {
 		return userDao.checkIfUserExists(username);
 	}
+
+
 
 }

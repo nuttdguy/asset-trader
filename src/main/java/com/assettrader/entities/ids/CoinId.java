@@ -9,7 +9,7 @@ public class CoinId implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String marketName;
-	private ExchangeName exchange;
+	private ExchangeName exchangeName;
 
 	public CoinId() {
 
@@ -17,7 +17,7 @@ public class CoinId implements Serializable {
 
 	public CoinId(String marketName, ExchangeName exchange) {
 		this.marketName = marketName;
-		this.exchange = exchange;
+		this.exchangeName = exchange;
 	}
 
 	public String getMarketName() {
@@ -28,12 +28,12 @@ public class CoinId implements Serializable {
 		this.marketName = marketName;
 	}
 
-	public ExchangeName getExchange() {
-		return exchange;
+	public ExchangeName getExchangeName() {
+		return exchangeName;
 	}
 
-	public void setExchange(ExchangeName exchange) {
-		this.exchange = exchange;
+	public void setExchangeName(ExchangeName exchange) {
+		this.exchangeName = exchange;
 	}
 
 }

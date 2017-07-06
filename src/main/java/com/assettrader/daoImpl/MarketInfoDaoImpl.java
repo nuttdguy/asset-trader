@@ -29,9 +29,6 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 	public List<MarketInfoView> getMarketInfoView(String exchange) {
 		List<MarketInfoView> marketInfoList = null;
 		
-		// TODO -- CHANGE BACK TO VARIABLE; TEST HARD-CODE VALUE
-		String sqlExchangeName = "BITTREX";
-		
 		try {
 			connection = DAOUtils.getConnection();
 			String sql = "SELECT A.COIN_ID, A.LOGO_URL, A.MARKET_NAME, A.MARKET_CURRENCY_LONG, A.MARKET_CURRENCY, "
@@ -40,10 +37,10 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 					+ "FROM COIN A "
 					+ "JOIN MARKET_SUMMARY B 	ON A.MARKET_NAME = B.MARKET_NAME "
 					+ "JOIN TICKER C 			ON A.MARKET_NAME = C.MARKET_NAME "
-					+ "WHERE A.EXCHANGE = ?; ";
+					+ "WHERE A.EXCHANGE_NAME = ?; ";
 			
 			statement = connection.prepareStatement(sql);	
-			statement.setString(1, sqlExchangeName);
+			statement.setString(1, exchange);
 			
 			rs = statement.executeQuery();
 			

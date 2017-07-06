@@ -43,7 +43,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 		try {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO TICKER"
-					+ "(ASK, BID, LAST, TIME_STAMP, MARKET_NAME, EXCHANGE)"
+					+ "(ASK, BID, LAST, TIME_STAMP, MARKET_NAME, EXCHANGE_NAME)"
 					+ "VALUES(?, ?, ?, NOW(), ?, ?) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "ASK = ?";
@@ -81,7 +81,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BASE_VOLUME, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
-					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE)"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 					+ " ON DUPLICATE KEY UPDATE "
 					+ " ASK = ? ";
@@ -126,7 +126,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_HISTORY "
 					+ "(FILL_TYPE, ORDER_ID, ORDER_TYPE, PRICE,"
-					+ " QUANTITY, TIME_STAMP, TOTAL, EXCHANGE, MARKET_NAME)"
+					+ " QUANTITY, TIME_STAMP, TOTAL, EXCHANGE_NAME, MARKET_NAME)"
 					+ " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
 					+ " ON DUPLICATE KEY UPDATE "
 					+ " FILL_TYPE = ? ";
@@ -172,7 +172,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 		try {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO ORDER_BOOK "
-					+ "(ORDER_BOOK_DATETIME, ORDER_TYPE, QUANTITY, RATE, EXCHANGE, MARKET_NAME)"
+					+ "(ORDER_BOOK_DATETIME, ORDER_TYPE, QUANTITY, RATE, EXCHANGE_NAME, MARKET_NAME)"
 					+ " VALUES(NOW(), ?, ?, ?, ?, ?) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "ORDER_TYPE = ?";
@@ -214,7 +214,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 		try {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO COIN"
-					+ "(EXCHANGE, MARKET_NAME, CREATED, MIN_TRADE_SIZE, "
+					+ "(EXCHANGE_NAME, MARKET_NAME, CREATED, MIN_TRADE_SIZE, "
 					+ "NOTICE, BASE_CURRENCY, BASE_CURRENCY_LONG, "
 					+ "IS_ACTIVE, LOGO_URL, "
 					+ "MARKET_CURRENCY, MARKET_CURRENCY_LONG) "
@@ -265,7 +265,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			String sql = "INSERT INTO CURRENCY"
 					+ "(BASE_ADDRESS, COIN_TYPE, "
 					+ "CURRENCY_LONG, CURRENCY_SHORT_NAME, IS_ACTIVE, MIN_CONFIRMATION, "
-					+ "TX_FEE, MARKET_NAME, EXCHANGE)"
+					+ "TX_FEE, MARKET_NAME, EXCHANGE_NAME)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "BASE_ADDRESS = ?";
@@ -308,7 +308,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
-					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE)"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "ASK = ? ";
@@ -361,7 +361,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
-					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE)"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 					+ "ON DUPLICATE KEY UPDATE"
 					+ " ASK = ? ";

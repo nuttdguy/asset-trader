@@ -39,7 +39,7 @@ public class Ticker {
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "MARKET_NAME", referencedColumnName="MARKET_NAME", insertable=true, updatable=false),
-		@JoinColumn(name = "EXCHANGE", referencedColumnName="EXCHANGE", insertable=true, updatable=false) })
+		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=true, updatable=false) })
 	private Coin coin;
 
 	public long getId() {

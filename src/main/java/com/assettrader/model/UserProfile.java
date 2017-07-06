@@ -1,27 +1,20 @@
 package com.assettrader.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.assettrader.model.coinmarket.Coin;
 
 @Entity
 @Table(name = "USER_PROFILE")
@@ -31,6 +24,9 @@ public class UserProfile extends Person {
 	@Column(name = "USER_PROFILE_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name = "USERNAME", unique=true)
+	private String username;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED_DATE")
@@ -44,19 +40,21 @@ public class UserProfile extends Person {
 	private boolean isActive;
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
-	private Credential credentials;
+	private Credential credential;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
-	private List<Account> account = new ArrayList<>();
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
+	private ApiCredential apiCredential;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
-	private List<Favorite> coinFavorites = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<UserAccount> userAccount;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
-	private List<Address> address = new ArrayList<>();
-	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<UserCoinFavorite> userCoinFavorite;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<Address> address;
+
 	public UserProfile() {
-		super();
 	}
 
 	public Long getId() {
@@ -65,6 +63,14 @@ public class UserProfile extends Person {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public Date getCreatedDate() {
@@ -91,12 +97,20 @@ public class UserProfile extends Person {
 		this.isActive = isActive;
 	}
 
-	public Credential getCredentials() {
-		return credentials;
+	public Credential getCredential() {
+		return credential;
 	}
 
-	public void setCredentials(Credential credentials) {
-		this.credentials = credentials;
+	public void setCredential(Credential credential) {
+		this.credential = credential;
+	}
+
+	public ApiCredential getApiCredential() {
+		return apiCredential;
+	}
+
+	public void setApiCredential(ApiCredential apiCredential) {
+		this.apiCredential = apiCredential;
 	}
 
 	public List<Address> getAddress() {
@@ -107,21 +121,20 @@ public class UserProfile extends Person {
 		this.address = address;
 	}
 
-	public List<Favorite> getCoinFavorites() {
-		return coinFavorites;
+	public List<UserAccount> getUserAccount() {
+		return userAccount;
 	}
 
-	public void setCoinFavorites(List<Favorite> coinFavorites) {
-		this.coinFavorites = coinFavorites;
+	public void setUserAccount(List<UserAccount> userAccount) {
+		this.userAccount = userAccount;
 	}
 
-	public List<Account> getAccount() {
-		return account;
+	public List<UserCoinFavorite> getUserCoinFavorite() {
+		return userCoinFavorite;
 	}
 
-	public void setAccount(List<Account> account) {
-		this.account = account;
+	public void setUserCoinFavorite(List<UserCoinFavorite> userCoinFavorite) {
+		this.userCoinFavorite = userCoinFavorite;
 	}
 
 }
-

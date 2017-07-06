@@ -19,7 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.assettrader.entities.ids.CoinId;
-import com.assettrader.model.Favorite;
+import com.assettrader.model.UserCoinFavorite;
+import com.assettrader.model.UserProfile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -37,8 +38,8 @@ public class Coin {
 	private String marketName;
 
 	@Id
-	@Column(name = "EXCHANGE")
-	private String exchange;
+	@Column(name = "EXCHANGE_NAME")
+	private String exchangeName;
 
 	@Column(name = "BASE_CURRENCY")
 	private String baseCurrency;
@@ -85,12 +86,8 @@ public class Coin {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
 	private List<Ticker> tickers;
 
-	@ManyToMany(cascade=CascadeType.ALL)
-	@JoinTable( name = "USER_COIN_FAVORITE",
-				joinColumns={ @JoinColumn(name = "MARKET_NAME", insertable=true, updatable=true),
-								@JoinColumn(name = "EXCHANGE", insertable=true, updatable=true) },
-				inverseJoinColumns= @JoinColumn( name = "FAVORITE_ID"))
-	private List<Favorite> userFavorites;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "coin")
+	private List<UserCoinFavorite> userCoinFavorite;
 
 	public Long getId() {
 		return id;
@@ -148,12 +145,12 @@ public class Coin {
 		this.isActive = isActive;
 	}
 
-	public String getExchange() {
-		return exchange;
+	public String getExchangeName() {
+		return exchangeName;
 	}
 
-	public void setExchange(String exchange) {
-		this.exchange = exchange;
+	public void setExchangeName(String exchange) {
+		this.exchangeName = exchange;
 	}
 
 	public Date getCreateDate() {
@@ -236,14 +233,12 @@ public class Coin {
 		this.tickers = tickers;
 	}
 
-	public List<Favorite> getUserFavorites() {
-		return userFavorites;
+	public List<UserCoinFavorite> getUserCoinFavorite() {
+		return userCoinFavorite;
 	}
 
-	public void setUserFavorites(List<Favorite> userFavorites) {
-		this.userFavorites = userFavorites;
+	public void setUserCoinFavorite(List<UserCoinFavorite> userCoinFavorite) {
+		this.userCoinFavorite = userCoinFavorite;
 	}
-
-
 
 }

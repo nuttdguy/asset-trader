@@ -11,8 +11,8 @@ public class ValidationHelperUtils {
 	//==|| PRIVATE VALIDATION METHODS
 	public static String validateExchangeName(String exchange) {
 		for (ExchangeName ex : ExchangeName.values()) { 
-			if (ex.name().toLowerCase().equals(exchange.toLowerCase())) {
-				return ex.name().toLowerCase();
+			if (ex.name().toUpperCase().equals(exchange.toUpperCase())) {
+				return ex.name().toUpperCase();
 			}
 		}
 		return ERROR_INVALID_EXCHANGE;
@@ -20,8 +20,8 @@ public class ValidationHelperUtils {
 	
 	public static String validateOrderType(String orderType) {
 		for (OrderType type : OrderType.values()) {
-			if (type.name().toLowerCase().equals(orderType.toLowerCase())) {
-				return type.name().toLowerCase();
+			if (type.name().toUpperCase().equals(orderType.toUpperCase())) {
+				return type.name().toUpperCase();
 			}
 		}
 		return DEFAULT_ORDERTYPE;		

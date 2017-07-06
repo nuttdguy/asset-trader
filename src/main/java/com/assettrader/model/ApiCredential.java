@@ -1,8 +1,5 @@
 package com.assettrader.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,33 +11,30 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CREDENTIAL")
-public class Credential implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+@Table(name = "API_CREDENTIAL")
+public class ApiCredential {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "CREDENTIAL_ID")
+	@Column(name = "API_CREDENTIAL_ID")
 	private Long id;
 
-	@Column(name = "TOKEN")
-	private String token;
+	@Column(name = "API_KEY")
+	private String apiKey;
 
-	@Column(name = "PASSWORD")
-	private String password;
+	@Column(name = "SECRET_KEY")
+	private String secretKey;
+
+	@Column(name = "EXCHANGE_NAME")
+	private String exchangeName;
 	
-	
-	@Column(name = "ACTIVITY_DATE")
-	private Date activityDate;
+	@Column(name = "SET_PRIMARY")
+	private boolean setPrimary;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=false)
 	private UserProfile userProfile;
-
-	public Credential() {
-	}
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -49,20 +43,36 @@ public class Credential implements Serializable {
 		this.id = id;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getApiKey() {
+		return apiKey;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
 	}
 
-	public String getToken() {
-		return token;
+	public String getSecretKey() {
+		return secretKey;
 	}
 
-	public void setToken(String token) {
-		this.token = token;
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+	public String getExchangeName() {
+		return exchangeName;
+	}
+
+	public void setExchangeName(String exchangeName) {
+		this.exchangeName = exchangeName;
+	}
+
+	public boolean isSetPrimary() {
+		return setPrimary;
+	}
+
+	public void setSetPrimary(boolean setPrimary) {
+		this.setPrimary = setPrimary;
 	}
 
 	public UserProfile getUserProfile() {
@@ -73,12 +83,6 @@ public class Credential implements Serializable {
 		this.userProfile = userProfile;
 	}
 
-	public Date getActivityDate() {
-		return activityDate;
-	}
-
-	public void setActivityDate(Date activityDate) {
-		this.activityDate = activityDate;
-	}
+	
 	
 }

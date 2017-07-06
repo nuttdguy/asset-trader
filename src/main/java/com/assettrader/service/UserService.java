@@ -5,14 +5,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.assettrader.model.Address;
+import com.assettrader.model.Credential;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 
 @Service
 public interface UserService {
 
-	void addCoinAsFavorite(Coin coin);
+	boolean saveCoinAsFavorite(RWFavorite userFav);
+	boolean saveApiKey(RWApiCredential credential);
 	
 	void updateUsername(String newUsername);
 	void updatePassword(String newPassword);

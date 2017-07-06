@@ -12,12 +12,10 @@ public class AccountId implements Serializable {
 	
 	private String currency;
 	
-	private UserProfile userProfile;
 	
 	public AccountId() {}
 
-	public AccountId(UserProfile userProfile, String exchangeName, String currency) {
-		this.userProfile = userProfile;
+	public AccountId(String exchangeName, String currency) {
 		this.exchangeName = exchangeName;
 		this.currency = currency;
 	}
@@ -36,14 +34,6 @@ public class AccountId implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
-	}
-
-	public UserProfile getUserProfile() {
-		return userProfile;
-	}
-
-	public void setUserProfile(UserProfile userProfile) {
-		this.userProfile = userProfile;
 	}
 
 }

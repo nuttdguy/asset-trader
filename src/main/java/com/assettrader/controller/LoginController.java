@@ -100,12 +100,12 @@ public class LoginController {
 		registerUser.setFirstName(user.getFirstName());
 		registerUser.setLastName(user.getLastName());
 		registerUser.setActive(isExist);
+		registerUser.setUsername(user.getUsername());
 		
 		Credential credential = new Credential();
 		credential.setPassword(user.getPassword());
-		credential.setUsername(user.getUsername());
 		
-		registerUser.setCredentials(credential);
+		registerUser.setCredential(credential);
 		return registerUser;
 	}
 	

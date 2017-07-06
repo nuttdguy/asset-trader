@@ -1,5 +1,6 @@
 package com.assettrader.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,8 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -28,7 +27,7 @@ import com.assettrader.entities.ids.AccountId;
 public class Account {
 
 	@GeneratedValue(strategy = GenerationType.TABLE)
-	@Column(name = "ACCOUNT_ID", columnDefinition="serial")
+	@Column(name = "ACCOUNT_ID", columnDefinition="SERIAL")
 	private Long id;
 
 	@Id
@@ -38,30 +37,26 @@ public class Account {
 	@Id
 	@Column(name = "CURRENCY")
 	private String currency;
+	
+	@Column(name = "ADD_DATE")
+	private Date addDate;
 
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "USER_PROFILE_ID")
-	private UserProfile userProfile;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,  mappedBy = "account")
+	private List<UserAccount> userAccount;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<DepositHistoryEntry> depositHistoryEntry;
 
-	/*
-	 * @OneToMany(cascade = CascadeType.ALL, mappedBy="account") private
-	 * List<DepositAddress> depositAddresses; // CAN HAVE MANY DEPOSIT ADDRESSES
-	 */
-
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<Balance> balances;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
+	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
 	private List<OrderHistoryEntry> orderHistory;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
+	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
 	private List<WithdrawalHistoryEntry> withdrawHistoryEntry;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
+	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
 	private List<WithdrawalRequested> withdrawalRequested;
 
 	public Long getId() {
@@ -88,12 +83,20 @@ public class Account {
 		this.currency = currency;
 	}
 
-	public UserProfile getUserProfile() {
-		return userProfile;
+	public Date getAddDate() {
+		return addDate;
 	}
 
-	public void setUserProfile(UserProfile userProfile) {
-		this.userProfile = userProfile;
+	public void setAddDate(Date addDate) {
+		this.addDate = addDate;
+	}
+
+	public List<UserAccount> getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(List<UserAccount> userAccount) {
+		this.userAccount = userAccount;
 	}
 
 	public List<DepositHistoryEntry> getDepositHistoryEntry() {

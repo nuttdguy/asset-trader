@@ -13,6 +13,8 @@ import com.assettrader.model.Address;
 import com.assettrader.model.Credential;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.utils.DAOUtils;
 
@@ -33,24 +35,24 @@ public class UserDaoImpl implements UserDao {
 		try {
 			connection = DAOUtils.getConnection();
 			String userSql = "INSERT INTO USER_PROFILE( "
-					+ "FIRST_NAME, LAST_NAME, CREATED_DATE) "
-					+ "VALUES( ?, ?, NOW() )";
+					+ "FIRST_NAME, LAST_NAME, CREATED_DATE, USERNAME) "
+					+ "VALUES( ?, ?, NOW(), ? )";
 			
 			statement = connection.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS);
 			statement.setString(1, newUser.getFirstName());
 			statement.setString(2, newUser.getLastName());
+			statement.setString(3, newUser.getUsername());
 			
 			Long id = (long) statement.executeUpdate();
 			statement.clearParameters();
 			
 			String credentialSql = "INSERT INTO CREDENTIAL( "
-					+ "USERNAME, PASSWORD, USER_PROFILE_ID ) "
-					+ "VALUES( ?, ?, ? )";
+					+ " PASSWORD, USER_PROFILE_ID, ACTIVITY_DATE ) "
+					+ "VALUES( ?, ?, NOW() )";
 			
 			statement = connection.prepareStatement(credentialSql);
-			statement.setString(1, newUser.getCredentials().getUsername());
-			statement.setString(2, newUser.getCredentials().getPassword());
-			statement.setLong(3, id);
+			statement.setString(1, newUser.getCredential().getPassword());
+			statement.setLong(2, id);
 			
 			statement.execute();
 			
@@ -66,11 +68,75 @@ public class UserDaoImpl implements UserDao {
 		return newUser;
 	}
 
+	
 	@Override
-	public void addCoinAsFavorite(Coin coin) {
-		// TODO Auto-generated method stub
+	public boolean saveCoinAsFavorite(RWFavorite userFav) {
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlOne = "SELECT MARKET_NAME, EXCHANGE_NAME FROM COIN WHERE COIN_ID = ?";
+			String sqlThree = "INSERT INTO USER_COIN_FAVORITE( "
+					+ "EXCHANGE_NAME, MARKET_NAME, USER_PROFILE_ID) "
+					+ "VALUES (?, ?, ? )";
+			
+			// (1a) GET MARKET-NAME FROM COIN USING COIN_ID
+			// (1b) GET EXCHANGE_NAME FROM COIN USING COIN_ID
+			String marketName = "";
+			String exchangeName = "";
+			statement = connection.prepareStatement(sqlOne);
+			statement.setLong(1, userFav.getCoinId());
+			ResultSet rs = statement.executeQuery();
+			statement.clearParameters();
+						
+			// (2) INSERT INTO USER_COIN_FAVORITE
+			statement = connection.prepareStatement(sqlThree);
+			
+			if(rs.next()) {
+				marketName = rs.getString("MARKET_NAME");
+				exchangeName = rs.getString("EXCHANGE_NAME");
+			}
+						
+			statement.setString(1, exchangeName);
+			statement.setString(2, marketName);
+			statement.setLong(3, userFav.getId());
+			
+			return statement.execute();
+			
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		return false;
 		
 	}
+	
+	
+	@Override
+	public boolean saveApiKey(RWApiCredential credential) {
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlInsert1 = "UPDATE CREDENTIAL SET API_KEY = ? WHERE USER_PROFILE_ID = ?;";
+			String sqlInsert2 = " UPDATE CREDENTIAL SET SECRET_KEY = ? WHERE USER_PROFILE_ID = ? ";
+			
+			statement = connection.prepareStatement(sqlInsert1);
+			statement.setString(1, credential.getApiKey());
+			statement.setLong(2, credential.getId()); 
+			statement.execute();		
+			statement.clearParameters();
+			
+			statement = connection.prepareStatement(sqlInsert2);
+			statement.setString(1, credential.getSecretKey());
+			statement.setLong(2, credential.getId());
+			return statement.execute();
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return false;
+	}
+	
 
 	//============================================
 	//=== UPDATE
@@ -241,5 +307,5 @@ public class UserDaoImpl implements UserDao {
 			ex.printStackTrace();
 		}
 	}
-	
+
 }

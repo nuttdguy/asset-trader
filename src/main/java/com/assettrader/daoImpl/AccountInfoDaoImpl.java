@@ -12,22 +12,22 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
-import com.assettrader.dao.MarketInfoDao;
-import com.assettrader.model.view.MarketInfoView;
+import com.assettrader.dao.AccountInfoDao;
+import com.assettrader.model.view.AccountInfoView;
 import com.assettrader.utils.DAOUtils;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 @Repository
 @Transactional
-public class MarketInfoDaoImpl implements MarketInfoDao {
+public class AccountInfoDaoImpl implements AccountInfoDao {
 
 	Connection connection = null;
 	PreparedStatement statement = null;
 	ResultSet rs = null;
 	
 	@Override
-	public List<MarketInfoView> getMarketInfoView(String exchange) {
-		List<MarketInfoView> marketInfoList = null;
+	public List<AccountInfoView> getMarketInfoView(String exchange) {
+		List<AccountInfoView> marketInfoList = null;
 		
 		try {
 			connection = DAOUtils.getConnection();
@@ -46,7 +46,7 @@ public class MarketInfoDaoImpl implements MarketInfoDao {
 			
 			marketInfoList = new ArrayList<>();
 			while(rs.next()) {
-				MarketInfoView view = new MarketInfoView();
+				AccountInfoView view = new AccountInfoView();
 				view.setId(rs.getLong("COIN_ID"));
 				view.setLogo(rs.getString("LOGO_URL"));
 				view.setMarketName(rs.getString("MARKET_NAME"));

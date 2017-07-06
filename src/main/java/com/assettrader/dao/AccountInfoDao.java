@@ -6,13 +6,13 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
-import com.assettrader.model.view.MarketInfoView;
+import com.assettrader.model.view.AccountInfoView;
 
 @Repository
 @Transactional
-public interface MarketInfoDao {
+public interface AccountInfoDao {
 
 	
-	public List<MarketInfoView> getMarketInfoView(String exchange);
+	public List<AccountInfoView> getMarketInfoView(String exchange);
 	
 }

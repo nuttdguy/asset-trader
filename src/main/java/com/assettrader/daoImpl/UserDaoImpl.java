@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
 	//== CREATE
 	//============================================
 	
-	@Override
+	@Override 
 	public UserProfile registerUser(UserProfile newUser) {
 		
 		try {
@@ -41,7 +41,7 @@ public class UserDaoImpl implements UserDao {
 			statement = connection.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS);
 			statement.setString(1, newUser.getFirstName());
 			statement.setString(2, newUser.getLastName());
-			statement.setString(3, newUser.getUsername());
+			statement.setString(3, newUser.getUsername().toUpperCase());
 			
 			Long id = (long) statement.executeUpdate();
 			statement.clearParameters();
@@ -117,18 +117,17 @@ public class UserDaoImpl implements UserDao {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sqlInsert1 = "UPDATE CREDENTIAL SET API_KEY = ? WHERE USER_PROFILE_ID = ?;";
-			String sqlInsert2 = " UPDATE CREDENTIAL SET SECRET_KEY = ? WHERE USER_PROFILE_ID = ? ";
+			String sqlInsert1 = "INSERT INTO API_CREDENTIAL( "
+					+ "API_KEY, EXCHANGE_NAME, SECRET_KEY, SET_PRIMARY, USER_PROFILE_ID) "
+					+ "VALUES( ?, ?, ?, ?, ? ) ";
 			
 			statement = connection.prepareStatement(sqlInsert1);
 			statement.setString(1, credential.getApiKey());
-			statement.setLong(2, credential.getId()); 
-			statement.execute();		
-			statement.clearParameters();
+			statement.setString(2, credential.getExchangeName() );
+			statement.setString(3, credential.getSecretKey() );
+			statement.setBoolean(4, true);
+			statement.setLong(5, credential.getId());
 			
-			statement = connection.prepareStatement(sqlInsert2);
-			statement.setString(1, credential.getSecretKey());
-			statement.setLong(2, credential.getId());
 			return statement.execute();
 			
 		} catch (SQLException ex) {
@@ -194,11 +193,11 @@ public class UserDaoImpl implements UserDao {
 		RWLoginDetail loginDetail = new RWLoginDetail();
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "SELECT A.*, B.USERNAME, B.TOKEN "
+			String sql = "SELECT A.*, B.TOKEN "
 					+ "FROM USER_PROFILE A "
 					+ "JOIN CREDENTIAL B "
 					+ "ON A.USER_PROFILE_ID = B.USER_PROFILE_ID "
-					+ "WHERE B.USERNAME = ? "
+					+ "WHERE A.USERNAME = ? "
 					+ "AND B.PASSWORD = ?;";
 			
 			statement = connection.prepareStatement(sql);

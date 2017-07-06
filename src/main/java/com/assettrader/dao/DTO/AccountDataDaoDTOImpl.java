@@ -36,7 +36,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sqlInsert1 = "INSERT INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE) "
+			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE) "
 					+ "VALUES( ?, ?, ?)";
 			
 			String sqlInsert2 = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "

@@ -44,11 +44,11 @@ public class SettingsController {
 	@ResponseBody
 	public ResResponse addApiExchange(@RequestBody RWApiCredential credential) {
 		
-		// TODO -- ADD API KEY
+		// TODO -- IS RETURNING SUCCESS WHEN IT IS NOT SUCCESSFUL
 		boolean isSuccess = userService.saveApiKey(credential);
 		ResResponse response = new ResResponse();
 		
-		if (isSuccess) {
+		if (!isSuccess) {
 			response.setMessage("Coin has been successfully saved");
 			response.setSuccess(true);
 		} else {

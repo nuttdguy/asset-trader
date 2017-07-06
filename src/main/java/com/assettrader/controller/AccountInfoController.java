@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.assettrader.model.rest.ResWrapper;
-import com.assettrader.model.view.MarketInfoView;
-import com.assettrader.service.MarketInfoService;
+import com.assettrader.model.view.AccountInfoView;
+import com.assettrader.service.AccountInfoService;
 
 @CrossOrigin
 @RestController
-public class MarketInfoController {
+public class AccountInfoController {
 	
 	@Autowired
-	private MarketInfoService marketInfoService;
+	private AccountInfoService marketInfoService;
 	
 	@RequestMapping(value = "/market/{exchange}")
-	public ResWrapper<List<MarketInfoView>> getMarketInfoView(@PathVariable String exchange) {
+	public ResWrapper<List<AccountInfoView>> getMarketInfoView(@PathVariable String exchange) {
 		
 		String validatedExchange = validateExchangeName(exchange);
-		List<MarketInfoView> viewList = marketInfoService.getMarketInfo(validatedExchange);
-		ResWrapper<List<MarketInfoView>> resResponse = new ResWrapper<>();
+		List<AccountInfoView> viewList = marketInfoService.getMarketInfo(validatedExchange);
+		ResWrapper<List<AccountInfoView>> resResponse = new ResWrapper<>();
 		resResponse.setResult(viewList);
 		
 		return resResponse;

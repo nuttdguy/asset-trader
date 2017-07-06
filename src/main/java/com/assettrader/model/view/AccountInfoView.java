@@ -1,6 +1,6 @@
 package com.assettrader.model.view;
 
-public class MarketInfoView {
+public class AccountInfoView {
 
 	
 	private Long id; // IN COIN TABLE

@@ -2,11 +2,16 @@ package com.assettrader.controller;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.assettrader.api.bittrex.BittrexClient;
@@ -18,114 +23,86 @@ import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.rest.RWLoginDetail;
+import com.assettrader.service.AccountDataService;
 import com.assettrader.service.CoinService;
 import com.assettrader.service.DTO.AccountDataServiceDTO;
 import com.assettrader.utils.BittrexKeyUtil;
 
+import feign.Headers;
+
 @CrossOrigin
 @RestController
-public class AccountDataApiController {
+@RequestMapping(value ="/account")
+public class AccountDataController {
 	
 	@Autowired
 	private AccountDataServiceDTO accountDataServiceDTO;
 	
 	@Autowired
+	private AccountDataService accountDataService;
+	
+	@Autowired
 	private CoinService coinService;
 	
-	// IS WORKING -- IS SHOWING LOGOS
-	@RequestMapping(value = "/account/balances", method = RequestMethod.GET)
-	public ApiResult<List<Balance>> getBalances() {
+	
+	@RequestMapping(value ={ "/balances" }, method = RequestMethod.POST)
+	public ApiResult<List<Balance>> getBalances(@RequestBody RWLoginDetail userDetail) {
 
+		BittrexKeyUtil keys = accountDataService.getApiKey(userDetail);
+		
 		ApiResult<List<Balance>> balanceApiDTO = 
-				initBittrexClient().getAccountApi().getBalances();
+				initBittrexClient(keys).getAccountApi().getBalances();
 		
 		return accountDataServiceDTO.saveAllAccountBalancesDTO(addLogoUrlToBalanceDTO(balanceApiDTO));
 	}
 	
-	// IS WORKING
-	@RequestMapping(value = "/account/balances/{currency}", method = RequestMethod.GET)
-	public ApiResult<Balance> getBalanceByCurrency(@PathVariable String currency) {
-		
-		ApiResult<Balance> balanceApiDTO = 
-				initBittrexClient().getAccountApi().getBalance(currency);
-		
-		// TODO -- ADD LOGIC FOR LOGO 
-		
-		return accountDataServiceDTO.saveAccountBalanceDTO(balanceApiDTO);
-	}
 	
-	// IS WORKING 
-	@RequestMapping(value = "/account/deposit/address/{currency}", method = RequestMethod.GET)
-	public ApiResult<DepositAddress> getDepositAddressByCurrency(@PathVariable String currency) {
+	@RequestMapping(value = "/orderhistory", method = RequestMethod.POST )
+	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@RequestBody RWLoginDetail userDetail) {
 		
-		ApiResult<DepositAddress> depositAddressDTO = 
-				initBittrexClient().getAccountApi().getDepositAddress(currency);
-		
-		// TODO -- ENABLE END-POINT FEATURE 
-		
-		return accountDataServiceDTO.saveDepositAddressDTO(depositAddressDTO);
-	}
-	
-	// IS WORKING -- LOGO IS SHOWING
-	@RequestMapping(value = "/account/orderhistory/{market}", method = RequestMethod.GET )
-	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@PathVariable String market) {
+		BittrexKeyUtil keys = accountDataService.getApiKey(userDetail);
 		
 		ApiResult<List<OrderHistoryEntry>> orderHistoryDTO =
-				initBittrexClient().getAccountApi().getOrderHistory(market);
-		
-		return accountDataServiceDTO.saveAllOrderHistoryEntry(addLogoUrlToOrderHistoryDTO(orderHistoryDTO), market);
-	}
-
-	// IS WORKING -- LOGO IS WORKING
-	@RequestMapping(value = "/account/orderhistory", method = RequestMethod.GET )
-	public ApiResult<List<OrderHistoryEntry>> getOrderHistory() {
-		
-		ApiResult<List<OrderHistoryEntry>> orderHistoryDTO =
-				initBittrexClient().getAccountApi().getOrderHistory();
+				initBittrexClient(keys).getAccountApi().getOrderHistory();
 		
 		return accountDataServiceDTO.saveAllOrderHistoryEntry(addLogoUrlToOrderHistoryDTO(orderHistoryDTO));
 	}
 	
 	
-	// IS WORKING // TODO -- TEST LOGO
-	@RequestMapping(value = "/account/withdrawalhistory", method = RequestMethod.GET )
-	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory() {
+	@RequestMapping(value = "/withdrawalhistory", method = RequestMethod.POST )
+	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory(@RequestBody RWLoginDetail userDetail) {
+		
+		BittrexKeyUtil keys = accountDataService.getApiKey(userDetail);
 		
 		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO = 
-				initBittrexClient().getAccountApi().getWithdrawalHistory();
+				initBittrexClient(keys).getAccountApi().getWithdrawalHistory();
 		
 		return accountDataServiceDTO.saveAllWithdrawalHistory(addLogoUrlToWithdrawalDTO(withdrawalHistoryDTO));
 	}
 	
-	// IS WORKING // TODO -- TEST LOGO
-	@RequestMapping(value = "/account/withdrawalhistory/{currency}", method = RequestMethod.GET )
-	public ApiResult<List<WithdrawalHistoryEntry>> getWithdrawalHistory(@PathVariable String currency) {
-		
-		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistoryDTO =
-				initBittrexClient().getAccountApi().getWithdrawalHistory(currency);
-		
-		return accountDataServiceDTO.saveAllWithdrawalHistory(addLogoUrlToWithdrawalDTO(withdrawalHistoryDTO));
-	}
-
 	
-	// IS WORKING // TODO -- TEST LOGO
-	@RequestMapping(value = "/account/deposithistory/{marketname}", method = RequestMethod.GET )
-	public ApiResult<List<DepositHistoryEntry>> getDepositHistory(@PathVariable String marketname) {
+	@RequestMapping(value = "/deposithistory", method = RequestMethod.POST )
+	public ApiResult<List<DepositHistoryEntry>> getDepositHistory(@RequestBody RWLoginDetail userDetail) {
+		
+		BittrexKeyUtil keys = accountDataService.getApiKey(userDetail);
 		
 		ApiResult<List<DepositHistoryEntry>> depositHistoryDTO =
-				initBittrexClient().getAccountApi().getDepositHistory(marketname);
-
+				initBittrexClient(keys).getAccountApi().getDepositHistory();
+		
 		return accountDataServiceDTO.saveAllDepositHistory(addLogoUrlsToDTOResult(depositHistoryDTO));
 	}
 	
-	// IS WORKING // TODO -- TEST LOGO
-	@RequestMapping(value = "/account/deposithistory", method = RequestMethod.GET )
-	public ApiResult<List<DepositHistoryEntry>> getDepositHistory() {
+	// IS WORKING 
+	@RequestMapping(value = "/depositaddress/{currency}", method = RequestMethod.GET)
+	public ApiResult<DepositAddress> getDepositAddressByCurrency(@PathVariable String currency) {
 		
-		ApiResult<List<DepositHistoryEntry>> depositHistoryDTO =
-				initBittrexClient().getAccountApi().getDepositHistory();
+//		ApiResult<DepositAddress> depositAddressDTO = 
+//				initBittrexClient().getAccountApi().getDepositAddress(currency);
 		
-		return accountDataServiceDTO.saveAllDepositHistory(addLogoUrlsToDTOResult(depositHistoryDTO));
+		// TODO -- ENABLE END-POINT FEATURE 
+		
+		return null; // accountDataServiceDTO.saveDepositAddressDTO(depositAddressDTO);
 	}
 
 	
@@ -210,10 +187,10 @@ public class AccountDataApiController {
 	//   PRIVATE METHOD FOR INITIALIZING KEY AND BITTREX CLIENT FOR ACCOUNT
 	//========================================================================
 	
-	private BittrexClient initBittrexClient() {
+	private BittrexClient initBittrexClient(BittrexKeyUtil keys) {
 		
 		ApiCredentials credentials = new ApiCredentials(
-				BittrexKeyUtil.getKEY(), BittrexKeyUtil.getSECRET());
+				keys.getKEY(), keys.getSECRET());
 		
 		return new BittrexClient(credentials);
 	}

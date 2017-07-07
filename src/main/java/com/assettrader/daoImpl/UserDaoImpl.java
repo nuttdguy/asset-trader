@@ -76,8 +76,8 @@ public class UserDaoImpl implements UserDao {
 			connection = DAOUtils.getConnection();
 			String sqlOne = "SELECT MARKET_NAME, EXCHANGE_NAME FROM COIN WHERE COIN_ID = ?";
 			String sqlThree = "INSERT INTO USER_COIN_FAVORITE( "
-					+ "EXCHANGE_NAME, MARKET_NAME, USER_PROFILE_ID) "
-					+ "VALUES (?, ?, ? )";
+					+ "EXCHANGE_NAME, MARKET_NAME, USER_PROFILE_ID, ADD_DATE, ACTIVE ) "
+					+ "VALUES (?, ?, ?, NOW(), ? )";
 			
 			// (1a) GET MARKET-NAME FROM COIN USING COIN_ID
 			// (1b) GET EXCHANGE_NAME FROM COIN USING COIN_ID
@@ -99,6 +99,7 @@ public class UserDaoImpl implements UserDao {
 			statement.setString(1, exchangeName);
 			statement.setString(2, marketName);
 			statement.setLong(3, userFav.getId());
+			statement.setBoolean(4, true);
 			
 			return statement.execute();
 			
@@ -141,7 +142,43 @@ public class UserDaoImpl implements UserDao {
 	//=== UPDATE
 	//============================================
 	
+	public boolean updateProfile(RWLoginDetail userDetail) {
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlUpdate1 = "UPDATE USER_PROFILE SET FIRST_NAME = ? WHERE USER_PROFILE_ID = ?; ";
+			String sqlUpdate2 = "UPDATE USER_PROFILE SET LAST_NAME = ? WHERE USER_PROFILE_ID = ?; ";
+			String sqlUpdate3 = "UPDATE USER_PROFILE SET USERNAME = ? WHERE USER_PROFILE_ID = ?; ";
+			
+			statement = connection.prepareStatement(sqlUpdate1);
+			statement.setString(1, userDetail.getFirstName() );
+			statement.setLong(2, userDetail.getId());
+			int result1 = statement.executeUpdate();
+			statement.clearParameters();
+			
+			statement = connection.prepareStatement(sqlUpdate2);
+			statement.setString(1, userDetail.getLastName());
+			statement.setLong(2, userDetail.getId());	
+			int result2 = statement.executeUpdate();
+			statement.clearParameters();
+			
+			statement = connection.prepareStatement(sqlUpdate3);
+			statement.setString(1, userDetail.getUserName());
+			statement.setLong(2, userDetail.getId());	
+			
+			int result3 = statement.executeUpdate();
 
+			if ( (result1 & result2 & result3) == 1) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return false;
+	}
 	
 	//============================================
 	//=== DELETES

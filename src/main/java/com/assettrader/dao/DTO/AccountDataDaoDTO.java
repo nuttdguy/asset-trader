@@ -14,7 +14,7 @@ public interface AccountDataDaoDTO {
 	ApiResult<Balance> saveAccountBalanceDTO(ApiResult<Balance> balanceApiDTO);
 	ApiResult<DepositAddress> saveDepositAddressDTO(ApiResult<DepositAddress> depositAddressDTO);
 	
-	ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO);
+	ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO, Long userId);
 
 	ApiResult<List<OrderHistoryEntry>> saveAllOrderHistoryEntry(ApiResult<List<OrderHistoryEntry>> orderHistoryDTO);
 	ApiResult<List<OrderHistoryEntry>> saveAllOrderHistoryEntry(ApiResult<List<OrderHistoryEntry>> orderHistoryDTO, String currency);

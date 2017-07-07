@@ -1,5 +1,6 @@
 package com.assettrader.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.websocket.server.PathParam;
@@ -23,13 +24,19 @@ import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
 import com.assettrader.model.coinmarket.Coin;
+import com.assettrader.model.coinmarket.Ticker;
+import com.assettrader.model.publicapi.DTO.CoinDTO;
 import com.assettrader.model.rest.RWLoginDetail;
+import com.assettrader.model.rest.ResWrapper;
+import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.view.AccountBalanceView;
 import com.assettrader.service.AccountDataService;
+import com.assettrader.service.AccountInfoService;
 import com.assettrader.service.CoinService;
 import com.assettrader.service.DTO.AccountDataServiceDTO;
+import com.assettrader.service.DTO.CoinServiceDTO;
 import com.assettrader.utils.BittrexKeyUtil;
 
-import feign.Headers;
 
 @CrossOrigin
 @RestController
@@ -45,18 +52,27 @@ public class AccountDataController {
 	@Autowired
 	private CoinService coinService;
 	
+	@Autowired
+	private CoinServiceDTO coinServiceDTO;
+	
+	//=======================================
+	// GENERAL CONTROLLER IMPLEMENTATIONS
+	//=======================================
 	
 	@RequestMapping(value ={ "/balances" }, method = RequestMethod.POST)
 	public ApiResult<List<Balance>> getBalances(@RequestBody RWLoginDetail userDetail) {
-
+		
+		// KEY IS REQUIRED FOR JOIN TABLE OR CREATING NEW ACCOUNT
+		Long userId = userDetail.getId();
+		
+		// NEED TO INCLUDE USER_PROFILE_ID
 		BittrexKeyUtil keys = accountDataService.getApiKey(userDetail);
 		
 		ApiResult<List<Balance>> balanceApiDTO = 
 				initBittrexClient(keys).getAccountApi().getBalances();
 		
-		return accountDataServiceDTO.saveAllAccountBalancesDTO(addLogoUrlToBalanceDTO(balanceApiDTO));
+		return accountDataServiceDTO.saveAllAccountBalancesDTO(addLogoUrlToBalanceDTO(balanceApiDTO), userId);
 	}
-	
 	
 	@RequestMapping(value = "/orderhistory", method = RequestMethod.POST )
 	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@RequestBody RWLoginDetail userDetail) {
@@ -106,10 +122,59 @@ public class AccountDataController {
 	}
 
 	
+	//=======================================
+	// CUSTOM-SPECIFIC CONTROLLER IMPLEMENTATIONS
+	//=======================================
+	
+	
+	@RequestMapping(value = {"/balances/{btcprice}&{id}"}, method = RequestMethod.GET)
+	public ResWrapper<AccountBalanceView> getPortfolioValue(@PathVariable Double btcprice, @PathVariable Long id) {
+		// NEED TO MAKE AN INITIAL REQUEST TO API BALANCES, TO ENSURE THERE IS ALWAYS A DISPLAYED AMOUNT
+		// TODO OR ELSE IMPLEMENT BUTTON TO DISPLAY VALUE
+		
+		// GET CURRENT BALANCE OF ALL COINS
+		List<Balance> balances = accountDataService.getAccountBalances(id);
+
+		// GET CURRENT ASK FROM TICKER; USE MARKET_NAME - WILL RETURN A SINGLE VALUE
+		List<Ticker> tickerList = new ArrayList<>();
+		Double portfolioValue = 0.00;		
+		String market = "BTC-";		
+		String exchangeName =  ExchangeName.BITTREX.name();
+		
+		for (Balance currencyName : balances) {		
+			String marketName = market + currencyName.getCurrency();
+			if (!marketName.equals("BTC-BTC") && currencyName.getCurrency() != null ) {
+				Ticker tickerPrice = coinServiceDTO.getTicker(marketName, exchangeName );
+				portfolioValue += multiplyValues(currencyName.getBalance(), tickerPrice.getAsk(), btcprice );
+				tickerList.add(tickerPrice);
+			}
+
+		}
+		
+		// MULITPLY COIN BALANCE BY BTC PRICE		
+		// TODO -- CREATE MODEL FOR STORING PORTFOLIO BALANCE
+		ResWrapper<AccountBalanceView> res = new ResWrapper<>();
+		AccountBalanceView balanceView = new AccountBalanceView();
+		balanceView.setPortfolioValue(portfolioValue);
+		
+		res.setSuccess(true);
+		res.setResult(balanceView);
+		res.setMessage("Portfolio was calculated!");
+		
+		// PERSIST RESULT OF BALANCE TO EACH COIN TO DATABASE FOR GRAPHING INTENT
+		// RETURN VALUE OF PORTFOLIO DISPLAY
+		return res;
+	}
+	
+	
 	//========================================================================
 	//   PRIVATE METHOD FOR ADDING LOGO URLS 
 	//========================================================================
 	
+	private Double multiplyValues(Double balance, double ask, Double btcprice) {
+		return balance * ask * btcprice;
+	}
+
 	private ApiResult<List<Balance>> addLogoUrlToBalanceDTO(ApiResult<List<Balance>> balanceApiDTO) {
 		List<Coin> logoList = coinService.getAllCoinLogos();
 		

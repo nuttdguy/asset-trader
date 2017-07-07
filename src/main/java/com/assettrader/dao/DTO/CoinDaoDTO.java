@@ -19,6 +19,5 @@ public interface CoinDaoDTO {
 	public void saveGetMarkets(List<Coin> coinList, String exchange);
 	public void saveGetCurrencies(List<Currency> currencyList, String exchange);
 	public void saveGetMarketSummaries(List<MarketSummary> marketSummaryList, String exchange);
-	public void saveGetMarketSummary(List<MarketSummary> marketSummary, String exchange);	
 	
 }

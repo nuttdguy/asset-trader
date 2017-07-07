@@ -56,13 +56,9 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			statement.setString(4, ticker.getCoin().getMarketName());
 			statement.setString(5, exchange);
 			
-			// FOR UPDATE
 			statement.setDouble(6, ticker.getAsk());
 			statement.executeUpdate();
-//			rs = statement.getGeneratedKeys();
-//            while (rs.next()) {
-//                rs.getInt(1);
-//            } 
+
 			
 		} catch (MySQLIntegrityConstraintViolationException cex) {
 			System.out.println("Error inserting into Ticker " + cex.getMessage());
@@ -74,15 +70,15 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 		
 	}
 
-	@Override // TODO - FIX CONSTRAINT, IS ALLOWING MULTIPLE RECORDS
+	@Override
 	public void saveGetMarketSummary(MarketSummary marketSummary, String exchange) {
 
 		try {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
 					+ "(ASK, BASE_VOLUME, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
-					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME, MARKET_NAME_SUMMARY)"
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 					+ " ON DUPLICATE KEY UPDATE "
 					+ " ASK = ? ";
 			
@@ -101,13 +97,11 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 			statement.setDate(11, marketSummary.getTimeStamp());
 			statement.setDouble(12, marketSummary.getVolume());
 			statement.setString(13, exchange);
+			statement.setString(14, marketSummary.getMarketName());
 			
-			statement.setDouble(14, marketSummary.getAsk());
+			statement.setDouble(15, marketSummary.getAsk());
 			statement.executeUpdate();
-//			rs = statement.getGeneratedKeys();
-//            while (rs.next()) {
-//                rs.getInt(1);
-//            } 
+
 			
 		} catch (MySQLIntegrityConstraintViolationException cex) {
 			System.out.println("Error inserting into market-summary " + cex.getMessage());
@@ -148,11 +142,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 				// FOR UPDATE
 				statement.setString(10, marketHistory.getFillType());
 				statement.executeUpdate();
-//				rs = statement.getGeneratedKeys();
-//				
-//	            while (rs.next()) {
-//	               rs.getInt(1);
-//	            } 
+
 			}
 			
 			
@@ -190,11 +180,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 				// FOR UPDATE
 				statement.setString(6, order.getOrderType().name());
 				statement.executeUpdate();
-//				rs = statement.getGeneratedKeys();
-//				
-//	            while (rs.next()) {
-//	               rs.getInt(1);
-//	            } 
+
 			}
 			
 			
@@ -240,13 +226,7 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 				
 				statement.setString(12, coin.getMinTradeSize());
 				statement.execute();
-//				rs = statement.getGeneratedKeys();
-//				
-//	            while (rs.next()) {
-//	            	rs.getInt(1);
-//	            } 
-				
-				System.out.println();
+
 			}
 				
 		} catch (MySQLIntegrityConstraintViolationException cex) {
@@ -307,19 +287,20 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 		try {
 			connection = DAOUtils.getConnection();
 			String sql = "INSERT INTO MARKET_SUMMARY"
-					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
+					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME,"
+					+ " MARKET_NAME_SUMMARY, OPEN_BUY_ORDERS,"
 					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "ASK = ? ";
 			
-			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			for (MarketSummary market : marketSummaryList) {
 				
 				String name = market.getMarketName();
-				String marketName = coinDAO.getCoinMarketName(name);
-					
+				String marketName = coinDAO.getCoinMarketName(name);				
+				statement = connection.prepareStatement(sql);
+				
 				if (!marketName.equals("NOT FOUND")) {
 					statement.setDouble(1, market.getAsk());
 					statement.setDouble(2, market.getBid());
@@ -327,20 +308,18 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 					statement.setDouble(4, market.getHigh());
 					statement.setDouble(5, market.getLow());
 					statement.setString(6, market.getMarketName());
-					statement.setInt(7, market.getOpenBuyOrders());
-					statement.setInt(8, market.getOpenSellOrders());
-					statement.setInt(9, market.getPrevDay());
-					statement.setDate(10, market.getTimeStamp());
-					statement.setDouble(11, market.getVolume());
-					statement.setString(12, exchange);
+					statement.setString(7, market.getMarketName());
+					statement.setInt(8, market.getOpenBuyOrders());
+					statement.setInt(9, market.getOpenSellOrders());
+					statement.setInt(10, market.getPrevDay());
+					statement.setDate(11, market.getTimeStamp());
+					statement.setDouble(12, market.getVolume());
+					statement.setString(13, exchange);
 					
 					// FOR UPDATE
-					statement.setDouble(13, market.getAsk());
+					statement.setDouble(14, market.getAsk());
 					statement.executeUpdate();
-//					rs = statement.getGeneratedKeys();
-//		            while (rs.next()) {
-//		                	rs.getInt(1);
-//		            } 
+					statement.clearParameters();
 				}
 			}
 			
@@ -354,53 +333,6 @@ public class CoinDaoDTOImpl implements CoinDaoDTO {
 		
 	}
 
-	@Override
-	public void saveGetMarketSummary(List<MarketSummary> marketSummary, String exchange) {
-		
-		try {
-			connection = DAOUtils.getConnection();
-			String sql = "INSERT INTO MARKET_SUMMARY"
-					+ "(ASK, BID, CREATED, HIGH, LOW, MARKET_NAME, OPEN_BUY_ORDERS,"
-					+ "OPEN_SELL_ORDERS, PREV_DAY, TIME_STAMP, VOLUME, EXCHANGE_NAME)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-					+ "ON DUPLICATE KEY UPDATE"
-					+ " ASK = ? ";
-			
-			statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			
-			for (MarketSummary market : marketSummary) {
-				statement.setDouble(1, market.getAsk());
-				statement.setDouble(2, market.getBid());
-				statement.setDate(3, market.getCreated());
-				statement.setDouble(4, market.getHigh());
-				statement.setDouble(5, market.getLow());
-				statement.setString(6, market.getMarketName());
-				statement.setInt(7, market.getOpenBuyOrders());
-				statement.setInt(8, market.getOpenSellOrders());
-				statement.setInt(9, market.getPrevDay());
-				statement.setDate(10, market.getTimeStamp());
-				statement.setDouble(11, market.getVolume());
-				statement.setString(12, exchange);
-				
-				// FOR UPDATE
-				statement.setDouble(13, market.getAsk());
-				statement.executeUpdate();
-//				rs = statement.getGeneratedKeys();
-//	            while (rs.next()) {
-//	            	rs.getInt(1);
-//	            } 
-			}
-			
-		} catch (MySQLIntegrityConstraintViolationException cex) {
-			System.out.println("Error inserting into market summary " + cex.getMessage());
-		} catch (SQLException sx) {
-			System.out.println("Error inserting market-summary " + sx.getMessage() );
-		} finally {
-			closeResources();
-		}
-		
-	}
-	
 	
 	// PRIVATE METHODS TO CLOSE OPENED RESOURCES
 	private void closeResources() {

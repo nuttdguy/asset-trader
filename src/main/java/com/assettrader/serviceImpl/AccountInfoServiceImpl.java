@@ -13,7 +13,7 @@ import com.assettrader.service.AccountInfoService;
 public class AccountInfoServiceImpl implements AccountInfoService {
 	
 	@Autowired
-	private AccountInfoDao marketInfoDao;
+	private AccountInfoDao accountInfoDao;
 	
 	//============================================
 	//== CREATE
@@ -35,8 +35,8 @@ public class AccountInfoServiceImpl implements AccountInfoService {
 	//============================================
 
 	@Override
-	public List<AccountInfoView> getMarketInfo(String exchange) {
-		return marketInfoDao.getMarketInfoView(exchange);
+	public List<AccountInfoView> getMarketInfoView(String exchange) {
+		return accountInfoDao.getMarketInfoView(exchange);
 	}
 	
 }

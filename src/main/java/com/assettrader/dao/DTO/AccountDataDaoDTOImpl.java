@@ -30,16 +30,19 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 	private PreparedStatement statement = null;
 	private LocalDateTimePersistenceConverter dateConverter = new LocalDateTimePersistenceConverter();
 
-	
+	// TODO -- IMPORTANT, NEED THE USER_PROFILE_ID, EXCHANGE_NAME, CURRENCY 
 	@Override
-	public ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO) {
+	public ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO, Long userId) {
 		
 		try {
 			connection = DAOUtils.getConnection();
 			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE) "
 					+ "VALUES( ?, ?, ?)";
 			
-			String sqlInsert2 = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
+			String sqlInsert2 = "INSERT IGNORE INTO USER_ACCOUNT (CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID, ADD_DATE ) "
+					+ "VALUES( ?, ?, ?, ? )";
+			
+			String sqlInsert3 = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
 					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME) "
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?) ";
 			
@@ -55,15 +58,26 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.clearParameters();
 			}
 			
-			for (Balance entry2 : balanceList){
-				statement = connection.prepareStatement(sqlInsert2, PreparedStatement.RETURN_GENERATED_KEYS );
-				statement.setDouble(1, entry2.getAvailable());
-				statement.setDouble(2, entry2.getBalance());
+			for (Balance entry2 : balanceList) {
+				Date d = new Date();
+				statement = connection.prepareStatement(sqlInsert2);
+				statement.setString(1, entry2.getCurrency());
+				statement.setString(2, ExchangeName.BITTREX.name() );
+				statement.setLong(3, userId);
+				statement.setTimestamp(4, new Timestamp(d.getTime()));
+				statement.execute();
+				statement.clearParameters();
+			}
+			
+			for (Balance entry3 : balanceList){
+				statement = connection.prepareStatement(sqlInsert3, PreparedStatement.RETURN_GENERATED_KEYS );
+				statement.setDouble(1, entry3.getAvailable());
+				statement.setDouble(2, entry3.getBalance());
 				
 				statement.setTimestamp(3, dateConverter.convertToDatabaseColumn(LocalDateTime.now()));
-				statement.setString(4, entry2.getCryptoAddress());
-				statement.setString(5, entry2.getCurrency());
-				statement.setDouble(6, entry2.getPending());
+				statement.setString(4, entry3.getCryptoAddress());
+				statement.setString(5, entry3.getCurrency());
+				statement.setDouble(6, entry3.getPending());
 				
 				statement.setString(7, ExchangeName.BITTREX.name());
 				

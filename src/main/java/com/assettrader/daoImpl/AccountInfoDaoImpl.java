@@ -23,44 +23,63 @@ public class AccountInfoDaoImpl implements AccountInfoDao {
 
 	Connection connection = null;
 	PreparedStatement statement = null;
-	ResultSet rs = null;
 	
 	@Override
 	public List<AccountInfoView> getMarketInfoView(String exchange) {
 		List<AccountInfoView> marketInfoList = null;
 		
+		// 1. GET THE RESULTS FROM FIRST TABLE IN FIRST QUERY
+		// 2. GET FIRST TICKER ASK PRICE IN DESC ORDER THROUGH ANOTHER LOOP
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "SELECT A.COIN_ID, A.LOGO_URL, A.MARKET_NAME, A.MARKET_CURRENCY_LONG, A.MARKET_CURRENCY, "
-					+ "B.VOLUME, B.OPEN_BUY_ORDERS, B.OPEN_SELL_ORDERS, B.HIGH, B.LOW, "
-					+ "C.LAST "
-					+ "FROM COIN A "
-					+ "JOIN MARKET_SUMMARY B 	ON A.MARKET_NAME = B.MARKET_NAME "
-					+ "JOIN TICKER C 			ON A.MARKET_NAME = C.MARKET_NAME "
-					+ "WHERE A.EXCHANGE_NAME = ?; ";
+			String sqlQuery1 = "SELECT A.COIN_ID, A.LOGO_URL, A.MARKET_NAME, "
+					+ "A.MARKET_CURRENCY_LONG, A.MARKET_CURRENCY, "
+					+ "B.VOLUME, B.OPEN_BUY_ORDERS, B.OPEN_SELL_ORDERS, B.HIGH, B.LOW "
+					+ "FROM COIN A JOIN MARKET_SUMMARY B "
+					+ "ON A.MARKET_NAME = B.MARKET_NAME "
+					+ "WHERE A.EXCHANGE_NAME = ? "
+					+ "ORDER BY B.VOLUME DESC; ";
 			
-			statement = connection.prepareStatement(sql);	
-			statement.setString(1, exchange);
+			String sqlQuery2 = "SELECT * FROM TICKER WHERE MARKET_NAME = ? "
+					+ " ORDER BY ASK DESC LIMIT 1 ";
 			
-			rs = statement.executeQuery();
+			statement = connection.prepareStatement(sqlQuery1);	
+			statement.setString(1, exchange);		
+			ResultSet rs1 = statement.executeQuery();
+			statement.clearParameters();
 			
 			marketInfoList = new ArrayList<>();
-			while(rs.next()) {
+			while(rs1.next()) {
+				
 				AccountInfoView view = new AccountInfoView();
-				view.setId(rs.getLong("COIN_ID"));
-				view.setLogo(rs.getString("LOGO_URL"));
-				view.setMarketName(rs.getString("MARKET_NAME"));
-				view.setMarketCurrency(rs.getString("MARKET_CURRENCY"));
-				view.setMarketCurrencyLong(rs.getString("MARKET_CURRENCY_LONG"));
-				view.setVolume(rs.getDouble("VOLUME"));
-				view.setBuyOrders(rs.getDouble("OPEN_BUY_ORDERS"));
-				view.setSellOrders(rs.getDouble("OPEN_SELL_ORDERS"));
-				view.setHigh(rs.getDouble("HIGH"));
-				view.setLow(rs.getDouble("LOW"));
-				view.setLast(rs.getDouble("LAST"));
+				String marketName= rs1.getString("MARKET_NAME");
+				statement = connection.prepareStatement(sqlQuery2);
+				statement.setString(1, marketName);
+				ResultSet rs2 = statement.executeQuery();
+				
+				view.setId(rs1.getLong("COIN_ID"));
+				view.setLogo(rs1.getString("LOGO_URL"));
+				view.setMarketName(rs1.getString("MARKET_NAME"));
+				view.setMarketCurrency(rs1.getString("MARKET_CURRENCY"));
+				view.setMarketCurrencyLong(rs1.getString("MARKET_CURRENCY_LONG"));
+				view.setVolume(rs1.getDouble("VOLUME"));
+				view.setBuyOrders(rs1.getDouble("OPEN_BUY_ORDERS"));
+				view.setSellOrders(rs1.getDouble("OPEN_SELL_ORDERS"));
+				view.setHigh(rs1.getDouble("HIGH"));
+				view.setLow(rs1.getDouble("LOW"));			
+				if (rs2.next()) {
+					view.setLast(rs2.getDouble("LAST"));
+				}
+				
 				marketInfoList.add(view);
 			}		
-			rs.close();
+			
+			
+			rs1.close();
+			
+			
+			
+			
 			
 		} catch (SQLSyntaxErrorException sqx) {
 			System.out.println("Syntax error : " + sqx.getMessage());

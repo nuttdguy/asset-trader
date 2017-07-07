@@ -1,13 +1,8 @@
 package com.assettrader.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import com.assettrader.model.Address;
-import com.assettrader.model.Credential;
 import com.assettrader.model.UserProfile;
-import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
@@ -15,25 +10,40 @@ import com.assettrader.model.rest.RWLoginDetail;
 @Service
 public interface UserService {
 
-	boolean saveCoinAsFavorite(RWFavorite userFav);
-	boolean saveApiKey(RWApiCredential credential);
+	public UserProfile registerUser(UserProfile newUser);
+
+	public boolean saveCoinAsFavorite(RWFavorite userFav);
 	
-	void updateUsername(String newUsername);
-	void updatePassword(String newPassword);
-	void updateUserAddress(Address newAddress);
-	void updateIsActive();
+	public boolean saveApiKey(RWApiCredential credential);
 	
-	void deleteUser(UserProfile userProfile);
-	void deleteFavoriteCoin(int favoriteId);
+	//============================================
+	//=== UPDATE
+	//============================================
+
+
+	public boolean updateProfile(RWLoginDetail userDetail);
 	
-	RWLoginDetail loginUser(String username, String password);
+	//============================================
+	//=== DELETES
+	//============================================
 	
-	UserProfile registerUser(UserProfile newUser);
-	UserProfile getUser(int profileId);
-	UserProfile getUser(String searchParam);
-	Address getUserAddress(int profileId);
 	
-	List<Coin> getUserFavoriteCoins(int profileId);
+
+		
+	//============================================
+	//=== RETRIEVE
+	//============================================
 	
-	boolean checkIfUserExists(String username);
+	
+	public RWLoginDetail loginUser(String username, String password);
+
+
+	
+	//============================================
+	//=== VALIDATE
+	//============================================
+	
+	
+	public boolean checkIfUserExists(String username);
+
 }

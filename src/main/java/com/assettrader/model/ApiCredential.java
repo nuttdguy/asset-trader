@@ -6,29 +6,34 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.assettrader.entities.ids.ApiKeyCredentialId;
+
 @Entity
 @Table(name = "API_CREDENTIAL")
+@IdClass(ApiKeyCredentialId.class)
 public class ApiCredential {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "API_CREDENTIAL_ID")
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "API_CREDENTIAL_ID", columnDefinition="SERIAL")
 	private Long id;
 
+	@Id
 	@Column(name = "API_KEY")
 	private String apiKey;
 
+	@Id
 	@Column(name = "SECRET_KEY")
 	private String secretKey;
 
 	@Column(name = "EXCHANGE_NAME")
 	private String exchangeName;
 	
-	@Column(name = "SET_PRIMARY")
+	@Column(name = "SET_PRIMARY", unique=true)
 	private boolean setPrimary;
 
 	@OneToOne(cascade = CascadeType.ALL)

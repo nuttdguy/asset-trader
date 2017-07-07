@@ -2,6 +2,7 @@ package com.assettrader.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.assettrader.model.Credential;
 import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
+import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.ResResponse;
 import com.assettrader.service.UserService;
 
@@ -44,7 +46,6 @@ public class SettingsController {
 	@ResponseBody
 	public ResResponse addApiExchange(@RequestBody RWApiCredential credential) {
 		
-		// TODO -- IS RETURNING SUCCESS WHEN IT IS NOT SUCCESSFUL
 		boolean isSuccess = userService.saveApiKey(credential);
 		ResResponse response = new ResResponse();
 		
@@ -58,6 +59,24 @@ public class SettingsController {
 		return response;
 		
 	}
+	
+	@RequestMapping(value = "/updateprofile", method = RequestMethod.POST)
+	public ResResponse updateProfile(@RequestBody RWLoginDetail userDetail) {
+		
+		boolean isSuccess = userService.updateProfile(userDetail);
+		ResResponse response = new ResResponse();
+		
+		if (isSuccess) {
+			response.setMessage("USER UPDATED");
+			response.setSuccess(true);
+			return response;
+		} else {
+			response.setMessage("UPDATE FAILED");
+			response.setSuccess(false);
+			return response;
+		}
+	}
+	
 	
 }
 

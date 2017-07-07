@@ -15,7 +15,6 @@ public interface CoinServiceDTO {
 	List<Currency> getCurrencies(String exchange);
 	List<MarketSummary> getMarketSummaries(String exchange);
 	
-	MarketSummary getMarketSummary(String marketName, String exchange);
 	Ticker getTicker(String marketName, String exchange);
 	
 	List<MarketHistory> getMarketHistory(String marketName, String exchange);	

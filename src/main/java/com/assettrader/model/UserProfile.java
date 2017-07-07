@@ -25,7 +25,7 @@ public class UserProfile extends Person {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "USERNAME", unique=true)
+	@Column(name = "USERNAME", unique = true)
 	private String username;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -44,6 +44,9 @@ public class UserProfile extends Person {
 
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
 	private ApiCredential apiCredential;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<SocialNetwork> socialNetwork;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<UserAccount> userAccount;
@@ -127,6 +130,14 @@ public class UserProfile extends Person {
 
 	public void setUserAccount(List<UserAccount> userAccount) {
 		this.userAccount = userAccount;
+	}
+
+	public List<SocialNetwork> getSocialNetwork() {
+		return socialNetwork;
+	}
+
+	public void setSocialNetwork(List<SocialNetwork> socialNetwork) {
+		this.socialNetwork = socialNetwork;
 	}
 
 	public List<UserCoinFavorite> getUserCoinFavorite() {

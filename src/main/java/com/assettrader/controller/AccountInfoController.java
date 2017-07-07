@@ -19,20 +19,19 @@ import com.assettrader.service.AccountInfoService;
 public class AccountInfoController {
 	
 	@Autowired
-	private AccountInfoService marketInfoService;
+	private AccountInfoService accountInfoService;
 	
 	@RequestMapping(value = "/market/{exchange}")
 	public ResWrapper<List<AccountInfoView>> getMarketInfoView(@PathVariable String exchange) {
 		
 		String validatedExchange = validateExchangeName(exchange);
-		List<AccountInfoView> viewList = marketInfoService.getMarketInfo(validatedExchange);
+		List<AccountInfoView> viewList = accountInfoService.getMarketInfoView(validatedExchange);
 		ResWrapper<List<AccountInfoView>> resResponse = new ResWrapper<>();
 		resResponse.setResult(viewList);
 		
 		return resResponse;
 		
 	}
-	
 	
 
 }

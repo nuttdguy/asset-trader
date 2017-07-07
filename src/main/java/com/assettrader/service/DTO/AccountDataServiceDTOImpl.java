@@ -20,8 +20,8 @@ public class AccountDataServiceDTOImpl implements AccountDataServiceDTO {
 	AccountDataDaoDTO accountDataDaoDTO;
 
 	@Override
-	public ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO) {
-		return accountDataDaoDTO.saveAllAccountBalancesDTO(balanceApiDTO);
+	public ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO, Long userId) {
+		return accountDataDaoDTO.saveAllAccountBalancesDTO(balanceApiDTO, userId);
 	}
 	
 	@Override

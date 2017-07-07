@@ -7,25 +7,30 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.type.TrueFalseType;
+
+import com.assettrader.entities.ids.MarketSummaryId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "MARKET_SUMMARY")
+@IdClass(MarketSummaryId.class)
 public class MarketSummary {
 
-	@Id
-	@Column(name = "MARKET_SUMMARY_ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "MARKET_SUMMARY_ID", columnDefinition="SERIAL")
+	@GeneratedValue(strategy = GenerationType.TABLE )
 	@JsonIgnore
 	private long id;
 
-	@Transient
+	@Id
+	@Column(name = "MARKET_NAME_SUMMARY")
 	private String marketName;
 
 	@Column(name = "HIGH")
@@ -40,6 +45,7 @@ public class MarketSummary {
 	@Column(name = "VOLUME")
 	private double volume;
 
+	@Id
 	@Column(name = "TIME_STAMP")
 	private Date timeStamp;
 

@@ -1,15 +1,10 @@
 package com.assettrader.serviceImpl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.assettrader.dao.UserDao;
-import com.assettrader.model.Address;
-import com.assettrader.model.Credential;
 import com.assettrader.model.UserProfile;
-import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
@@ -47,27 +42,8 @@ public class UserServiceImpl implements UserService {
 	//============================================
 
 	@Override
-	public void updateUsername(String newUsername) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updatePassword(String newPassword) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateUserAddress(Address newAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateIsActive() {
-		// TODO Auto-generated method stub
-		
+	public boolean updateProfile(RWLoginDetail userDetail) {
+		return userDao.updateProfile(userDetail);
 	}
 
 	
@@ -76,17 +52,6 @@ public class UserServiceImpl implements UserService {
 	//============================================
 	
 	
-	@Override
-	public void deleteUser(UserProfile userProfile) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteFavoriteCoin(int favoriteId) {
-		// TODO Auto-generated method stub
-		
-	}
 
 		
 	//============================================
@@ -100,29 +65,6 @@ public class UserServiceImpl implements UserService {
 	}
 	
 
-	@Override
-	public UserProfile getUser(int profileId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UserProfile getUser(String searchParam) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Address getUserAddress(int profileId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Coin> getUserFavoriteCoins(int profileId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	
 	//============================================

@@ -32,7 +32,7 @@ public class CoinApiController {
 	private static int FIRST_PERSIST = 0;
 	
 	@Autowired
-	public CoinServiceDTO coinDTOService;
+	public CoinServiceDTO coinServiceDTO;
 
 	
 	@RequestMapping(value = "/getmarkets/{exchange}", method = RequestMethod.GET)
@@ -42,9 +42,9 @@ public class CoinApiController {
 		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
 			if (FIRST_PERSIST == 0) {
 				FIRST_PERSIST++;
-				return coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
+				return coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
 			}
-			return coinDTOService.getCoinMarkets(validatedExchange);
+			return coinServiceDTO.getCoinMarkets(validatedExchange);
 		}		
 		return null;
 	}
@@ -55,10 +55,10 @@ public class CoinApiController {
 		
 		if (validatedExchange != ERROR_INVALID_EXCHANGE) {		
 			if (FIRST_PERSIST == 0) {
-				coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
+				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
 				FIRST_PERSIST++;
 			}		
-			return coinDTOService.getCurrencies(validatedExchange);
+			return coinServiceDTO.getCurrencies(validatedExchange);
 		}
 		return null;
 	}
@@ -70,27 +70,12 @@ public class CoinApiController {
 		
 		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
 			if (FIRST_PERSIST == 0) {
-				coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
+				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
 				FIRST_PERSIST++;
 			}
-			return coinDTOService.getMarketSummaries(validatedExchange);
+			return coinServiceDTO.getMarketSummaries(validatedExchange);
 		}
 		
-		return null;
-	}
-	
-	
-	@RequestMapping(value = "/getmarketsummary/{marketname}&{exchange}", method = RequestMethod.GET)
-	private MarketSummary getMarketSummary(Model model, @PathVariable String marketname, @PathVariable String exchange) {
-		String validatedExchange = validateExchangeName(exchange);
-		
-		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
-			if (FIRST_PERSIST == 0) {
-				coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
-				FIRST_PERSIST++;
-			}		
-			return coinDTOService.getMarketSummary(marketname, validatedExchange);
-		}
 		return null;
 	}
 	
@@ -104,11 +89,11 @@ public class CoinApiController {
 		
 		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
 			if (FIRST_PERSIST == 0) {
-				coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
+				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
 				FIRST_PERSIST++;
 			}
 			
-			return coinDTOService.getOrderBook(marketname, validatedOrderType, validatedExchange);
+			return coinServiceDTO.getOrderBook(marketname, validatedOrderType, validatedExchange);
 		}
 		return null;
 	}
@@ -120,11 +105,11 @@ public class CoinApiController {
 		
 		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
 			if (FIRST_PERSIST == 0) {
-				coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
+				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
 				FIRST_PERSIST++;
 			}
 	
-			return coinDTOService.getTicker(marketname, validatedExchange);
+			return coinServiceDTO.getTicker(marketname, validatedExchange);
 		}
 		return null;
 	}
@@ -135,14 +120,30 @@ public class CoinApiController {
 		
 		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
 			if (FIRST_PERSIST == 0) {
-				coinDTOService.loadApplicationBootingEndPoints(validatedExchange);
+				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
 				FIRST_PERSIST++;
 			}
 			
-			return coinDTOService.getMarketHistory(marketname, validatedExchange);
+			return coinServiceDTO.getMarketHistory(marketname, validatedExchange);
 			}
 		return null;
 	}
 	
+	
+//	
+//	@RequestMapping(value = "/getmarketsummary/{marketname}&{exchange}", method = RequestMethod.GET)
+//	private MarketSummary getMarketSummary(Model model, @PathVariable String marketname, @PathVariable String exchange) {
+//		String validatedExchange = validateExchangeName(exchange);
+//		
+//		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
+//			if (FIRST_PERSIST == 0) {
+//				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
+//				FIRST_PERSIST++;
+//			}		
+//			return coinServiceDTO.getMarketSummary(marketname, validatedExchange);
+//		}
+//		return null;
+//	}
+//	
 	
 }

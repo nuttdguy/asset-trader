@@ -33,7 +33,7 @@ public interface AccountInfoService {
 	//=== RETRIEVE
 	//============================================
 	
-	List<AccountInfoView> getMarketInfo(String exchange);
+	List<AccountInfoView> getMarketInfoView(String exchange);
 	
 	//============================================
 	//=== VALIDATE

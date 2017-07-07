@@ -37,12 +37,12 @@ public class Balance implements Serializable {
 		this.logoUrl = logoUrl;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "BALANCE_ID")
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "BALANCE_ID", columnDefinition="SERIAL")
 	@JsonIgnore
 	private Double id;
 
+	@Id
 	@Column(name = "CURRENCY")
 	private String currency;
 

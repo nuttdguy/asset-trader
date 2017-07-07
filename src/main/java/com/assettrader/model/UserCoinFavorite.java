@@ -34,8 +34,11 @@ public class UserCoinFavorite {
 	@JoinColumn( name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=true)
 	private UserProfile userProfile;
 
-	@Column( name = "ADD_DATE")
+	@Column( name = "ADD_DATE" )
 	private Date addDate;
+	
+	@Column( name = "ACTIVE" )
+	private boolean active;
 
 	public Long getId() {
 		return id;
@@ -52,5 +55,30 @@ public class UserCoinFavorite {
 	public void setAddDate(Date addDate) {
 		this.addDate = addDate;
 	}
+
+	public Coin getCoin() {
+		return coin;
+	}
+
+	public void setCoin(Coin coin) {
+		this.coin = coin;
+	}
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 
 }

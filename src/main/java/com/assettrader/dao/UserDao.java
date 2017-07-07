@@ -21,7 +21,7 @@ public interface UserDao {
 	//=== UPDATE
 	//============================================
 	
-
+	public boolean updateProfile(RWLoginDetail userDetail);
 	
 	//============================================
 	//=== DELETES

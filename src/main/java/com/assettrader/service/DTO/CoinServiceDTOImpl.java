@@ -44,7 +44,7 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 	private static final String GET_CURRENCIES = "/getcurrencies";
 	private static final String GET_MARKET_SUMMARIES = "/getmarketsummaries";
 	private static final String GET_TICKER = "/getticker";
-	private static final String GET_MARKET_SUMMARY = "/getmarketsummary";
+	// private static final String GET_MARKET_SUMMARY = "/getmarketsummary";
 	private static final String GET_ORDER_BOOK = "/getorderbook";
 	private static final String GET_MARKET_HISTORY = "/getmarkethistory";
 	private static final String MARKET_PREFIX = "?market=";
@@ -137,30 +137,6 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		}
 
 		return marketSummaryList;
-	}
-
-	@Override
-	public MarketSummary getMarketSummary(String marketName, String exchange) {
-		MarketSummary marketSummary = null;
-		ObjectMapper mapper = initMapper();
-
-		try {
-			URL url = new URL(PUBLIC_URL + GET_MARKET_SUMMARY + MARKET_PREFIX + marketName);
-			MarketSummariesResultDTO marketDTO = mapper.readValue(url, MarketSummariesResultDTO.class);
-
-			marketSummary = new MarketSummary();
-			for (MarketSummariesDTO market : marketDTO.getResult()) {
-				marketSummary = DTOToMarketSummary(market);
-			}
-
-			coinDTODao.saveGetMarketSummary(marketSummary, exchange);
-			return marketSummary;
-
-		} catch (IOException io) {
-			System.out.println("IOException getting market summary " + io.getMessage());
-		}
-
-		return marketSummary;
 	}
 
 	@Override // WORKING REST ENDPOINT
@@ -270,21 +246,28 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 				coinName.add(coin.getMarketName());
 		}
 
+		
+		System.out.println("------- MARKET-HISTORY IS LOADING -----------");
 		for (String marketName : coinName) {
 			getMarketHistory(marketName, exchange);
 		}
 		System.out.println("------- MARKET-HISTORY IS DONE LOADING -----------");
 
+		
+		System.out.println("------- ORDER BOOK IS LOADING ----------");
 		for (String marketName : coinName) {
 			getOrderBook(marketName, OrderType.BOTH.name().toLowerCase(), exchange);
 		}
 		System.out.println("------- ORDER BOOK IS DONE LOADING ----------");
 
+		
+		System.out.println("------- TICKER IS LOADING ----------");
 		for (String marketName : coinName) {
 			getTicker(marketName, exchange);
 		}
 		System.out.println("------- TICKER IS DONE LOADING ----------");
 
+		
 		System.out.println("-----  LOADING AND PERSISTING INITIAL DATA IS DONE!!! ------");
 		return coinList;
 	}
@@ -360,6 +343,7 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		market.setOpenSellOrders(marketSummaryDTO.getOpenSellOrders());
 		market.setPrevDay(marketSummaryDTO.getPrevDay());
 		market.setCreated(marketSummaryDTO.getCreated());
+		market.setMarketName(marketSummaryDTO.getMarketName());
 
 		return market;
 	}
@@ -415,5 +399,29 @@ public class CoinServiceDTOImpl implements CoinServiceDTO {
 		marketHistory.setTimeStamp(marketHistoryDTO.getTimeStamp());
 		return marketHistory;
 	}
+	
+//	@Override
+//	public MarketSummary getMarketSummary(String marketName, String exchange) {
+//		MarketSummary marketSummary = null;
+//		ObjectMapper mapper = initMapper();
+//
+//		try {
+//			URL url = new URL(PUBLIC_URL + GET_MARKET_SUMMARY + MARKET_PREFIX + marketName);
+//			MarketSummariesResultDTO marketDTO = mapper.readValue(url, MarketSummariesResultDTO.class);
+//
+//			marketSummary = new MarketSummary();
+//			for (MarketSummariesDTO market : marketDTO.getResult()) {
+//				marketSummary = DTOToMarketSummary(market);
+//			}
+//
+//			coinDTODao.saveGetMarketSummary(marketSummary, exchange);
+//			return marketSummary;
+//
+//		} catch (IOException io) {
+//			System.out.println("IOException getting market summary " + io.getMessage());
+//		}
+//
+//		return marketSummary;
+//	}
 
 }

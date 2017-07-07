@@ -8,29 +8,34 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.assettrader.entities.ids.UserAccountId;
+
 
 @Entity
 @Table(name = "USER_ACCOUNT")
+@IdClass(UserAccountId.class)
 public class UserAccount {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "USER_ACCOUNT_ID")
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "USER_ACCOUNT_ID", columnDefinition="SERIAL")
 	private Long id;
 
+	@Id
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumns({
-		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=true, updatable=true),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=true, updatable=true) })
+		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
+		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false) })
 	private Account account;
 	
+	@Id
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn( name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=true)
+	@JoinColumn( name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=false, updatable=false)
 	private UserProfile userProfile;
 
 	@Column( name = "ADD_DATE")

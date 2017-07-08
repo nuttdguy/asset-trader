@@ -1,5 +1,7 @@
 package com.assettrader.model.rest;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 
 public class ResWrapper<T> {
@@ -9,6 +11,8 @@ public class ResWrapper<T> {
 	private String message;
 
 	private T result;
+	
+	private List<T> resultList;
 
 	public boolean isSuccess() {
 		return success;
@@ -36,6 +40,14 @@ public class ResWrapper<T> {
 
 	public T getResult() {
 		return result;
+	}
+
+	public List<T> getResultList() {
+		return resultList;
+	}
+
+	public void setResultList(List<T> resultList) {
+		this.resultList = resultList;
 	}
 
 	public void setResult(T result) {

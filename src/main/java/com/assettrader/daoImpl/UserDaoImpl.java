@@ -4,18 +4,23 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.naming.spi.DirStateFactory.Result;
 
 import org.springframework.stereotype.Repository;
 
 import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
 import com.assettrader.model.Credential;
+import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
+import com.assettrader.model.rest.RWPassword;
 import com.assettrader.utils.DAOUtils;
 
 @Repository
@@ -137,6 +142,32 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 	
+	@Override
+	public boolean addFriend(SocialNetwork friend) {
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlInsert = "INSERT INTO SOCIAL_NETWORK( "
+					+ "EMAIL, FIRST_NAME, LAST_NAME, IS_ACTIVE, "
+					+ "ENABLE_SEND_TO, MESSAGE, USER_PROFILE_ID ) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ? )";
+			
+			statement = connection.prepareStatement(sqlInsert);
+			statement.setString(1, friend.getEmail());
+			statement.setString(2, friend.getFirstName());
+			statement.setString(3, friend.getLastName());
+			statement.setBoolean(4, friend.isActive());
+			statement.setBoolean(5, friend.isEnableSendTo());
+			statement.setString(6, friend.getMessage());
+			statement.setLong(7, friend.getId());
+			
+			return statement.execute();
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return false;
+	}
 
 	//============================================
 	//=== UPDATE
@@ -184,7 +215,51 @@ public class UserDaoImpl implements UserDao {
 	//=== DELETES
 	//============================================
 	
-
+	public boolean deleteFriend(Long friendId) {
+		
+		try {
+			
+			connection = DAOUtils.getConnection();
+			String sqlDelete = "DELETE FROM SOCIAL_NETWORK WHERE SOCIAL_NETWORK_ID = ?";
+			
+			statement = connection.prepareStatement(sqlDelete);
+			statement.setLong(1, friendId);
+			return statement.execute();
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return false;
+	}
+	
+	
+	public boolean updatePassword(RWPassword password) {
+		int result = 0;
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlCompare = "SELECT PASSWORD FROM CREDENTIAL WHERE USER_PROFILE_ID = ?";
+			String sqlUpdate = "UPDATE CREDENTIAL SET PASSWORD = ? WHERE USER_PROFILE_ID = ?";
+			
+			statement = connection.prepareStatement(sqlCompare);
+			statement.setLong(1, password.getId());
+			ResultSet rs1 = statement.executeQuery();
+			statement.clearParameters();
+			if (rs1.next()) {
+				if (rs1.getString("PASSWORD").equals(password.getCurrentPassword())) {
+					statement = connection.prepareStatement(sqlUpdate);
+					statement.setString(1, password.getNewPassword());
+					statement.setLong(2, password.getId());
+					return statement.execute();
+				}
+			}
+			rs1.close();
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return false;
+		
+	}
 	
 	//============================================
 	//=== RETRIEVE
@@ -231,6 +306,42 @@ public class UserDaoImpl implements UserDao {
 	}
 
 
+	@Override
+	public List<SocialNetwork> getFriendList(Long userId) {
+		
+		List<SocialNetwork> socialNetworkList = null;
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlSelect = "SELECT * FROM SOCIAL_NETWORK WHERE USER_PROFILE_ID = ? ";
+			
+			statement = connection.prepareStatement(sqlSelect);
+			statement.setLong(1, userId);
+			ResultSet rs = statement.executeQuery();
+			
+			socialNetworkList = new ArrayList<>();
+			while (rs.next()) {
+				SocialNetwork sn = new SocialNetwork();
+				sn.setEmail( rs.getString("EMAIL"));
+				sn.setFirstName( rs.getString("FIRST_NAME" ));
+				sn.setLastName( rs.getString("LAST_NAME") );
+				sn.setId( rs.getLong( "SOCIAL_NETWORK_ID") );
+				sn.setActive( rs.getBoolean("IS_ACTIVE"));
+				sn.setEnableSendTo( rs.getBoolean("ENABLE_SEND_TO") );
+				sn.setMessage( rs.getString( "MESSAGE" ) );
+				socialNetworkList.add(sn);
+			}
+			rs.close();
+			
+			return socialNetworkList;
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		
+		return socialNetworkList;
+	}
 	
 	//============================================
 	//=== VALIDATE

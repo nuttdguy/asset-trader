@@ -3,6 +3,7 @@ package com.assettrader.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
 import com.assettrader.model.rest.ResResponse;
 import com.assettrader.model.rest.ResWrapper;
+import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.service.UserService;
 
 @CrossOrigin
@@ -156,6 +158,42 @@ public class SettingsController {
 		response.setSuccess(false);
 		return response;
 		
+	}
+	
+	@RequestMapping(value = "/favorite/coin/list/{userId}", method = RequestMethod.GET)
+	public ResWrapper<List<FavoriteCoinView>> getFavoriteCoins(@PathVariable Long userId) {
+		
+		List<FavoriteCoinView> coinFavList = userService.getFavoriteCoins(userId);
+		
+		ResWrapper<List<FavoriteCoinView>> response = new ResWrapper<>();
+		if (coinFavList != null) {
+			response.setMessage("YOUR FAVORITES");
+			response.setResult(coinFavList);
+			response.setSuccess(true);
+			response.setStatus(HttpStatus.OK);
+			return response;
+		}
+		
+		response.setMessage("ERROR GETTING COIN LIST");
+		response.setSuccess(false);
+		return response;
+	}
+	
+	
+	@RequestMapping(value = "/favorite/delete/{coinId}", method = RequestMethod.DELETE)
+	public ResResponse deleteCoinFavorite(@PathVariable Long coinId) {
+		
+		boolean isSuccess = userService.deleteCoinFavorite(coinId);
+		ResResponse response = new ResResponse();
+		if (!isSuccess) {
+			response.setMessage("COIN REMOVED");
+			response.setSuccess(true);
+			return response;
+		}
+		
+		response.setMessage("COIN COULD NOT BE REMOVED");
+		response.setSuccess(false);
+		return response;
 		
 	}
 	

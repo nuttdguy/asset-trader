@@ -12,6 +12,7 @@ import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
+import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.service.UserService;
 
 
@@ -64,11 +65,15 @@ public class UserServiceImpl implements UserService {
 	//=== DELETES
 	//============================================
 	
-	
+	@Override
 	public boolean deleteFriend(Long friendId) {
 		return userDao.deleteFriend(friendId);
 	}
 		
+	public boolean deleteCoinFavorite(Long userCoinFavId) {
+		return userDao.deleteCoinFavorite(userCoinFavId);
+	}
+	
 	//============================================
 	//=== RETRIEVE
 	//============================================
@@ -84,6 +89,10 @@ public class UserServiceImpl implements UserService {
 		return userDao.getFriendList(userId);
 	}
 
+	@Override
+	public List<FavoriteCoinView> getFavoriteCoins(Long userId) {
+		return userDao.getFavoriteCoins(userId);
+	}
 	
 	//============================================
 	//=== VALIDATE

@@ -8,6 +8,7 @@ import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
+import com.assettrader.model.view.FavoriteCoinView;
 
 
 public interface UserDao {
@@ -34,6 +35,7 @@ public interface UserDao {
 	//============================================
 	
 	public boolean deleteFriend(Long friendId);
+	public boolean deleteCoinFavorite(Long userCoinFavId);
 	
 	//============================================
 	//=== RETRIEVE
@@ -41,6 +43,7 @@ public interface UserDao {
 	
 	public RWLoginDetail loginUser(String username, String password);
 	public List<SocialNetwork> getFriendList(Long userId);
+	public List<FavoriteCoinView> getFavoriteCoins(Long userId);
 	
 	//============================================
 	//=== VALIDATE

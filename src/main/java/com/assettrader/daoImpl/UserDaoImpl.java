@@ -21,6 +21,7 @@ import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
+import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.utils.DAOUtils;
 
 @Repository
@@ -212,7 +213,7 @@ public class UserDaoImpl implements UserDao {
 	}
 	
 	//============================================
-	//=== DELETES
+	//=== DELETE
 	//============================================
 	
 	public boolean deleteFriend(Long friendId) {
@@ -341,6 +342,81 @@ public class UserDaoImpl implements UserDao {
 		}
 		
 		return socialNetworkList;
+	}
+	
+	@SuppressWarnings("null")
+	public List<FavoriteCoinView> getFavoriteCoins(Long userId) {
+		
+		List<FavoriteCoinView> favCoinList = null;
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlSelect1 = "SELECT * FROM USER_COIN_FAVORITE WHERE USER_PROFILE_ID = ?";
+			
+			String sqlSelect2 = "SELECT A.LOGO_URL, A.MARKET_CURRENCY_LONG, A.COIN_ID, "
+					+ "B.VOLUME, B.ASK, B.BID "
+					+ "FROM COIN A "
+					+ "JOIN MARKET_SUMMARY B "
+					+ "ON A.MARKET_NAME = B.MARKET_NAME "
+					+ "WHERE A.MARKET_NAME = ?";
+			
+			statement = connection.prepareStatement(sqlSelect1);
+			statement.setLong(1, userId);
+			ResultSet rs1 = statement.executeQuery();
+			statement.clearParameters();
+			
+			favCoinList = new ArrayList<>();
+			
+			while (rs1.next()) {
+				statement = connection.prepareStatement(sqlSelect2);
+				statement.setString(1, rs1.getString("MARKET_NAME"));
+				ResultSet rs2 = statement.executeQuery();			
+				statement.clearParameters();
+				
+				if (rs2.next()) {
+					FavoriteCoinView favorite = new FavoriteCoinView();
+					favorite.setLogoUrl(rs2.getString("LOGO_URL"));
+					favorite.setCoinId(rs2.getLong("COIN_ID"));
+					favorite.setMarketCurrencyLong(rs2.getString("MARKET_CURRENCY_LONG"));
+					favorite.setVolume(rs2.getDouble("VOLUME"));
+					favorite.setAsk(rs2.getDouble("ASK"));
+					favorite.setBid(rs2.getDouble("BID"));
+					favorite.setUserCoinFavoriteId(rs1.getLong("USER_COIN_FAVORITE_ID"));
+					favCoinList.add(favorite);
+				}
+				rs2.close();
+			}
+			rs1.close();
+			return favCoinList;
+			
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		
+		return favCoinList;
+	}
+	
+	
+	public boolean deleteCoinFavorite(Long userCoinFavId) {
+		boolean result = false;
+		
+		 try {
+			 connection = DAOUtils.getConnection();
+			 String sqlDelete = "DELETE FROM USER_COIN_FAVORITE "
+			 		+ "WHERE USER_COIN_FAVORITE_ID = ?";
+			 
+			 statement = connection.prepareStatement(sqlDelete);
+			 statement.setLong(1, userCoinFavId);
+			 return statement.execute();
+			 
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		return result;
+		 
 	}
 	
 	//============================================

@@ -12,6 +12,7 @@ public interface AccountDataDao {
 	//== CREATE
 	//============================================
 	
+	public void saveCurrentBalance(Double balance, Long userId);
 
 	//============================================
 	//=== UPDATE

@@ -21,6 +21,10 @@ public class AccountDataServiceImpl implements AccountDataService {
 	//== CREATE
 	//============================================
 	
+	@Override
+	public void saveCurrentBalance(Double balance, Long userId) {
+		accountDataDao.saveCurrentBalance(balance, userId);		
+	}
 	
 	//============================================
 	//=== UPDATE

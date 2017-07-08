@@ -127,13 +127,11 @@ public class AccountDataController {
 	//=======================================
 	
 	
-	@RequestMapping(value = {"/balances/{btcprice}&{id}"}, method = RequestMethod.GET)
-	public ResWrapper<AccountBalanceView> getPortfolioValue(@PathVariable Double btcprice, @PathVariable Long id) {
-		// NEED TO MAKE AN INITIAL REQUEST TO API BALANCES, TO ENSURE THERE IS ALWAYS A DISPLAYED AMOUNT
-		// TODO OR ELSE IMPLEMENT BUTTON TO DISPLAY VALUE
+	@RequestMapping(value = {"/balances/{btcprice}&{userId}"}, method = RequestMethod.GET)
+	public ResWrapper<AccountBalanceView> getPortfolioValue(@PathVariable Double btcprice, @PathVariable Long userId) {
 		
 		// GET CURRENT BALANCE OF ALL COINS
-		List<Balance> balances = accountDataService.getAccountBalances(id);
+		List<Balance> balances = accountDataService.getAccountBalances(userId);
 
 		// GET CURRENT ASK FROM TICKER; USE MARKET_NAME - WILL RETURN A SINGLE VALUE
 		List<Ticker> tickerList = new ArrayList<>();
@@ -151,8 +149,6 @@ public class AccountDataController {
 
 		}
 		
-		// MULITPLY COIN BALANCE BY BTC PRICE		
-		// TODO -- CREATE MODEL FOR STORING PORTFOLIO BALANCE
 		ResWrapper<AccountBalanceView> res = new ResWrapper<>();
 		AccountBalanceView balanceView = new AccountBalanceView();
 		balanceView.setPortfolioValue(portfolioValue);
@@ -162,6 +158,8 @@ public class AccountDataController {
 		res.setMessage("Portfolio was calculated!");
 		
 		// PERSIST RESULT OF BALANCE TO EACH COIN TO DATABASE FOR GRAPHING INTENT
+		accountDataService.saveCurrentBalance(portfolioValue, userId);
+		
 		// RETURN VALUE OF PORTFOLIO DISPLAY
 		return res;
 	}

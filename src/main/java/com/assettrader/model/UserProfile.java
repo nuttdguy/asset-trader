@@ -57,6 +57,9 @@ public class UserProfile extends Person {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<Address> address;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<BalanceHistory> balanceHistories;
+
 	public UserProfile() {
 	}
 
@@ -146,6 +149,14 @@ public class UserProfile extends Person {
 
 	public void setUserCoinFavorite(List<UserCoinFavorite> userCoinFavorite) {
 		this.userCoinFavorite = userCoinFavorite;
+	}
+
+	public List<BalanceHistory> getBalanceHistories() {
+		return balanceHistories;
+	}
+
+	public void setBalanceHistories(List<BalanceHistory> balanceHistories) {
+		this.balanceHistories = balanceHistories;
 	}
 
 }

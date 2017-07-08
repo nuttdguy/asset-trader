@@ -28,6 +28,27 @@ public class AccountDataDaoImpl implements AccountDataDao {
 	//== CREATE
 	//============================================
 	
+	public void saveCurrentBalance(Double balance, Long userId) {
+		
+		try {
+			
+			connection = DAOUtils.getConnection();
+			String sqlInsert = "INSERT INTO BALANCE_HISTORY( "
+					+ "BALANCE_AMOUNT, BALANCE_DATE_TIME, USER_PROFILE_ID) "
+					+ "VALUES( ?, NOW(), ?)";
+			
+			statement = connection.prepareStatement(sqlInsert);
+			statement.setDouble(1, balance);
+			statement.setLong(2, userId);
+			statement.execute();					
+			
+		} catch (SQLException se) {
+			System.out.println("SQL Exception: " + se.getMessage());
+		} finally {
+			closeResources();
+		}
+		
+	}
 	
 	//============================================
 	//=== UPDATE

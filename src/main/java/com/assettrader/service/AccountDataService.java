@@ -14,6 +14,7 @@ public interface AccountDataService {
 	//== CREATE
 	//============================================
 	
+	public void saveCurrentBalance(Double balance, Long userId);
 
 	//============================================
 	//=== UPDATE

@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.spi.DirStateFactory.Result;
@@ -18,6 +20,7 @@ import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWExternalWallet;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
@@ -169,11 +172,143 @@ public class UserDaoImpl implements UserDao {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean addExternalWallet(RWExternalWallet walletDetail) {
+		
+		boolean isSuccess = true;
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlSelect = "SELECT MARKET_CURRENCY, MARKET_CURRENCY_LONG FROM COIN";
+			
+			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS ( CURRENCY, EXCHANGE_NAME, ADD_DATE ) VALUES (?, ?, NOW())";
+			
+			String sqlInsert2 = "INSERT IGNORE INTO USER_ACCOUNT ( "
+					+ "USER_PROFILE_ID, EXCHANGE_NAME, CURRENCY, ADD_DATE) "
+					+ "VALUES( ?, ?, ?, NOW() )";
+			
+			String sqlInsert3 = "INSERT INTO DEPOSIT_ADDRESS ( "
+					+ "ADDRESS, CURRENCY, EXCHANGE_NAME) VALUES("
+					+ "?, ?, ? ) "
+					+ "ON DUPLICATE KEY UPDATE ADDRESS = ?";
+			
+			String sqlInsert4 = "INSERT INTO BALANCE ( "
+					+ "ACCOUNT_BALANCE, AVAILABLE, BALANCE_DATE, CRYPTO_ADDRESS, CURRENCY, EXCHANGE_NAME ) "
+					+ "VALUES( ?, ?, NOW(), ?, ?, ? ) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "ACCOUNT_BALANCE = ?, "
+					+ "AVAILABLE = ?, "
+					+ "BALANCE_DATE = NOW(), "
+					+ "CRYPTO_ADDRESS = ? ,"
+					+ "CURRENCY = ?, "
+					+ "EXCHANGE_NAME = ? ";
+			
+
+			// ADD TO DEPOSIT HISTORY
+			String sqlInsert5 = "INSERT INTO DEPOSIT_HISTORY_ENTRY ( "
+					+ "TX_ID, AMOUNT, CRYPTO_ADDRESS, "
+					+ "CURRENCY, LAST_UPDATED, EXCHANGE_NAME ) "
+					+ "VALUES ( ?, ?, ?, ?, ?, ?) "
+					+ "ON DUPLICATE KEY UPDATE AMOUNT = ?, "
+					+ "LAST_UPDATED = ?";
+					
+			// ADD TO RETURN HISTORY
+			
+			
+			statement = connection.prepareStatement(sqlSelect);
+			ResultSet rsSelect = statement.executeQuery();
+			statement.clearParameters();
+			
+			// TODO - REFACTOR TO CHECK IF COIN IS VALID, RATHER THAN LOOP THROUGH EVERY COIN
+			
+			
+			while (rsSelect.next()) {
+				String marketCurrency = rsSelect.getString("MARKET_CURRENCY").toUpperCase();
+				String marketCurrencyLong = rsSelect.getString("MARKET_CURRENCY_LONG").toUpperCase();
+				
+				// PERFORM INSERT 1
+				if (marketCurrency.equals(walletDetail.getCoinName().toUpperCase()) 
+						|| marketCurrencyLong.equals(walletDetail.getCoinName().toUpperCase() )) {
+					statement = connection.prepareStatement(sqlInsert1);
+					statement.setString(1, marketCurrency);
+					statement.setString(2, walletDetail.getExchangeName().name());
+					isSuccess = statement.execute();
+					statement.clearParameters();
+				}
+				
+				// PERFORM INSERT 2
+				if (!isSuccess) {
+					statement = connection.prepareStatement(sqlInsert2);
+					statement.setLong(1, walletDetail.getId());
+					statement.setString(2, walletDetail.getExchangeName().name());
+					statement.setString(3, walletDetail.getCoinName().toUpperCase());
+					isSuccess = statement.execute();
+					statement.clearParameters();
+				}
+				
+				// PERFORM INSERT 3
+				if (!isSuccess) {
+					statement = connection.prepareStatement(sqlInsert3);
+					statement.setString(1, walletDetail.getCoinDepositAddress());
+					statement.setString(2, walletDetail.getCoinName().toUpperCase());
+					statement.setString(3, walletDetail.getExchangeName().name());
+					statement.setString(4, walletDetail.getCoinDepositAddress());
+					isSuccess = statement.execute();
+					statement.clearParameters();
+				}
+				
+				// PERFORM INSERT 4
+				if (!isSuccess) {
+					statement = connection.prepareStatement(sqlInsert4);
+					statement.setDouble(1, walletDetail.getCoinBalance());
+					statement.setDouble(2, walletDetail.getCoinBalance());
+					statement.setString(3, walletDetail.getCoinDepositAddress());
+					statement.setString(4, marketCurrency);
+					statement.setString(5, walletDetail.getExchangeName().name());
+					
+					statement.setDouble(6, walletDetail.getCoinBalance());
+					statement.setDouble(7, walletDetail.getCoinBalance());
+					statement.setString(8, walletDetail.getCoinDepositAddress());
+					statement.setString(9, marketCurrency);
+					statement.setString(10, walletDetail.getExchangeName().name());
+					isSuccess = statement.execute();
+					statement.clearParameters();
+				}
+				
+								
+				// PERFORM INSERT 5
+				if(!isSuccess) {
+					statement = connection.prepareStatement(sqlInsert5);
+					Date date = new Date();
+					statement.setString(1, "00000001_Wallet");
+					statement.setDouble(2, walletDetail.getCoinBalance());
+					statement.setString(3, walletDetail.getCoinDepositAddress());
+					statement.setString(4, walletDetail.getCoinName());
+					statement.setTimestamp(5, new Timestamp(date.getTime()) );
+					statement.setString(6, walletDetail.getExchangeName().name());
+					statement.setDouble(7, walletDetail.getCoinBalance());
+					statement.setTimestamp(8, new Timestamp(date.getTime()));
+					isSuccess = statement.execute();
+					break;
+				}
+
+			}
+			
+			rsSelect.close();
+			return isSuccess;
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return isSuccess;
+		
+	}
 
 	//============================================
 	//=== UPDATE
 	//============================================
 	
+	@Override
 	public boolean updateProfile(RWLoginDetail userDetail) {
 		
 		try {
@@ -216,6 +351,7 @@ public class UserDaoImpl implements UserDao {
 	//=== DELETE
 	//============================================
 	
+	@Override
 	public boolean deleteFriend(Long friendId) {
 		
 		try {
@@ -233,9 +369,9 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 	
-	
+	@Override
 	public boolean updatePassword(RWPassword password) {
-		int result = 0;
+
 		try {
 			connection = DAOUtils.getConnection();
 			String sqlCompare = "SELECT PASSWORD FROM CREDENTIAL WHERE USER_PROFILE_ID = ?";
@@ -344,6 +480,7 @@ public class UserDaoImpl implements UserDao {
 		return socialNetworkList;
 	}
 	
+	@Override
 	@SuppressWarnings("null")
 	public List<FavoriteCoinView> getFavoriteCoins(Long userId) {
 		
@@ -397,7 +534,7 @@ public class UserDaoImpl implements UserDao {
 		return favCoinList;
 	}
 	
-	
+	@Override
 	public boolean deleteCoinFavorite(Long userCoinFavId) {
 		boolean result = false;
 		
@@ -417,6 +554,14 @@ public class UserDaoImpl implements UserDao {
 		}
 		return result;
 		 
+	}
+	
+	
+	@Override
+	public List<RWExternalWallet> getExternalWallets(Long userId) {
+		
+		
+		return null;
 	}
 	
 	//============================================

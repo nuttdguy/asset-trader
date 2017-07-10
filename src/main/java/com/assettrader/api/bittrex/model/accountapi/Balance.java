@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -17,11 +18,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.assettrader.entities.ids.BalanceId;
 import com.assettrader.model.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "BALANCE")
+@IdClass(BalanceId.class)
 public class Balance implements Serializable {
 
 	private static final long serialVersionUID = -2617907704243030480L;
@@ -55,6 +58,7 @@ public class Balance implements Serializable {
 	@Column(name = "PENDING")
 	private Double pending;
 
+	@Id
 	@Column(name = "CRYPTO_ADDRESS")
 	private String cryptoAddress;
 	

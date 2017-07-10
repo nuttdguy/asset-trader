@@ -9,6 +9,7 @@ import com.assettrader.dao.UserDao;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWExternalWallet;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
@@ -46,6 +47,17 @@ public class UserServiceImpl implements UserService {
 	public boolean addFriend(SocialNetwork friend) {
 		return userDao.addFriend(friend);
 	}
+	
+	@Override
+	public boolean addExternalWallet(RWExternalWallet walletDetail) {
+		return userDao.addExternalWallet(walletDetail);
+	}
+	
+	@Override
+	public List<RWExternalWallet> getExternalWallets(Long userId) {
+		return userDao.getExternalWallets(userId);
+	}
+	
 	
 	//============================================
 	//=== UPDATE
@@ -103,6 +115,7 @@ public class UserServiceImpl implements UserService {
 	public boolean checkIfUserExists(String username) {
 		return userDao.checkIfUserExists(username);
 	}
+
 
 
 

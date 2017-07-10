@@ -301,7 +301,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);		
 				statement.setString(1, entry.getPaymentUuid());
 				statement.setString(2, entry.getAddress());
-				statement.setString(3, entry.getAmount());
+				statement.setDouble(3, entry.getAmount());
 				statement.setBoolean(4, entry.getAuthorized());
 				statement.setBoolean(5, entry.getCanceled());
 				statement.setString(6, entry.getCurrency());

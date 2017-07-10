@@ -60,6 +60,9 @@ public class UserProfile extends Person {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<BalanceHistory> balanceHistories;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<ReturnHistory> returnHistories;
+
 	public UserProfile() {
 	}
 
@@ -157,6 +160,14 @@ public class UserProfile extends Person {
 
 	public void setBalanceHistories(List<BalanceHistory> balanceHistories) {
 		this.balanceHistories = balanceHistories;
+	}
+
+	public List<ReturnHistory> getReturnHistories() {
+		return returnHistories;
+	}
+
+	public void setReturnHistories(List<ReturnHistory> returnHistories) {
+		this.returnHistories = returnHistories;
 	}
 
 }

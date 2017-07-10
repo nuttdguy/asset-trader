@@ -23,6 +23,7 @@ public class BittrexClient {
 	public static final String DEFAULT_BASE_URL = "https://bittrex.com/api/v1.1";
 	
 	private BittrexAccountApi accountApi;
+	private BittrexPublicApi publicApi;
 
 	private boolean credentialsAvailable = true;
 
@@ -54,8 +55,7 @@ public class BittrexClient {
 			apiBuilder.logger(new Slf4jLogger(BittrexClient.class)).logLevel(logLevel);
 		}
 
-		// TODO -- CONVERT TO THIS PUBLIC IMPLEMENTATION 
-		// publicApi = apiBuilder.target(BittrexPublicApi.class, baseUrl);
+		 publicApi = apiBuilder.target(BittrexPublicApi.class, baseUrl);
 
 		credentialsAvailable = credentials != null;
 
@@ -69,6 +69,10 @@ public class BittrexClient {
 	public BittrexAccountApi getAccountApi() {
 		failIfNoCredentials("You can't use the AccountAPI without credentials.");
 		return accountApi;
+	}
+	
+	public BittrexPublicApi getPublicApi() {
+		return publicApi;
 	}
 
 	private void failIfNoCredentials(String message) {

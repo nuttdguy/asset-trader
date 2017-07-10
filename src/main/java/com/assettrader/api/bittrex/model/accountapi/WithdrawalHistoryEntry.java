@@ -50,7 +50,7 @@ public class WithdrawalHistoryEntry implements Serializable {
 	private String currency;
 	
 	@Column( name = "AMOUNT")
-	private String amount;
+	private Double amount;
 	
 	@Column( name = "ADDRESS")
 	private String address;
@@ -108,11 +108,11 @@ public class WithdrawalHistoryEntry implements Serializable {
 		this.currency = currency;
 	}
 
-	public String getAmount() {
+	public Double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
 

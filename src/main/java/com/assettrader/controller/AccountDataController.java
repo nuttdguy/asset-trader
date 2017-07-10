@@ -3,16 +3,13 @@ package com.assettrader.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.assettrader.api.bittrex.BittrexClient;
@@ -23,15 +20,14 @@ import com.assettrader.api.bittrex.model.accountapi.DepositHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
+import com.assettrader.api.bittrex.model.publicapi.MarketSummary;
 import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.coinmarket.Ticker;
-import com.assettrader.model.publicapi.DTO.CoinDTO;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.ResWrapper;
 import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.model.view.AccountBalanceView;
 import com.assettrader.service.AccountDataService;
-import com.assettrader.service.AccountInfoService;
 import com.assettrader.service.CoinService;
 import com.assettrader.service.DTO.AccountDataServiceDTO;
 import com.assettrader.service.DTO.CoinServiceDTO;
@@ -74,6 +70,7 @@ public class AccountDataController {
 		return accountDataServiceDTO.saveAllAccountBalancesDTO(addLogoUrlToBalanceDTO(balanceApiDTO), userId);
 	}
 	
+	
 	@RequestMapping(value = "/orderhistory", method = RequestMethod.POST )
 	public ApiResult<List<OrderHistoryEntry>> getOrderHistory(@RequestBody RWLoginDetail userDetail) {
 		
@@ -109,6 +106,7 @@ public class AccountDataController {
 		return accountDataServiceDTO.saveAllDepositHistory(addLogoUrlsToDTOResult(depositHistoryDTO));
 	}
 	
+	
 	// IS WORKING 
 	@RequestMapping(value = "/depositaddress/{currency}", method = RequestMethod.GET)
 	public ApiResult<DepositAddress> getDepositAddressByCurrency(@PathVariable String currency) {
@@ -125,6 +123,7 @@ public class AccountDataController {
 	//=======================================
 	// CUSTOM-SPECIFIC CONTROLLER IMPLEMENTATIONS
 	//=======================================
+	
 	
 	
 	@RequestMapping(value = {"/balances/{btcprice}&{userId}"}, method = RequestMethod.GET)
@@ -149,6 +148,8 @@ public class AccountDataController {
 
 		}
 		
+		
+		
 		ResWrapper<AccountBalanceView> res = new ResWrapper<>();
 		AccountBalanceView balanceView = new AccountBalanceView();
 		balanceView.setPortfolioValue(portfolioValue);
@@ -158,10 +159,83 @@ public class AccountDataController {
 		res.setMessage("Portfolio was calculated!");
 		
 		// PERSIST RESULT OF BALANCE TO EACH COIN TO DATABASE FOR GRAPHING INTENT
-		accountDataService.saveCurrentBalance(portfolioValue, userId);
+		accountDataService.saveCurrentBalance(btcprice, portfolioValue, userId);
+		
 		
 		// RETURN VALUE OF PORTFOLIO DISPLAY
 		return res;
+	}
+	
+	
+	
+	@RequestMapping(value = {"/balances/profit/{btcprice}&{userId}"}, method = RequestMethod.GET)
+	public ResWrapper<AccountBalanceView> getReturnOnInvestment(@PathVariable Double btcprice, @PathVariable Long userId) {
+		
+		// USE CLIENT TO GENERATE GET KEYS, GENERATE
+		BittrexKeyUtil keys = accountDataService.getApiKey(userId);
+		
+		// GET CURRENT DATA FROM API
+		ApiResult<List<DepositHistoryEntry>> depositHistory =
+				initBittrexClient(keys).getAccountApi().getDepositHistory();
+		
+		ApiResult<List<WithdrawalHistoryEntry>> withdrawalHistory =
+				initBittrexClient(keys).getAccountApi().getWithdrawalHistory();
+		
+		ApiResult<List<Balance>> currentBalance =
+				initBittrexClient(keys).getAccountApi().getBalances();
+		
+		ApiResult<List<MarketSummary>> marketSummary =
+				initBittrexClient(keys).getPublicApi().getMarketSummaries();
+		
+		Double totalDeposit = 0.00;
+		Double totalWithdrawal = 0.00;
+		Double totalBalance = 0.00;
+		// CALCULATE RESULT, WILL REQUIRE HISTORICAL BTC DATA 
+		for (DepositHistoryEntry dEntry : depositHistory.getResult()) {
+			if (dEntry.getAmount() > 0 && dEntry.getCurrency().equals("BTC")) {
+				totalDeposit += dEntry.getAmount();
+			}
+		}
+		
+		for (WithdrawalHistoryEntry wEntry : withdrawalHistory.getResult()) {
+			if (wEntry.getAmount() > 0 && wEntry.getCurrency().equals("BTC")) {
+				totalWithdrawal += wEntry.getAmount();
+			}
+		}
+		
+		List<MarketSummary> mSummary = marketSummary.getResult();
+		
+		START: for (Balance bEntry : currentBalance.getResult()) {
+			if (bEntry.getBalance() > 0 ) {
+				
+				String currency = bEntry.getCurrency();
+				for (MarketSummary ms : mSummary) {
+					if (ms.getMarketName().substring(4).equals( currency )) {
+						totalBalance += ( bEntry.getBalance() * ms.getAsk() ) ;
+						continue START;
+					}
+				}
+			}
+		}
+		
+		Double returnPercent = 0.00;
+		returnPercent = (( totalDeposit - totalWithdrawal ) + totalBalance) / totalDeposit ;
+		
+		// PERSIST CURRENT DATA TO DB FOR HISTORY
+		// TODO -- CREATE TABLES TO ASSOCIATE HISTORY WITH SPECIFIC USER
+		// accountDataService.saveDepositHistory(depositHistory, userId);
+		// accountDataService.saveWithdrawalHistory(withdrawalHistory, userId);
+		accountDataService.saveReturnHistory(totalDeposit, totalWithdrawal, totalBalance, btcprice, userId);
+		
+		// Create ResWrapper, return returnPercent
+		ResWrapper<AccountBalanceView> response = new ResWrapper<>();
+		AccountBalanceView balanceView = new AccountBalanceView();
+		balanceView.setReturnPercent(returnPercent);
+		response.setResult(balanceView);
+		response.setMessage("RETURN PERCENT CALCULATED");
+		response.setStatus(HttpStatus.OK);
+		
+		return response;
 	}
 	
 	

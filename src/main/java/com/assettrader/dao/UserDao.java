@@ -5,6 +5,7 @@ import java.util.List;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWExternalWallet;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
@@ -22,6 +23,7 @@ public interface UserDao {
 	public boolean saveCoinAsFavorite(RWFavorite userFav);
 	public boolean saveApiKey(RWApiCredential credential);
 	public boolean addFriend(SocialNetwork friend);
+	public boolean addExternalWallet(RWExternalWallet walletDetail);
 
 	//============================================
 	//=== UPDATE
@@ -44,6 +46,7 @@ public interface UserDao {
 	public RWLoginDetail loginUser(String username, String password);
 	public List<SocialNetwork> getFriendList(Long userId);
 	public List<FavoriteCoinView> getFavoriteCoins(Long userId);
+	public List<RWExternalWallet> getExternalWallets(Long userId);
 	
 	//============================================
 	//=== VALIDATE

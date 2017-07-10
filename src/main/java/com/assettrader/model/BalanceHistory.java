@@ -27,6 +27,9 @@ public class BalanceHistory {
 	@Column(name = "BALANCE_DATE_TIME")
 	private Date balanceDateTime;
 	
+	@Column(name = "BTC_PRICE")
+	private Double btcPrice;
+	
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn( name = "USER_PROFILE_ID" )
 	private UserProfile userProfile;
@@ -53,6 +56,22 @@ public class BalanceHistory {
 
 	public void setBalanceDateTime(Date balanceDateTime) {
 		this.balanceDateTime = balanceDateTime;
+	}
+
+	public Double getBtcPrice() {
+		return btcPrice;
+	}
+
+	public void setBtcPrice(Double btcPrice) {
+		this.btcPrice = btcPrice;
+	}
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.assettrader.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.assettrader.model.Credential;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.rest.RWApiCredential;
+import com.assettrader.model.rest.RWExternalWallet;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
 import com.assettrader.model.rest.ResResponse;
 import com.assettrader.model.rest.ResWrapper;
+import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.service.UserService;
 
@@ -197,5 +199,51 @@ public class SettingsController {
 		
 	}
 	
+	@RequestMapping(value = "/wallet/{userId}", method = RequestMethod.GET)
+	public ResWrapper<List<RWExternalWallet>> addExternalCoinWallet(@PathVariable Long userId) {
+		
+		List<RWExternalWallet> walletList = userService.getExternalWallets(userId);
+		
+		ResWrapper<List<RWExternalWallet>> response = new ResWrapper<>();
+		
+
+		return response;
+		
+	}
+	
+	
+	@RequestMapping(value = "/wallet/add", method = RequestMethod.POST)
+	public ResResponse addExternalCoinWallet(@RequestBody RWExternalWallet walletDetail) {
+		
+		walletDetail.setExchangeName(ExchangeName.WALLET);
+		boolean isSuccess = userService.addExternalWallet(walletDetail);
+
+		ResResponse response = new ResResponse();
+		if (!isSuccess) {
+			response.setMessage("COIN ADDED TO WALLET");
+			response.setSuccess(true);
+			return response;
+		}
+		
+		response.setMessage("COIN COULD NOT BE ADDED");
+		response.setSuccess(false);
+		return response;
+		
+	}
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 

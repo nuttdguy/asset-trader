@@ -5,6 +5,7 @@ import com.assettrader.model.utils.ExchangeName;
 public class RWExternalWallet {
 
 	private Long id;
+	private Long userId;
 	private Long walletId;
 	private String coinName;
 	private Double coinBalance;
@@ -18,6 +19,14 @@ public class RWExternalWallet {
 
 	public void setWalletId(Long walletId) {
 		this.walletId = walletId;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public ExchangeName getExchangeName() {

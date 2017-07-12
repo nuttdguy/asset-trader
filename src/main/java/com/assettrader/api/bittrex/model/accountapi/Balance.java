@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +22,7 @@ import javax.persistence.Transient;
 
 import com.assettrader.entities.ids.BalanceId;
 import com.assettrader.model.Account;
+import com.assettrader.model.utils.ExchangeName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -28,25 +31,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Balance implements Serializable {
 
 	private static final long serialVersionUID = -2617907704243030480L;
-	
-	@Transient
-	private String logoUrl;
-	
-	public String getLogoUrl() {
-		return logoUrl;
-	}
-
-	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
-	}
 
 	@GeneratedValue(strategy = GenerationType.TABLE)
-	@Column(name = "BALANCE_ID", columnDefinition="SERIAL")
+	@Column(name = "BALANCE_ID", columnDefinition = "SERIAL")
 	@JsonIgnore
 	private Double id;
 
 	@Id
-	@Column(name = "CURRENCY")
+	@Column(name = "CURRENCY_NAME")
 	private String currency;
 
 	@Column(name = "ACCOUNT_BALANCE")
@@ -61,11 +53,11 @@ public class Balance implements Serializable {
 	@Id
 	@Column(name = "CRYPTO_ADDRESS")
 	private String cryptoAddress;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "BALANCE_DATE")
 	private Date balanceDate;
-	
+
 	@JsonIgnore
 	@Transient
 	private Boolean requested;
@@ -74,12 +66,35 @@ public class Balance implements Serializable {
 	@Transient
 	private String uuid;
 
+	@Transient
+	@Enumerated(EnumType.STRING)
+	private ExchangeName exchangeName;
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false) })
+			@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
+			@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false) })
 	private Account account;
+
+	@Transient
+	private String logoUrl;
+
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
+
+	public ExchangeName getExchangeName() {
+		return exchangeName;
+	}
+
+	public void setExchangeName(ExchangeName exchangeName) {
+		this.exchangeName = exchangeName;
+	}
 
 	public String getCurrency() {
 		return currency;

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.assettrader.model.EmailProvider;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWExternalWallet;
@@ -27,19 +28,19 @@ import com.assettrader.service.UserService;
 
 @CrossOrigin
 @RestController
-@RequestMapping( value = "/user")
+@RequestMapping(value = "/user")
 public class SettingsController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
 	@ResponseBody
 	public ResResponse saveCoinAsFavorite(@RequestBody RWFavorite userFav) {
-		
+
 		boolean isSuccess = userService.saveCoinAsFavorite(userFav);
 		ResResponse response = new ResResponse();
-		
+
 		if (isSuccess) {
 			response.setMessage("Coin has been successfully saved");
 			response.setSuccess(true);
@@ -48,16 +49,16 @@ public class SettingsController {
 			response.setSuccess(false);
 		}
 		return response;
-		
+
 	}
-	
-	@RequestMapping(value = "/apikey", method = RequestMethod.POST )
+
+	@RequestMapping(value = "/apikey", method = RequestMethod.POST)
 	@ResponseBody
 	public ResResponse addApiExchange(@RequestBody RWApiCredential credential) {
-		
+
 		boolean isSuccess = userService.saveApiKey(credential);
 		ResResponse response = new ResResponse();
-		
+
 		if (!isSuccess) {
 			response.setMessage("Coin has been successfully saved");
 			response.setSuccess(true);
@@ -66,71 +67,68 @@ public class SettingsController {
 			response.setSuccess(false);
 		}
 		return response;
-		
+
 	}
-	
+
 	@RequestMapping(value = "/profile/update", method = RequestMethod.POST)
 	public ResResponse updateProfile(@RequestBody RWLoginDetail userDetail) {
-		
+
 		ResResponse response = new ResResponse();
 		boolean isSuccess = false;
-		
-		if (!userDetail.getUserName().equals("")
-				&& !userDetail.getFirstName().equals("")
-				&& !userDetail.getLastName().equals("") ) {
-			
+
+		if (!userDetail.getUserName().equals("") && !userDetail.getFirstName().equals("")
+				&& !userDetail.getLastName().equals("")) {
+
 			isSuccess = userService.updateProfile(userDetail);
 		}
-		
+
 		if (isSuccess) {
 			response.setMessage("USER UPDATED");
 			response.setSuccess(true);
 			return response;
 		}
-		
+
 		response.setMessage("UPDATE FAILED");
 		response.setSuccess(false);
 		return response;
 	}
-	
-	@RequestMapping(value = "/friend/add", method = RequestMethod.POST) 
+
+	@RequestMapping(value = "/friend/add", method = RequestMethod.POST)
 	public ResResponse addFriend(@RequestBody SocialNetwork friend) {
-		
+
 		ResResponse response = new ResResponse();
-		
-		if (!friend.getEmail().equals("")
-				&& !friend.getFirstName().equals("")
-				&& !friend.getLastName().equals("") ) {
+
+		if (!friend.getEmail().equals("") && !friend.getFirstName().equals("") && !friend.getLastName().equals("")) {
 			boolean isSuccess = userService.addFriend(friend);
-			
+
 			if (!isSuccess) {
 				response.setMessage("FRIEND ADDED TO NETWORK");
 				response.setSuccess(true);
 				return response;
-			} 
+			}
 		}
-		
+
 		response.setMessage("ADDING FRIEND WAS NOT SUCCESSFUL");
 		response.setSuccess(false);
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/friend/list/{userId}", method = RequestMethod.GET)
 	public ResWrapper<List<SocialNetwork>> getFriendList(@PathVariable Long userId) {
-		
+
 		List<SocialNetwork> socialNetwork = userService.getFriendList(userId);
-		
+
 		ResWrapper<List<SocialNetwork>> response = new ResWrapper<>();
 		response.setMessage("GETTING FRIEND LIST IS SUCCESSFUL");
 		response.setSuccess(true);
 		response.setResult(socialNetwork);
-		
+
 		return response;
 	}
-	
-	@RequestMapping(value = "/friend/delete/{friendId}", method = RequestMethod.GET )
+
+	@RequestMapping(value = "/friend/delete/{friendId}", method = RequestMethod.GET)
 	public ResResponse deleteFriend(@PathVariable Long friendId) {
-		
+
 		boolean isSuccess = userService.deleteFriend(friendId);
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
@@ -138,16 +136,16 @@ public class SettingsController {
 			response.setSuccess(true);
 			return response;
 		}
-		
+
 		response.setMessage("FRIEND WAS NOT DELETED");
 		response.setSuccess(false);
 		return response;
-		
+
 	}
-	
-	@RequestMapping(value = "/password/update", method = RequestMethod.POST )
+
+	@RequestMapping(value = "/password/update", method = RequestMethod.POST)
 	public ResResponse updatePassword(@RequestBody RWPassword password) {
-		
+
 		boolean isSuccess = userService.updatePassword(password);
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
@@ -155,18 +153,18 @@ public class SettingsController {
 			response.setSuccess(true);
 			return response;
 		}
-		
+
 		response.setMessage("PASSWORD COULD NOT BE UPDATED");
 		response.setSuccess(false);
 		return response;
-		
+
 	}
-	
+
 	@RequestMapping(value = "/favorite/coin/list/{userId}", method = RequestMethod.GET)
 	public ResWrapper<List<FavoriteCoinView>> getFavoriteCoins(@PathVariable Long userId) {
-		
+
 		List<FavoriteCoinView> coinFavList = userService.getFavoriteCoins(userId);
-		
+
 		ResWrapper<List<FavoriteCoinView>> response = new ResWrapper<>();
 		if (coinFavList != null) {
 			response.setMessage("YOUR FAVORITES");
@@ -175,16 +173,15 @@ public class SettingsController {
 			response.setStatus(HttpStatus.OK);
 			return response;
 		}
-		
+
 		response.setMessage("ERROR GETTING COIN LIST");
 		response.setSuccess(false);
 		return response;
 	}
-	
-	
+
 	@RequestMapping(value = "/favorite/delete/{coinId}", method = RequestMethod.DELETE)
 	public ResResponse deleteCoinFavorite(@PathVariable Long coinId) {
-		
+
 		boolean isSuccess = userService.deleteCoinFavorite(coinId);
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
@@ -192,29 +189,38 @@ public class SettingsController {
 			response.setSuccess(true);
 			return response;
 		}
-		
+
 		response.setMessage("COIN COULD NOT BE REMOVED");
 		response.setSuccess(false);
 		return response;
-		
+
 	}
+
 	
 	@RequestMapping(value = "/wallet/{userId}", method = RequestMethod.GET)
-	public ResWrapper<List<RWExternalWallet>> addExternalCoinWallet(@PathVariable Long userId) {
-		
-		List<RWExternalWallet> walletList = userService.getExternalWallets(userId);
-		
-		ResWrapper<List<RWExternalWallet>> response = new ResWrapper<>();
-		
+	public ResWrapper<List<RWExternalWallet>> getExternalCoinWallets(@PathVariable Long userId) {
 
+		List<RWExternalWallet> walletList = userService.getExternalWallets(userId);
+
+		ResWrapper<List<RWExternalWallet>> response = new ResWrapper<>();
+		if (walletList != null) {
+			response.setResult(walletList);
+			response.setStatus(HttpStatus.OK);
+			response.setMessage("Success");
+			return response;
+			
+		}
+
+		response.setMessage("Wallet list cannot be retrieved");
+		response.setSuccess(false);
 		return response;
-		
+
 	}
-	
+
 	
 	@RequestMapping(value = "/wallet/add", method = RequestMethod.POST)
 	public ResResponse addExternalCoinWallet(@RequestBody RWExternalWallet walletDetail) {
-		
+
 		walletDetail.setExchangeName(ExchangeName.WALLET);
 		boolean isSuccess = userService.addExternalWallet(walletDetail);
 
@@ -224,20 +230,94 @@ public class SettingsController {
 			response.setSuccess(true);
 			return response;
 		}
-		
+
 		response.setMessage("COIN COULD NOT BE ADDED");
+		response.setSuccess(false);
+		return response;
+
+	}
+	
+	// TODO -- ADD DELETE WALLET
+	@RequestMapping(value = "/wallet/delete/{walletId}", method = RequestMethod.DELETE)
+	public ResResponse deleteExternalCoinWallet(@PathVariable Long walletId) {
+
+		boolean isSuccess = userService.deleteExternalWallet(walletId);
+
+		ResResponse response = new ResResponse();
+		if (!isSuccess) {
+			response.setMessage("WALLET HAS BEEN DELETED ... ");
+			response.setSuccess(true);
+			return response;
+		}
+
+		response.setMessage("WALLET HAS NOT BEEN DELETED ... ");
+		response.setSuccess(false);
+		return response;
+
+	}
+	
+
+	@RequestMapping(value = "/email/external", method = RequestMethod.POST)
+	public ResResponse addExternalEmail(@RequestBody EmailProvider emailProvider) {
+
+		boolean isSuccess = true;
+		if (!emailProvider.getEmailFrom().isEmpty() 
+				|| !emailProvider.getEmailFromPassword().isEmpty() ) { 
+			
+			isSuccess = userService.addExternalEmail(emailProvider);
+		}
+		
+		ResResponse response = new ResResponse();
+		if (!isSuccess) {
+			response.setMessage("EMAIL ADDED SUCCESSFULLY");
+			response.setSuccess(true);
+			return response;
+		}
+
+		response.setMessage("EMAIL COULD NOT BE ADDED");
+		response.setSuccess(false);
+		return response;
+	}
+	
+	@RequestMapping(value = "/email/external/list/{userId}", method = RequestMethod.GET)
+	public ResWrapper<List<EmailProvider>> getExternalEmails(@PathVariable Long userId) {
+		
+		List<EmailProvider> externalEmails = userService.getExternalEmails(userId);
+		
+		ResWrapper<List<EmailProvider>> response = new ResWrapper<>();
+		if (externalEmails != null) {
+			response.setResult(externalEmails);
+			response.setMessage("Retrieved emails");
+			response.setSuccess(true);
+			return response;
+		}
+		
+		response.setResult(externalEmails);
+		response.setMessage("Could not retrieve emails");
+		response.setSuccess(false);
+		return response;
+	}
+	
+	@RequestMapping(value = "/email/external/delete/{emailId}", method = RequestMethod.DELETE)
+	public ResResponse deleteExternalEmail(@PathVariable Long emailId) {
+		
+		boolean isSuccess = userService.deleteExternalEmail(emailId);
+		
+		ResResponse response = new ResResponse();
+		if (!isSuccess) {
+			response.setMessage("EMAIL WAS DELETED SUCCESSFULLY");
+			response.setSuccess(true);
+			return response;
+		}
+
+		response.setMessage("EMAIL COULD NOT BE DELETED");
 		response.setSuccess(false);
 		return response;
 		
 	}
 	
-	
+
 }
-
-
-
-
-
 
 
 

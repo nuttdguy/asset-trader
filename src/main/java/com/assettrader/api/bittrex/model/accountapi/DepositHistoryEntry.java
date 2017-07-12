@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.assettrader.model.Account;
+import com.assettrader.model.utils.ExchangeName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -26,17 +27,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class DepositHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -8357674342951584523L;
-	
-	@Transient
-	private String logoUrl;
-	
-	public String getLogoUrl() {
-		return logoUrl;
-	}
-
-	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
-	}
 
 	@GeneratedValue( strategy=GenerationType.TABLE)
 	@Column( name = "DEPOSIT_HISTORY_ID", columnDefinition="SERIAL")
@@ -49,7 +39,7 @@ public class DepositHistoryEntry implements Serializable {
 	@Column( name = "LAST_UPDATED" )
     private Date lastUpdated;
 	
-	@Column( name = "CURRENCY" )
+	@Column( name = "CURRENCY_NAME" )
     private String currency;
 	
 	@Column( name = "AMOUNT" )
@@ -58,6 +48,10 @@ public class DepositHistoryEntry implements Serializable {
 	@Column( name = "CRYPTO_ADDRESS" )
     private String cryptoAddress;
 		
+	@JsonIgnore
+	@Transient
+	private ExchangeName exchangeName;
+	
 	@Id
 	@Column( name = "TX_ID" )
     private String txId;
@@ -90,6 +84,16 @@ public class DepositHistoryEntry implements Serializable {
 	@Transient
     private Boolean invalidAddress;
 	
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
@@ -108,7 +112,15 @@ public class DepositHistoryEntry implements Serializable {
         return confirmations;
     }
 
-    public void setConfirmations(Integer confirmations) {
+    public ExchangeName getExchangeName() {
+		return exchangeName;
+	}
+
+	public void setExchangeName(ExchangeName exchangeName) {
+		this.exchangeName = exchangeName;
+	}
+
+	public void setConfirmations(Integer confirmations) {
         this.confirmations = confirmations;
     }
 

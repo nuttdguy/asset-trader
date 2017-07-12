@@ -1,4 +1,4 @@
-package com.assettrader.model;
+/*package com.assettrader.model;
 
 import java.util.Date;
 
@@ -74,3 +74,4 @@ public class UserAccount {
 	}
 
 }
+*/

@@ -24,17 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class OrderHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = -3261426735268961664L;
-		
-	@Transient
-	private String logoUrl;
-	
-	public String getLogoUrl() {
-		return logoUrl;
-	}
-
-	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
-	}
 
 	@JsonIgnore
 	@GeneratedValue( strategy=GenerationType.TABLE )
@@ -95,6 +84,17 @@ public class OrderHistoryEntry implements Serializable {
 		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
 		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false) })
 	private Account account;
+	
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 	
 	public Long getId() {
 		return id;

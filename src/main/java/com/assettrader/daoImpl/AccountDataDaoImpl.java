@@ -32,18 +32,19 @@ public class AccountDataDaoImpl implements AccountDataDao {
 	//== CREATE
 	//============================================
 	
-	public void saveCurrentBalance(Double btcprice, Double balance, Long userId) {
+	@Override
+	public void saveCurrentBalance(Double btcprice, Double balance,  Long userId) {
 		
 		try {
 			
 			connection = DAOUtils.getConnection();
 			String sqlInsert = "INSERT INTO BALANCE_HISTORY( "
-					+ "BALANCE_AMOUNT, BALANCE_DATE_TIME, BTC_PRICE, USER_PROFILE_ID) "
-					+ "VALUES( ?, NOW(), ?, ?)";
+					+ "BALANCE_AMOUNT, BTC_PRICE, USER_PROFILE_ID, BALANCE_DATE_TIME ) "
+					+ "VALUES( ?, ?, ?, NOW() )";
 			
 			statement = connection.prepareStatement(sqlInsert);
-			statement.setDouble(1, btcprice);
-			statement.setDouble(2, balance);
+			statement.setDouble(1, balance);
+			statement.setDouble(2, btcprice);
 			statement.setLong(3, userId);
 			statement.execute();					
 			
@@ -149,7 +150,8 @@ public class AccountDataDaoImpl implements AccountDataDao {
 		try {
 			connection = DAOUtils.getConnection();
 			String sqlInsert = "INSERT INTO RETURN_HISTORY( "
-					+ "ENTRY_DATE, TOTAL_BALANCE, TOTAL_DEPOSIT, TOTAL_WITHDRAWAL, BTC_PRICE, USER_PROFILE_ID ) "
+					+ "ENTRY_DATE, TOTAL_BALANCE, TOTAL_DEPOSIT, "
+					+ "TOTAL_WITHDRAWAL, BTC_PRICE, USER_PROFILE_ID ) "
 					+ "VALUES( NOW(), ?, ?, ?, ?, ? )";
 			
 			statement = connection.prepareStatement(sqlInsert);
@@ -243,49 +245,85 @@ public class AccountDataDaoImpl implements AccountDataDao {
 	}
 	
 
+	// TODO -- FIX TABLE AND RESULT OF QUERY, 
 	@Override
 	public List<Balance> getAccountBalances(Long id) {
 		List<Balance> balances = new ArrayList<>();
 		
 		try {
 			connection = DAOUtils.getConnection();
-//			String sql = "SELECT 	B.* FROM ACCOUNTS A "
-//					+ "LEFT JOIN 	BALANCE B ON A.CURRENCY = B.CURRENCY "
-//					+ "RIGHT JOIN  	USER_ACCOUNT C ON A.CURRENCY = C.CURRENCY "
-//					+ "WHERE 		C.USER_PROFILE_ID = ?";
 			
-			// GET CURRENCY, EXCHANGE_NAME, USER_ACCOUNT_ID, ADD_DATE_TIME FROM USER_ACCOUNT WHERE USER_PROFILE_ID = 1;
-			// GET CURRENCY, EXCHANGE_NAME, ACCOUNT_ID, ADD_DATE FROM ACCOUNTS;
-			// GET * FROM BALANCE WHERE CURRENCY = ? AND EXCHANGE_NAME = ?;
+			// TODO -- GET ALL VALUES FROM EACH EXCHANGE INDIVIDUALLY
+			String sqlSelectWallet = "SELECT DISTINCT * FROM ACCOUNTS "
+					+ "WHERE USER_PROFILE_ID = ? "
+					+ "AND EXCHANGE_NAME = ? ";
 			
-			// GET ALL ACTIVE ACCOUNTS
-			String sqlSelect1 = "SELECT CURRENCY FROM ACCOUNTS";
-			String sqlSelect2 = "SELECT * FROM BALANCE "
-					+ "WHERE CURRENCY = ? "
-					+ "AND AVAILABLE > 0";
+			String sqlSelectBittrex = "SELECT DISTINCT * FROM ACCOUNTS "
+					+ "WHERE USER_PROFILE_ID = ? "
+					+ "AND EXCHANGE_NAME = ? ";
 			
-			statement = connection.prepareStatement(sqlSelect1);
-			statement.setLong(1, id);			
+			String sqlSelectBalance = "SELECT * FROM BALANCE "
+					+ "WHERE ACCOUNT_BALANCE > 0 "
+					+ "AND CURRENCY = ? ";
+			
+			// RESULT_1 == ALL WALLET-TYPE CURRENCY NAMES
+			statement = connection.prepareStatement(sqlSelectWallet);
+			statement.setLong(1, id);	
+			statement.setString(2, ExchangeName.WALLET.name());	
 			ResultSet rs1 = statement.executeQuery();
 			statement.clearParameters();
 			
-			while (rs1.next()) {
-				statement = connection.prepareStatement(sqlSelect2);
-				statement.setString(1, rs1.getString("CURRENCY") );
-				ResultSet rs2 = statement.executeQuery();
+			// RESULT_2 == ALL BITTREX-TYPE CURRENCY NAMES
+			statement = connection.prepareStatement(sqlSelectBittrex);
+			statement.setLong(1, id);		
+			statement.setString(2, ExchangeName.BITTREX.name());	
+			ResultSet rs2 = statement.executeQuery();
+			statement.clearParameters();
+			
+			// QUERY FOR BALANCES GREATER-THAN 0 BY EXCHANGE-TYPE AND CURRENCY NAME
+			while (rs1.next() ) {
 				
-				while (rs2.next()) {
+				statement = connection.prepareStatement(sqlSelectBalance);
+				statement.setString(1, rs1.getString("CURRENCY"));
+				ResultSet rs3 = statement.executeQuery();
+				statement.clearParameters();
+				
+				if (rs3.next() ) {
 					Balance b = new Balance();
-					b.setCurrency(rs2.getString("CURRENCY"));
-					b.setBalance(rs2.getDouble("ACCOUNT_BALANCE"));
-					b.setAvailable(rs2.getDouble("AVAILABLE"));
-					Date date = rs2.getDate("BALANCE_DATE");
+					b.setCurrency(rs3.getString("CURRENCY"));
+					b.setBalance(rs3.getDouble("ACCOUNT_BALANCE"));
+					b.setAvailable(rs3.getDouble("AVAILABLE"));
+					Date date = rs3.getDate("BALANCE_DATE");
 					b.setBalanceDate(date);
+					b.setExchangeName(ExchangeName.valueOf(rs3.getString("EXCHANGE_NAME")));
 					balances.add(b);
-				}
-				rs2.close();
+				}		
+				rs3.close();
 			}
+			
+			while (rs1.next() ) {
+				
+				statement = connection.prepareStatement(sqlSelectBalance);
+				statement.setString(1, rs1.getString("CURRENCY"));
+				ResultSet rs4 = statement.executeQuery();
+				statement.clearParameters();
+				
+				if (rs4.next() ) {
+					Balance b = new Balance();
+					b.setCurrency(rs4.getString("CURRENCY"));
+					b.setBalance(rs4.getDouble("ACCOUNT_BALANCE"));
+					b.setAvailable(rs4.getDouble("AVAILABLE"));
+					Date date = rs4.getDate("BALANCE_DATE");
+					b.setBalanceDate(date);
+					b.setExchangeName(ExchangeName.valueOf(rs4.getString("EXCHANGE_NAME")));
+					balances.add(b);
+				}	
+				rs4.close();
+			}
+			
 			rs1.close();
+			rs2.close();
+
 			return balances;
 			
 		} catch (SQLException se) {

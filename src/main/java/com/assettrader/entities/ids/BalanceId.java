@@ -2,6 +2,8 @@ package com.assettrader.entities.ids;
 
 import java.io.Serializable;
 
+import com.assettrader.model.utils.ExchangeName;
+
 public class BalanceId implements Serializable {
 
 	private static final long serialVersionUID = -2741632730731334929L;
@@ -9,7 +11,7 @@ public class BalanceId implements Serializable {
 	private String currency;
 	
 	private String cryptoAddress;
-
+	
 	public String getCurrency() {
 		return currency;
 	}

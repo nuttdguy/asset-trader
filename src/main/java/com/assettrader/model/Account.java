@@ -11,7 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.assettrader.api.bittrex.model.accountapi.Balance;
@@ -41,8 +43,8 @@ public class Account {
 	@Column(name = "ADD_DATE")
 	private Date addDate;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,  mappedBy = "account")
-	private List<UserAccount> userAccount;
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,  mappedBy = "account")
+//	private List<UserAccount> userAccount;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<DepositHistoryEntry> depositHistoryEntry;
@@ -58,6 +60,10 @@ public class Account {
 
 	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
 	private List<WithdrawalRequested> withdrawalRequested;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=false)
+	private UserProfile userProfile;
 
 	public Long getId() {
 		return id;
@@ -91,13 +97,13 @@ public class Account {
 		this.addDate = addDate;
 	}
 
-	public List<UserAccount> getUserAccount() {
-		return userAccount;
-	}
-
-	public void setUserAccount(List<UserAccount> userAccount) {
-		this.userAccount = userAccount;
-	}
+//	public List<UserAccount> getUserAccount() {
+//		return userAccount;
+//	}
+//
+//	public void setUserAccount(List<UserAccount> userAccount) {
+//		this.userAccount = userAccount;
+//	}
 
 	public List<DepositHistoryEntry> getDepositHistoryEntry() {
 		return depositHistoryEntry;

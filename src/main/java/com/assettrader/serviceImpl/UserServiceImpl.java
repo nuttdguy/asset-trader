@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.assettrader.dao.UserDao;
+import com.assettrader.model.EmailProvider;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.rest.RWApiCredential;
@@ -58,6 +59,10 @@ public class UserServiceImpl implements UserService {
 		return userDao.getExternalWallets(userId);
 	}
 	
+	@Override
+	public boolean addExternalEmail(EmailProvider emailProvider) {
+		return userDao.addExternalEmail(emailProvider);
+	}
 	
 	//============================================
 	//=== UPDATE
@@ -82,8 +87,19 @@ public class UserServiceImpl implements UserService {
 		return userDao.deleteFriend(friendId);
 	}
 		
+	@Override
 	public boolean deleteCoinFavorite(Long userCoinFavId) {
 		return userDao.deleteCoinFavorite(userCoinFavId);
+	}
+	
+	@Override
+	public boolean deleteExternalEmail(Long emailId) {
+		return userDao.deleteExternalEmail(emailId);
+	}
+	
+	@Override
+	public boolean deleteExternalWallet(Long walletId) {
+		return userDao.deleteExternalWallet(walletId);
 	}
 	
 	//============================================
@@ -106,6 +122,11 @@ public class UserServiceImpl implements UserService {
 		return userDao.getFavoriteCoins(userId);
 	}
 	
+	@Override
+	public List<EmailProvider> getExternalEmails(Long userId) {
+		return userDao.getExternalEmails(userId);
+	}
+	
 	//============================================
 	//=== VALIDATE
 	//============================================
@@ -115,8 +136,6 @@ public class UserServiceImpl implements UserService {
 	public boolean checkIfUserExists(String username) {
 		return userDao.checkIfUserExists(username);
 	}
-
-
 
 
 }

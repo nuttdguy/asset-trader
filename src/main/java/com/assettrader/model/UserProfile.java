@@ -21,11 +21,11 @@ import javax.persistence.TemporalType;
 public class UserProfile extends Person {
 
 	@Id
-	@Column(name = "USER_PROFILE_ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "USER_PROFILE_ID" )
+	@GeneratedValue(strategy = GenerationType.IDENTITY )
 	private Long id;
 
-	@Column(name = "USERNAME", unique = true)
+	@Column(name = "USERNAME", unique= true)
 	private String username;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -46,10 +46,10 @@ public class UserProfile extends Person {
 	private ApiCredential apiCredential;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
-	private List<SocialNetwork> socialNetwork;
+	private List<Account> Account;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
-	private List<UserAccount> userAccount;
+	private List<SocialNetwork> socialNetwork;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<UserCoinFavorite> userCoinFavorite;
@@ -62,6 +62,9 @@ public class UserProfile extends Person {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<ReturnHistory> returnHistories;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
+	private List<EmailProvider> emailProvider;
 
 	public UserProfile() {
 	}
@@ -130,12 +133,20 @@ public class UserProfile extends Person {
 		this.address = address;
 	}
 
-	public List<UserAccount> getUserAccount() {
-		return userAccount;
+	public List<Account> getAccount() {
+		return Account;
 	}
 
-	public void setUserAccount(List<UserAccount> userAccount) {
-		this.userAccount = userAccount;
+	public void setAccount(List<Account> account) {
+		Account = account;
+	}
+
+	public List<EmailProvider> getEmailProvider() {
+		return emailProvider;
+	}
+
+	public void setEmailProvider(List<EmailProvider> emailProvider) {
+		this.emailProvider = emailProvider;
 	}
 
 	public List<SocialNetwork> getSocialNetwork() {

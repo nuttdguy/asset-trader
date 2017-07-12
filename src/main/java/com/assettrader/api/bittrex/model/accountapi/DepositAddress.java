@@ -10,9 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.assettrader.entities.ids.DepositAddressId;
 import com.assettrader.model.Account;
+import com.assettrader.model.utils.ExchangeName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -33,13 +35,43 @@ public class DepositAddress {
     private String address;
 	
 	@JsonIgnore
+	@Transient
+	private ExchangeName exchangeName;
+	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
 		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false) })
 	private Account account;
 
-    public String getCurrency() {
+	
+	
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public ExchangeName getExchangeName() {
+		return exchangeName;
+	}
+
+	public void setExchangeName(ExchangeName exchangeName) {
+		this.exchangeName = exchangeName;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public String getCurrency() {
         return currency;
     }
 

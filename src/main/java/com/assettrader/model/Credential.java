@@ -30,12 +30,12 @@ public class Credential implements Serializable {
 	@Column(name = "PASSWORD")
 	private String password;
 	
-	
 	@Column(name = "ACTIVITY_DATE")
 	private Date activityDate;
-
+	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=false)
+	@JoinColumn(name = "USER_PROFILE_ID", 
+		referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=false)
 	private UserProfile userProfile;
 
 	public Credential() {

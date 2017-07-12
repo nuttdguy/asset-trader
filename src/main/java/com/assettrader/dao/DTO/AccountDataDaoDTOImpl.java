@@ -28,58 +28,53 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 	
 	private Connection connection = null;
 	private PreparedStatement statement = null;
-	private LocalDateTimePersistenceConverter dateConverter = new LocalDateTimePersistenceConverter();
 
+	
 	// TODO -- IMPORTANT, NEED THE USER_PROFILE_ID, EXCHANGE_NAME, CURRENCY 
 	@Override
 	public ApiResult<List<Balance>> saveAllAccountBalancesDTO(ApiResult<List<Balance>> balanceApiDTO, Long userId) {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE) "
-					+ "VALUES( ?, ?, ?)";
+			String sqlInsert1 = "INSERT INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE, USER_PROFILE_ID ) "
+					+ "VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE "
+					+ "CURRENCY = ?, EXCHANGE_NAME = ? ";
 			
-			String sqlInsert2 = "INSERT IGNORE INTO USER_ACCOUNT (CURRENCY, EXCHANGE_NAME, USER_PROFILE_ID, ADD_DATE ) "
-					+ "VALUES( ?, ?, ?, ? )";
 			
 			String sqlInsert3 = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
 					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME) "
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?) ";
 			
 			List<Balance> balanceList = balanceApiDTO.getResult();
+			Date d = new Date();
+			
 			
 			for (Balance entry1 : balanceList) {
-				Date d = new Date();
+				
 				statement = connection.prepareStatement(sqlInsert1);
 				statement.setString(1, entry1.getCurrency());
-				statement.setString(2, ExchangeName.BITTREX.name() ); // TODO - CHANGE HARD CODED VALUE
+				statement.setString(2, ExchangeName.BITTREX.name()); // TODO - CHANGE HARD CODED VALUE
 				statement.setTimestamp(3, new Timestamp(d.getTime()));
+				statement.setLong(4, userId);
+				
+				statement.setString(5, entry1.getCurrency());
+				statement.setString(6, ExchangeName.BITTREX.name() );
 				statement.execute();
 				statement.clearParameters();
 			}
-			
-			for (Balance entry2 : balanceList) {
-				Date d = new Date();
-				statement = connection.prepareStatement(sqlInsert2);
-				statement.setString(1, entry2.getCurrency());
-				statement.setString(2, ExchangeName.BITTREX.name() );
-				statement.setLong(3, userId);
-				statement.setTimestamp(4, new Timestamp(d.getTime()));
-				statement.execute();
-				statement.clearParameters();
-			}
-			
+					
 			for (Balance entry3 : balanceList){
+						
 				statement = connection.prepareStatement(sqlInsert3, PreparedStatement.RETURN_GENERATED_KEYS );
 				statement.setDouble(1, entry3.getAvailable());
 				statement.setDouble(2, entry3.getBalance());
 				
-				statement.setTimestamp(3, dateConverter.convertToDatabaseColumn(LocalDateTime.now()));
+				statement.setTimestamp(3, new Timestamp(d.getTime()));
 				statement.setString(4, entry3.getCryptoAddress());
 				statement.setString(5, entry3.getCurrency());
 				statement.setDouble(6, entry3.getPending());
 				
-				statement.setString(7, ExchangeName.BITTREX.name());
+				statement.setString(7, ExchangeName.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -109,9 +104,10 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
 			
 			Date d = new Date();
+			
 			statement = connection.prepareStatement(sqlInsert1);
 			statement.setString(1, balanceApiDTO.getResult().getCurrency());
-			statement.setString(2, ExchangeName.BITTREX.name() ); // TODO - CHANGE HARD CODED VALUE
+			statement.setString(2, ExchangeName.BITTREX.name() ); 
 			statement.setTimestamp(3, new Timestamp( d.getTime() ));
 			statement.execute();
 			statement.clearParameters();
@@ -125,7 +121,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			statement.setString(4, balanceApiDTO.getResult().getCryptoAddress());
 			statement.setString(5, balanceApiDTO.getResult().getCurrency());
 			statement.setDouble(6, balanceApiDTO.getResult().getPending());
-			statement.setString(7, ExchangeName.BITTREX.name());
+			statement.setString(7, ExchangeName.BITTREX.name() );
 			
 			statement.execute();
 			System.out.println("Successfully persisted ACCOUNT BALANCE RECORD");
@@ -148,6 +144,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 					+ "VALUES(?, ?, ?)";
 			
 			statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+			
 			
 			statement.setString(1, depositAddressDTO.getResult().getAddress() );
 			statement.setString(2, depositAddressDTO.getResult().getCurrency() );
@@ -183,8 +180,10 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 					+ "?, ? )";
 			
 			List<OrderHistoryEntry> orderHistoryList = orderHistoryDTO.getResult();
+					
 			
 			for (OrderHistoryEntry entry : orderHistoryList) {
+				
 				
 				statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 				statement.setString(1, entry.getOrderUuid());
@@ -263,7 +262,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setDouble(14, entry.getQuantityRemaining());
 				statement.setTimestamp(15, new Timestamp(entry.getTimeStamp().getTime() ));				
 				statement.setString(16, entry.getExchange().substring(4).toUpperCase() ); // GETS THE CURRENCY SHORT-NAME
-				statement.setString(17, ExchangeName.BITTREX.name());
+				statement.setString(17, ExchangeName.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -310,7 +309,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setBoolean(9, entry.getPendingPayment());
 				statement.setDouble(10, entry.getTxCost());
 				statement.setString(11, entry.getTxId());
-				statement.setString(12, ExchangeName.BITTREX.name());
+				statement.setString(12, ExchangeName.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -351,7 +350,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(4, entry.getCurrency());
 				statement.setTimestamp(5, new Timestamp(entry.getLastUpdated().getTime()));
 				statement.setString(6, entry.getTxId());
-				statement.setString(7, ExchangeName.BITTREX.name());
+				statement.setString(7, ExchangeName.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();

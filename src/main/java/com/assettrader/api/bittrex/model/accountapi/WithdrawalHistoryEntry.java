@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.assettrader.model.Account;
+import com.assettrader.model.utils.ExchangeName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -26,16 +27,6 @@ public class WithdrawalHistoryEntry implements Serializable {
 
 	private static final long serialVersionUID = 4908513899210242329L;
 	
-	@Transient
-	private String logoUrl;
-	
-	public String getLogoUrl() {
-		return logoUrl;
-	}
-
-	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
-	}
 
 	@JsonIgnore
 	@GeneratedValue( strategy = GenerationType.TABLE)
@@ -78,12 +69,36 @@ public class WithdrawalHistoryEntry implements Serializable {
 	private Boolean invalidAddress;
 	
 	@JsonIgnore
+	@Transient
+	private ExchangeName exchangeName;
+	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
 		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false) })
 	private Account account;
 	
+	
+	@Transient
+	private String logoUrl;
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public ExchangeName getExchangeName() {
+		return exchangeName;
+	}
+
+	public void setExchangeName(ExchangeName exchangeName) {
+		this.exchangeName = exchangeName;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
+
 	public Long getId() {
 		return id;
 	}

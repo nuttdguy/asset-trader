@@ -2,6 +2,7 @@ package com.assettrader.dao;
 
 import java.util.List;
 
+import com.assettrader.model.EmailProvider;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.rest.RWApiCredential;
@@ -24,6 +25,7 @@ public interface UserDao {
 	public boolean saveApiKey(RWApiCredential credential);
 	public boolean addFriend(SocialNetwork friend);
 	public boolean addExternalWallet(RWExternalWallet walletDetail);
+	public boolean addExternalEmail(EmailProvider emailProvider);
 
 	//============================================
 	//=== UPDATE
@@ -38,6 +40,8 @@ public interface UserDao {
 	
 	public boolean deleteFriend(Long friendId);
 	public boolean deleteCoinFavorite(Long userCoinFavId);
+	public boolean deleteExternalEmail(Long emailId);
+	public boolean deleteExternalWallet(Long walletId);
 	
 	//============================================
 	//=== RETRIEVE
@@ -47,6 +51,7 @@ public interface UserDao {
 	public List<SocialNetwork> getFriendList(Long userId);
 	public List<FavoriteCoinView> getFavoriteCoins(Long userId);
 	public List<RWExternalWallet> getExternalWallets(Long userId);
+	public List<EmailProvider> getExternalEmails(Long userId);
 	
 	//============================================
 	//=== VALIDATE

@@ -36,8 +36,7 @@ public class SocialNetwork extends Person {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "USER_PROFILE_ID", 
-				referencedColumnName="USER_PROFILE_ID", 
-				insertable=false, updatable=false)
+				referencedColumnName="USER_PROFILE_ID", insertable=false, updatable=false)
 	private UserProfile userProfile;
 
 	public Long getId() {

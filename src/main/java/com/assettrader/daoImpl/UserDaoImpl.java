@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.assettrader.dao.UserDao;
 import com.assettrader.model.Address;
 import com.assettrader.model.Credential;
+import com.assettrader.model.EmailProvider;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
 import com.assettrader.model.coinmarket.Coin;
@@ -24,6 +25,8 @@ import com.assettrader.model.rest.RWExternalWallet;
 import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
+import com.assettrader.model.utils.EmailProviderName;
+import com.assettrader.model.utils.ExchangeName;
 import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.utils.DAOUtils;
 
@@ -48,12 +51,19 @@ public class UserDaoImpl implements UserDao {
 					+ "VALUES( ?, ?, NOW(), ? )";
 			
 			statement = connection.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS);
-			statement.setString(1, newUser.getFirstName());
-			statement.setString(2, newUser.getLastName());
+			statement.setString(1, newUser.getFirstName().toUpperCase());
+			statement.setString(2, newUser.getLastName().toUpperCase());
 			statement.setString(3, newUser.getUsername().toUpperCase());
 			
-			Long id = (long) statement.executeUpdate();
+			statement.executeUpdate();
 			statement.clearParameters();
+			
+			ResultSet keyResult = statement.getGeneratedKeys();
+			Long id = 0L; 
+			
+			if (keyResult.next()) {
+				id = keyResult.getLong("GENERATED_KEY");
+			}
 			
 			String credentialSql = "INSERT INTO CREDENTIAL( "
 					+ " PASSWORD, USER_PROFILE_ID, ACTIVITY_DATE ) "
@@ -181,25 +191,23 @@ public class UserDaoImpl implements UserDao {
 			connection = DAOUtils.getConnection();
 			String sqlSelect = "SELECT MARKET_CURRENCY, MARKET_CURRENCY_LONG FROM COIN";
 			
-			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS ( CURRENCY, EXCHANGE_NAME, ADD_DATE ) VALUES (?, ?, NOW())";
-			
-			String sqlInsert2 = "INSERT IGNORE INTO USER_ACCOUNT ( "
-					+ "USER_PROFILE_ID, EXCHANGE_NAME, CURRENCY, ADD_DATE) "
-					+ "VALUES( ?, ?, ?, NOW() )";
+			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS ( "
+					+ "CURRENCY, EXCHANGE_NAME, ADD_DATE, USER_PROFILE_ID ) VALUES (?, ?, NOW(), ?)";
 			
 			String sqlInsert3 = "INSERT INTO DEPOSIT_ADDRESS ( "
 					+ "ADDRESS, CURRENCY, EXCHANGE_NAME) VALUES("
 					+ "?, ?, ? ) "
-					+ "ON DUPLICATE KEY UPDATE ADDRESS = ?";
+					+ "ON DUPLICATE KEY UPDATE EXCHANGE_NAME = ?";
 			
 			String sqlInsert4 = "INSERT INTO BALANCE ( "
-					+ "ACCOUNT_BALANCE, AVAILABLE, BALANCE_DATE, CRYPTO_ADDRESS, CURRENCY, EXCHANGE_NAME ) "
-					+ "VALUES( ?, ?, NOW(), ?, ?, ? ) "
+					+ "ACCOUNT_BALANCE, AVAILABLE, BALANCE_DATE, CRYPTO_ADDRESS, CURRENCY_NAME, CURRENCY, EXCHANGE_NAME ) "
+					+ "VALUES( ?, ?, NOW(), ?, ?, ?, ? ) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "ACCOUNT_BALANCE = ?, "
 					+ "AVAILABLE = ?, "
 					+ "BALANCE_DATE = NOW(), "
-					+ "CRYPTO_ADDRESS = ? ,"
+					+ "CRYPTO_ADDRESS = ?, "
+					+ "CURRENCY_NAME = ?, "
 					+ "CURRENCY = ?, "
 					+ "EXCHANGE_NAME = ? ";
 			
@@ -207,9 +215,10 @@ public class UserDaoImpl implements UserDao {
 			// ADD TO DEPOSIT HISTORY
 			String sqlInsert5 = "INSERT INTO DEPOSIT_HISTORY_ENTRY ( "
 					+ "TX_ID, AMOUNT, CRYPTO_ADDRESS, "
-					+ "CURRENCY, LAST_UPDATED, EXCHANGE_NAME ) "
-					+ "VALUES ( ?, ?, ?, ?, ?, ?) "
-					+ "ON DUPLICATE KEY UPDATE AMOUNT = ?, "
+					+ "CURRENCY_NAME, LAST_UPDATED, CURRENCY, EXCHANGE_NAME ) "
+					+ "VALUES ( ?, ?, ?, ?, ?, ?, ?) "
+					+ "ON DUPLICATE KEY UPDATE "
+					+ "AMOUNT = ?, "
 					+ "LAST_UPDATED = ?";
 					
 			// ADD TO RETURN HISTORY
@@ -232,30 +241,23 @@ public class UserDaoImpl implements UserDao {
 					statement = connection.prepareStatement(sqlInsert1);
 					statement.setString(1, marketCurrency);
 					statement.setString(2, walletDetail.getExchangeName().name());
+					statement.setLong(3, walletDetail.getUserId());
 					isSuccess = statement.execute();
 					statement.clearParameters();
 				}
 				
-				// PERFORM INSERT 2
-				if (!isSuccess) {
-					statement = connection.prepareStatement(sqlInsert2);
-					statement.setLong(1, walletDetail.getId());
-					statement.setString(2, walletDetail.getExchangeName().name());
-					statement.setString(3, walletDetail.getCoinName().toUpperCase());
-					isSuccess = statement.execute();
-					statement.clearParameters();
-				}
-				
+
 				// PERFORM INSERT 3
 				if (!isSuccess) {
 					statement = connection.prepareStatement(sqlInsert3);
 					statement.setString(1, walletDetail.getCoinDepositAddress());
 					statement.setString(2, walletDetail.getCoinName().toUpperCase());
 					statement.setString(3, walletDetail.getExchangeName().name());
-					statement.setString(4, walletDetail.getCoinDepositAddress());
+					statement.setString(4, walletDetail.getExchangeName().name() );
 					isSuccess = statement.execute();
 					statement.clearParameters();
 				}
+				
 				
 				// PERFORM INSERT 4
 				if (!isSuccess) {
@@ -264,13 +266,15 @@ public class UserDaoImpl implements UserDao {
 					statement.setDouble(2, walletDetail.getCoinBalance());
 					statement.setString(3, walletDetail.getCoinDepositAddress());
 					statement.setString(4, marketCurrency);
-					statement.setString(5, walletDetail.getExchangeName().name());
+					statement.setString(5, marketCurrency);
+					statement.setString(6, walletDetail.getExchangeName().name());
 					
-					statement.setDouble(6, walletDetail.getCoinBalance());
 					statement.setDouble(7, walletDetail.getCoinBalance());
-					statement.setString(8, walletDetail.getCoinDepositAddress());
-					statement.setString(9, marketCurrency);
-					statement.setString(10, walletDetail.getExchangeName().name());
+					statement.setDouble(8, walletDetail.getCoinBalance());
+					statement.setString(9, walletDetail.getCoinDepositAddress());
+					statement.setString(10, marketCurrency);
+					statement.setString(11, marketCurrency);
+					statement.setString(12, walletDetail.getExchangeName().name());
 					isSuccess = statement.execute();
 					statement.clearParameters();
 				}
@@ -285,9 +289,11 @@ public class UserDaoImpl implements UserDao {
 					statement.setString(3, walletDetail.getCoinDepositAddress());
 					statement.setString(4, walletDetail.getCoinName());
 					statement.setTimestamp(5, new Timestamp(date.getTime()) );
-					statement.setString(6, walletDetail.getExchangeName().name());
-					statement.setDouble(7, walletDetail.getCoinBalance());
-					statement.setTimestamp(8, new Timestamp(date.getTime()));
+					statement.setString(6, walletDetail.getCoinName());					
+					statement.setString(7, walletDetail.getExchangeName().name());
+					
+					statement.setDouble(8, walletDetail.getCoinBalance());
+					statement.setTimestamp(9, new Timestamp(date.getTime()));
 					isSuccess = statement.execute();
 					break;
 				}
@@ -302,6 +308,33 @@ public class UserDaoImpl implements UserDao {
 		}
 		return isSuccess;
 		
+	}
+	
+	public boolean addExternalEmail(EmailProvider emailProvider) {
+		
+		boolean isSuccess = true;
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlInsert = "INSERT INTO EMAIL_PROVIDER( "
+					+ "ACCOUNT_NOTE, ADD_DATE, EMAIL_FROM, EMAIL_FROM_PASSWORD, "
+					+ "PROVIDER_NAME, USER_PROFILE_ID ) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ? )";
+			
+			Date date = new Date();
+			statement = connection.prepareStatement(sqlInsert);
+			
+			statement.setString(1, emailProvider.getAccountNote());
+			statement.setTimestamp(2, new Timestamp(date.getTime()));
+			statement.setString(3, emailProvider.getEmailFrom());
+			statement.setString(4, emailProvider.getEmailFromPassword() );
+			statement.setString(5, emailProvider.getEmailProviderName().name() );
+			statement.setLong(6, emailProvider.getUserId() );
+			return statement.execute();
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return isSuccess;
 	}
 
 	//============================================
@@ -347,27 +380,6 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 	
-	//============================================
-	//=== DELETE
-	//============================================
-	
-	@Override
-	public boolean deleteFriend(Long friendId) {
-		
-		try {
-			
-			connection = DAOUtils.getConnection();
-			String sqlDelete = "DELETE FROM SOCIAL_NETWORK WHERE SOCIAL_NETWORK_ID = ?";
-			
-			statement = connection.prepareStatement(sqlDelete);
-			statement.setLong(1, friendId);
-			return statement.execute();
-			
-		} catch (SQLException ex) {
-			System.out.println("SQLException: " + ex.getMessage() );
-		}
-		return false;
-	}
 	
 	@Override
 	public boolean updatePassword(RWPassword password) {
@@ -398,6 +410,96 @@ public class UserDaoImpl implements UserDao {
 		
 	}
 	
+	
+	//============================================
+	//=== DELETE
+	//============================================
+	
+	@Override
+	public boolean deleteFriend(Long friendId) {
+		
+		try {
+			
+			connection = DAOUtils.getConnection();
+			String sqlDelete = "DELETE FROM SOCIAL_NETWORK WHERE SOCIAL_NETWORK_ID = ?";
+			
+			statement = connection.prepareStatement(sqlDelete);
+			statement.setLong(1, friendId);
+			return statement.execute();
+			
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean deleteCoinFavorite(Long userCoinFavId) {
+		boolean result = false;
+		
+		 try {
+			 connection = DAOUtils.getConnection();
+			 String sqlDelete = "DELETE FROM USER_COIN_FAVORITE "
+			 		+ "WHERE USER_COIN_FAVORITE_ID = ?";
+			 
+			 statement = connection.prepareStatement(sqlDelete);
+			 statement.setLong(1, userCoinFavId);
+			 return statement.execute();
+			 
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		return result;
+		 
+	}
+	
+	@Override
+	public boolean deleteExternalEmail(Long emailId) {
+		boolean result = false;
+		
+		 try {
+			 connection = DAOUtils.getConnection();
+			 String sqlDelete = "DELETE FROM EMAIL_PROVIDER "
+			 		+ "WHERE EMAIL_PROVIDER_ID = ?";
+			 
+			 statement = connection.prepareStatement(sqlDelete);
+			 statement.setLong(1, emailId);
+			 return statement.execute();
+			 
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		return result;
+		 
+	}
+	
+	@Override
+	public boolean deleteExternalWallet(Long walletId) {
+		boolean result = false;
+		
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlSelect1 = "SELECT * FROM ACCOUNTS WHERE ACCOUNT_ID = ?";
+			
+			String sqlDelete1 = "DELETE FROM BALANCE WHERE EXCHANGE_NAME = ? AND CURRENCY = ? ";
+			
+			statement = connection.prepareStatement(sqlSelect1);
+			statement.setLong(1, walletId);
+			return statement.execute();
+			
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		return result;
+		
+	}
+	
 	//============================================
 	//=== RETRIEVE
 	//============================================
@@ -413,7 +515,7 @@ public class UserDaoImpl implements UserDao {
 					+ "JOIN CREDENTIAL B "
 					+ "ON A.USER_PROFILE_ID = B.USER_PROFILE_ID "
 					+ "WHERE A.USERNAME = ? "
-					+ "AND B.PASSWORD = ?;";
+					+ "AND B.PASSWORD = ? ";
 			
 			statement = connection.prepareStatement(sql);
 			statement.setString(1, username.toUpperCase());
@@ -480,6 +582,7 @@ public class UserDaoImpl implements UserDao {
 		return socialNetworkList;
 	}
 	
+	
 	@Override
 	@SuppressWarnings("null")
 	public List<FavoriteCoinView> getFavoriteCoins(Long userId) {
@@ -534,34 +637,91 @@ public class UserDaoImpl implements UserDao {
 		return favCoinList;
 	}
 	
+
 	@Override
-	public boolean deleteCoinFavorite(Long userCoinFavId) {
-		boolean result = false;
+	public List<RWExternalWallet> getExternalWallets(Long userId) {
 		
-		 try {
-			 connection = DAOUtils.getConnection();
-			 String sqlDelete = "DELETE FROM USER_COIN_FAVORITE "
-			 		+ "WHERE USER_COIN_FAVORITE_ID = ?";
-			 
-			 statement = connection.prepareStatement(sqlDelete);
-			 statement.setLong(1, userCoinFavId);
-			 return statement.execute();
-			 
+		List<RWExternalWallet> walletList = null;
+		try {
+
+			connection = DAOUtils.getConnection();
+			String sqlSelect1 = "SELECT A.*, B.* FROM ACCOUNTS A "
+					+ "JOIN BALANCE B "
+					+ "WHERE A.EXCHANGE_NAME = ? "
+					+ "AND B.EXCHANGE_NAME = ? " 
+					+ "AND A.CURRENCY = B.CURRENCY "
+					+ "AND USER_PROFILE_ID = ? ";
+			
+		
+			statement= connection.prepareStatement(sqlSelect1);
+			statement.setString(1, "WALLET");
+			statement.setString(2, "WALLET");
+			statement.setLong(3, userId);
+			ResultSet rs1 = statement.executeQuery();
+			statement.clearParameters();
+			
+			walletList = new ArrayList<>();
+			while (rs1.next() ) {
+				RWExternalWallet wallet = new RWExternalWallet();
+				wallet.setUserId(userId);
+				wallet.setId(rs1.getLong("BALANCE_ID"));
+				wallet.setWalletId(rs1.getLong("ACCOUNT_ID"));
+				wallet.setCoinName(rs1.getString("CURRENCY_NAME"));
+				wallet.setCoinBalance(rs1.getDouble("ACCOUNT_BALANCE"));
+				wallet.setCoinDepositAddress(rs1.getString("CRYPTO_ADDRESS"));
+				wallet.setCoinWithdrawalAddress(rs1.getString("CRYPTO_ADDRESS"));
+				wallet.setExchangeName( ExchangeName.valueOf(rs1.getString("EXCHANGE_NAME")));
+				walletList.add(wallet);
+			}
+			rs1.close();
+			return walletList;
+			
 		} catch(SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage() );
 		} finally {
 			closeResources();
 		}
-		return result;
-		 
+		
+		return walletList;
 	}
 	
 	
+	
 	@Override
-	public List<RWExternalWallet> getExternalWallets(Long userId) {
+	public List<EmailProvider> getExternalEmails(Long userId) {
 		
+		List<EmailProvider> externalEmails = null;
 		
-		return null;
+		try {
+			connection = DAOUtils.getConnection();
+			String sqlInsert = "SELECT * FROM EMAIL_PROVIDER WHERE USER_PROFILE_ID = ? ";
+			
+			statement = connection.prepareStatement(sqlInsert);
+			statement.setLong(1, userId);
+			ResultSet rs = statement.executeQuery();
+			
+			externalEmails = new ArrayList<>();
+			while (rs.next() ) {
+				
+				EmailProvider email = new EmailProvider();
+				email.setAccountNote(rs.getString("ACCOUNT_NOTE"));
+				email.setAddDate(rs.getDate("ADD_DATE"));
+				email.setEmailFrom(rs.getString("EMAIL_FROM"));
+				email.setId(rs.getLong("EMAIL_PROVIDER_ID") );
+				email.setEmailProviderName(EmailProviderName.valueOf(rs.getString("PROVIDER_NAME")));
+				email.setUserId(userId);
+				externalEmails.add(email);
+			}
+			
+			rs.close();
+			return externalEmails;
+		
+		} catch(SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage() );
+		} finally {
+			closeResources();
+		}
+		return externalEmails;
 	}
 	
 	//============================================
@@ -573,9 +733,9 @@ public class UserDaoImpl implements UserDao {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sql = "SELECT B.USERNAME "
-					+ "FROM CREDENTIAL B "
-					+ "WHERE B.USERNAME = ? ;";
+			String sql = "SELECT USERNAME "
+					+ "FROM USER_PROFILE "
+					+ "WHERE USERNAME = ? ;";
 			
 			statement = connection.prepareStatement(sql);
 			statement.setString(1, username.toUpperCase());

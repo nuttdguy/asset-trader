@@ -55,17 +55,22 @@ public class AccountDataController {
 	// GENERAL CONTROLLER IMPLEMENTATIONS
 	//=======================================
 	
+	// TODO --- BIG BUG WITH HARD-CODED VALUE FROM DIRECT API-REQUEST
 	@RequestMapping(value ={ "/balances" }, method = RequestMethod.POST)
 	public ApiResult<List<Balance>> getBalances(@RequestBody RWLoginDetail userDetail) {
 		
-		// KEY IS REQUIRED FOR JOIN TABLE OR CREATING NEW ACCOUNT
 		Long userId = userDetail.getId();
-		
-		// NEED TO INCLUDE USER_PROFILE_ID
 		BittrexKeyUtil keys = accountDataService.getApiKey(userDetail);
 		
 		ApiResult<List<Balance>> balanceApiDTO = 
 				initBittrexClient(keys).getAccountApi().getBalances();
+		
+		// GET DEPOSIT ADDRESS FOR EACH ACTIVE COIN
+		for (Balance deposit: balanceApiDTO.getResult()) {
+			String currency = deposit.getCurrency();
+			ApiResult<DepositAddress> depositAddress = initBittrexClient(keys).getAccountApi().getDepositAddress(currency);
+			balanceApiDTO.getResult().get(0).setCryptoAddress(depositAddress.getResult().getAddress());
+		}
 		
 		return accountDataServiceDTO.saveAllAccountBalancesDTO(addLogoUrlToBalanceDTO(balanceApiDTO), userId);
 	}

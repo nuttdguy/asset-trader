@@ -34,6 +34,7 @@
 	<!-- Beans for service implementations -->
 	<bean id="coinService" class="com.assettrader.serviceImpl.CoinServiceImpl" />
 	<bean id="userService" class="com/assettrader/serviceImpl/UserServiceImpl" />
+	<bean id="mailService" class="com/assettrader/serviceImpl/MailSeviceImpl" />
 	
 	<!-- DataSource -->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">

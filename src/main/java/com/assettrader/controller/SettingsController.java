@@ -41,7 +41,7 @@ public class SettingsController {
 		ResResponse response = new ResResponse();
 
 		if (isSuccess) {
-			response.setMessage("Coin has been successfully saved");
+			response.setMessage("Coin saved to favorites");
 			response.setSuccess(true);
 		} else {
 			response.setMessage("Coin was not saved");
@@ -59,12 +59,14 @@ public class SettingsController {
 		ResResponse response = new ResResponse();
 
 		if (!isSuccess) {
-			response.setMessage("Coin has been successfully saved");
+			response.setMessage("Api keys saved");
 			response.setSuccess(true);
-		} else {
-			response.setMessage("Coin was not saved");
-			response.setSuccess(false);
+			return response;
 		}
+		
+		response.setMessage("Api keys not saved");
+		response.setSuccess(false);
+		
 		return response;
 
 	}

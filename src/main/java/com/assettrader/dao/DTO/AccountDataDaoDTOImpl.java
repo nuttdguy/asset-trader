@@ -36,18 +36,18 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 		
 		try {
 			connection = DAOUtils.getConnection();
-			String sqlInsert1 = "INSERT INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE, USER_PROFILE_ID ) "
-					+ "VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE "
+			String sqlInsert1 = "INSERT INTO ACCOUNTS( CURRENCY, EXCHANGE_NAME, ADD_DATE, USER_PROFILE_ID, EXCHANGE_SUFFIX ) "
+					+ "VALUES( ?, ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE "
 					+ "CURRENCY = ?, EXCHANGE_NAME = ? ";
 			
 			
 			String sqlInsert3 = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
-					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME) "
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?) ";
+					+ "CRYPTO_ADDRESS, CURRENCY_NAME, PENDING, CURRENCY, EXCHANGE_NAME, EXCHANGE_SUFFIX) "
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 			
 			List<Balance> balanceList = balanceApiDTO.getResult();
 			Date d = new Date();
-			
+			String exchangeSuffix = "1b";
 			
 			for (Balance entry1 : balanceList) {
 				
@@ -56,9 +56,10 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(2, ExchangeName.BITTREX.name()); // TODO - CHANGE HARD CODED VALUE
 				statement.setTimestamp(3, new Timestamp(d.getTime()));
 				statement.setLong(4, userId);
+				statement.setString(5, exchangeSuffix );
 				
-				statement.setString(5, entry1.getCurrency());
-				statement.setString(6, ExchangeName.BITTREX.name() );
+				statement.setString(6, entry1.getCurrency());
+				statement.setString(7, ExchangeName.BITTREX.name() );
 				statement.execute();
 				statement.clearParameters();
 			}
@@ -73,8 +74,10 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(4, entry3.getCryptoAddress());
 				statement.setString(5, entry3.getCurrency());
 				statement.setDouble(6, entry3.getPending());
+				statement.setString(7, entry3.getCurrency());
+				statement.setString(8, exchangeSuffix );
 				
-				statement.setString(7, ExchangeName.BITTREX.name() );
+				statement.setString(9, ExchangeName.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -100,8 +103,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 					+ "VALUES( ?, ?, ?)";
 			
 			String sqlInsert2 = "INSERT IGNORE INTO BALANCE(AVAILABLE, ACCOUNT_BALANCE, BALANCE_DATE, "
-					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME) "
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+					+ "CRYPTO_ADDRESS, CURRENCY, PENDING, EXCHANGE_NAME, EXCHANGE_SUFFIX) "
+					+ "VALUES(?, ?, ?, ?, ?, ?, ? ?)";
 			
 			Date d = new Date();
 			
@@ -122,6 +125,10 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			statement.setString(5, balanceApiDTO.getResult().getCurrency());
 			statement.setDouble(6, balanceApiDTO.getResult().getPending());
 			statement.setString(7, ExchangeName.BITTREX.name() );
+			
+			statement.setString(8, "0b" ); 
+			// TODO -- TEST THIS IMPLEMENTATION, EXCHANGE_SUFFIX NEEDS TO BE APPLIED DYNAMICALLY
+			// TODO -- NEED TO PREFIX ACCOUNT WITH USER_PROFILE_ID
 			
 			statement.execute();
 			System.out.println("Successfully persisted ACCOUNT BALANCE RECORD");

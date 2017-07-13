@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -33,10 +34,10 @@ public class ApiCredential {
 	@Column(name = "EXCHANGE_NAME")
 	private String exchangeName;
 	
-	@Column(name = "SET_PRIMARY", unique=true)
+	@Column(name = "SET_PRIMARY")
 	private boolean setPrimary;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=false)
 	private UserProfile userProfile;
 	

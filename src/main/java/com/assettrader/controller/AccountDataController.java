@@ -55,7 +55,7 @@ public class AccountDataController {
 	// GENERAL CONTROLLER IMPLEMENTATIONS
 	//=======================================
 	
-	// TODO --- BIG BUG WITH HARD-CODED VALUE FROM DIRECT API-REQUEST
+	
 	@RequestMapping(value ={ "/balances" }, method = RequestMethod.POST)
 	public ApiResult<List<Balance>> getBalances(@RequestBody RWLoginDetail userDetail) {
 		

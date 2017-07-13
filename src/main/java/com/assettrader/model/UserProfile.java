@@ -42,8 +42,8 @@ public class UserProfile extends Person {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
 	private Credential credential;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
-	private ApiCredential apiCredential;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile")
+	private List<ApiCredential> apiCredentials;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<Account> Account;
@@ -117,12 +117,12 @@ public class UserProfile extends Person {
 		this.credential = credential;
 	}
 
-	public ApiCredential getApiCredential() {
-		return apiCredential;
+	public List<ApiCredential> getApiCredentials() {
+		return apiCredentials;
 	}
 
-	public void setApiCredential(ApiCredential apiCredential) {
-		this.apiCredential = apiCredential;
+	public void setApiCredentials(List<ApiCredential> apiCredentials) {
+		this.apiCredentials = apiCredentials;
 	}
 
 	public List<Address> getAddress() {

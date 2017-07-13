@@ -2,8 +2,6 @@ package com.assettrader.entities.ids;
 
 import java.io.Serializable;
 
-import com.assettrader.model.UserProfile;
-
 public class AccountId implements Serializable {
 
 	private static final long serialVersionUID = -5874619578460890796L;
@@ -12,6 +10,7 @@ public class AccountId implements Serializable {
 	
 	private String currency;
 	
+	private String exchangeSuffix;
 	
 	public AccountId() {}
 
@@ -34,6 +33,14 @@ public class AccountId implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getExchangeSuffix() {
+		return exchangeSuffix;
+	}
+
+	public void setExchangeSuffix(String exchangeSuffix) {
+		this.exchangeSuffix = exchangeSuffix;
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.assettrader.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,13 +101,13 @@ public class SettingsController {
 			boolean isSuccess = userService.addFriend(friend);
 
 			if (!isSuccess) {
-				response.setMessage("FRIEND ADDED TO NETWORK");
+				response.setMessage("Friend added ...");
 				response.setSuccess(true);
 				return response;
 			}
 		}
 
-		response.setMessage("ADDING FRIEND WAS NOT SUCCESSFUL");
+		response.setMessage("Error adding friend ...");
 		response.setSuccess(false);
 		return response;
 	}
@@ -149,12 +148,12 @@ public class SettingsController {
 		boolean isSuccess = userService.updatePassword(password);
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
-			response.setMessage("PASSWORD UPDATED");
+			response.setMessage("Password updated");
 			response.setSuccess(true);
 			return response;
 		}
 
-		response.setMessage("PASSWORD COULD NOT BE UPDATED");
+		response.setMessage("Was not able to update password");
 		response.setSuccess(false);
 		return response;
 
@@ -226,18 +225,17 @@ public class SettingsController {
 
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
-			response.setMessage("COIN ADDED TO WALLET");
+			response.setMessage("External Wallet added");
 			response.setSuccess(true);
 			return response;
 		}
 
-		response.setMessage("COIN COULD NOT BE ADDED");
+		response.setMessage("External wallet was not added");
 		response.setSuccess(false);
 		return response;
 
 	}
 	
-	// TODO -- ADD DELETE WALLET
 	@RequestMapping(value = "/wallet/delete/{walletId}", method = RequestMethod.DELETE)
 	public ResResponse deleteExternalCoinWallet(@PathVariable Long walletId) {
 
@@ -245,12 +243,12 @@ public class SettingsController {
 
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
-			response.setMessage("WALLET HAS BEEN DELETED ... ");
+			response.setMessage("Wallet deleted ... ");
 			response.setSuccess(true);
 			return response;
 		}
 
-		response.setMessage("WALLET HAS NOT BEEN DELETED ... ");
+		response.setMessage("Wallet was not deleted ... ");
 		response.setSuccess(false);
 		return response;
 
@@ -269,12 +267,12 @@ public class SettingsController {
 		
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
-			response.setMessage("EMAIL ADDED SUCCESSFULLY");
+			response.setMessage("Email added");
 			response.setSuccess(true);
 			return response;
 		}
 
-		response.setMessage("EMAIL COULD NOT BE ADDED");
+		response.setMessage("Email was not added");
 		response.setSuccess(false);
 		return response;
 	}
@@ -293,7 +291,7 @@ public class SettingsController {
 		}
 		
 		response.setResult(externalEmails);
-		response.setMessage("Could not retrieve emails");
+		response.setMessage("Error in getting emails");
 		response.setSuccess(false);
 		return response;
 	}
@@ -305,12 +303,12 @@ public class SettingsController {
 		
 		ResResponse response = new ResResponse();
 		if (!isSuccess) {
-			response.setMessage("EMAIL WAS DELETED SUCCESSFULLY");
+			response.setMessage("Email deleted");
 			response.setSuccess(true);
 			return response;
 		}
 
-		response.setMessage("EMAIL COULD NOT BE DELETED");
+		response.setMessage("Email not deleted");
 		response.setSuccess(false);
 		return response;
 		

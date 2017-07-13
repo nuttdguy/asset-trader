@@ -186,22 +186,61 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public boolean addExternalWallet(RWExternalWallet walletDetail) {
 		
+		// !!!!!!!!!!!!   ADD EXCHANGE SUFFIX   !!!!!!!!!!!!!
+		
 		boolean isSuccess = true;
 		try {
+			
+			String accountSuffix = "";
+			String sqlSelect = "";
+			String sqlInsert1 = "";
+			ResultSet rsSelect =  null;
+			
+			
+			// (1) ALWAYS INSERT RECORD IF WALLET
+			if (walletDetail.getExchangeName() == ExchangeName.WALLET) {
+				try {
+					connection = DAOUtils.getConnection();
+					
+					accountSuffix = walletDetail.getUserId() + "w";
+					
+					// INSERT FIRST, CREATE THE RECORD
+					sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS ( "
+							+ "CURRENCY, EXCHANGE_NAME, EXCHANGE_SUFFIX, ADD_DATE, USER_PROFILE_ID ) VALUES (?, ?, ?, NOW(), ?)";
+					
+					statement = connection.prepareStatement(sqlInsert1);
+					statement.setString(1, walletDetail.getCoinName().toUpperCase());
+					statement.setString(2, walletDetail.getExchangeName().name());
+					statement.setString(3, accountSuffix );
+					statement.setLong(4, walletDetail.getUserId());
+					statement.execute();
+					statement.clearParameters();
+				} catch (SQLException e) {
+					System.out.println(e.getMessage() );
+				} finally {
+					closeResources();
+				}
+
+			}
+			
+	
+			// (2) BEGIN NORMAL EXECUTION OF INSERTS 
+			
 			connection = DAOUtils.getConnection();
-			String sqlSelect = "SELECT MARKET_CURRENCY, MARKET_CURRENCY_LONG FROM COIN";
+				
+			sqlSelect = "SELECT * FROM ACCOUNTS WHERE USER_PROFILE_ID = ?";
+					
+			sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS ( "
+						+ "CURRENCY, EXCHANGE_NAME, EXCHANGE_SUFFIX, ADD_DATE, USER_PROFILE_ID ) VALUES (?, ?, ?, NOW(), ?)";
 			
-			String sqlInsert1 = "INSERT IGNORE INTO ACCOUNTS ( "
-					+ "CURRENCY, EXCHANGE_NAME, ADD_DATE, USER_PROFILE_ID ) VALUES (?, ?, NOW(), ?)";
-			
-			String sqlInsert3 = "INSERT INTO DEPOSIT_ADDRESS ( "
-					+ "ADDRESS, CURRENCY, EXCHANGE_NAME) VALUES("
-					+ "?, ?, ? ) "
+			String sqlInsert3 = "INSERT IGNORE INTO DEPOSIT_ADDRESS ( "
+					+ "ADDRESS, CURRENCY, EXCHANGE_NAME, EXCHANGE_SUFFIX) VALUES("
+					+ "?, ?, ?, ? ) "
 					+ "ON DUPLICATE KEY UPDATE EXCHANGE_NAME = ?";
 			
-			String sqlInsert4 = "INSERT INTO BALANCE ( "
-					+ "ACCOUNT_BALANCE, AVAILABLE, BALANCE_DATE, CRYPTO_ADDRESS, CURRENCY_NAME, CURRENCY, EXCHANGE_NAME ) "
-					+ "VALUES( ?, ?, NOW(), ?, ?, ?, ? ) "
+			String sqlInsert4 = "INSERT IGNORE INTO BALANCE ( "
+					+ "ACCOUNT_BALANCE, AVAILABLE, BALANCE_DATE, CRYPTO_ADDRESS, CURRENCY_NAME, CURRENCY, EXCHANGE_NAME, EXCHANGE_SUFFIX ) "
+					+ "VALUES( ?, ?, NOW(), ?, ?, ?, ?, ? ) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "ACCOUNT_BALANCE = ?, "
 					+ "AVAILABLE = ?, "
@@ -209,39 +248,46 @@ public class UserDaoImpl implements UserDao {
 					+ "CRYPTO_ADDRESS = ?, "
 					+ "CURRENCY_NAME = ?, "
 					+ "CURRENCY = ?, "
-					+ "EXCHANGE_NAME = ? ";
+					+ "EXCHANGE_NAME = ?,"
+					+ "EXCHANGE_SUFFIX = ? ";
 			
 
 			// ADD TO DEPOSIT HISTORY
-			String sqlInsert5 = "INSERT INTO DEPOSIT_HISTORY_ENTRY ( "
+			String sqlInsert5 = "INSERT IGNORE INTO DEPOSIT_HISTORY_ENTRY ( "
 					+ "TX_ID, AMOUNT, CRYPTO_ADDRESS, "
-					+ "CURRENCY_NAME, LAST_UPDATED, CURRENCY, EXCHANGE_NAME ) "
-					+ "VALUES ( ?, ?, ?, ?, ?, ?, ?) "
+					+ "CURRENCY_NAME, LAST_UPDATED, CURRENCY, EXCHANGE_NAME, EXCHANGE_SUFFIX ) "
+					+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) "
 					+ "ON DUPLICATE KEY UPDATE "
 					+ "AMOUNT = ?, "
 					+ "LAST_UPDATED = ?";
-					
+			
 			// ADD TO RETURN HISTORY
-			
-			
-			statement = connection.prepareStatement(sqlSelect);
-			ResultSet rsSelect = statement.executeQuery();
-			statement.clearParameters();
+		
 			
 			// TODO - REFACTOR TO CHECK IF COIN IS VALID, RATHER THAN LOOP THROUGH EVERY COIN
 			
+			statement = connection.prepareStatement(sqlSelect);
+			statement.setLong(1, walletDetail.getUserId() );
+			rsSelect = statement.executeQuery();
+			statement.clearParameters();
 			
-			while (rsSelect.next()) {
-				String marketCurrency = rsSelect.getString("MARKET_CURRENCY").toUpperCase();
-				String marketCurrencyLong = rsSelect.getString("MARKET_CURRENCY_LONG").toUpperCase();
-				
+			int count = 0;
+			while (rsSelect.next() ) {
+						
 				// PERFORM INSERT 1
-				if (marketCurrency.equals(walletDetail.getCoinName().toUpperCase()) 
-						|| marketCurrencyLong.equals(walletDetail.getCoinName().toUpperCase() )) {
+				if (rsSelect.getString("EXCHANGE_NAME").equals(ExchangeName.BITTREX)) {
+					accountSuffix = walletDetail.getUserId() + "b";
+				} else {
+					accountSuffix = walletDetail.getUserId() + "w";
+				}
+				
+				
+				if (rsSelect.getString("CURRENCY").toUpperCase().equals(walletDetail.getCoinName().toUpperCase()) ) {
 					statement = connection.prepareStatement(sqlInsert1);
-					statement.setString(1, marketCurrency);
+					statement.setString(1, rsSelect.getString("CURRENCY").toUpperCase());
 					statement.setString(2, walletDetail.getExchangeName().name());
-					statement.setLong(3, walletDetail.getUserId());
+					statement.setString(3, accountSuffix );
+					statement.setLong(4, walletDetail.getUserId());
 					isSuccess = statement.execute();
 					statement.clearParameters();
 				}
@@ -253,7 +299,8 @@ public class UserDaoImpl implements UserDao {
 					statement.setString(1, walletDetail.getCoinDepositAddress());
 					statement.setString(2, walletDetail.getCoinName().toUpperCase());
 					statement.setString(3, walletDetail.getExchangeName().name());
-					statement.setString(4, walletDetail.getExchangeName().name() );
+					statement.setString(4, accountSuffix );
+					statement.setString(5, walletDetail.getExchangeName().name());
 					isSuccess = statement.execute();
 					statement.clearParameters();
 				}
@@ -265,16 +312,18 @@ public class UserDaoImpl implements UserDao {
 					statement.setDouble(1, walletDetail.getCoinBalance());
 					statement.setDouble(2, walletDetail.getCoinBalance());
 					statement.setString(3, walletDetail.getCoinDepositAddress());
-					statement.setString(4, marketCurrency);
-					statement.setString(5, marketCurrency);
+					statement.setString(4, rsSelect.getString("CURRENCY").toUpperCase());
+					statement.setString(5, rsSelect.getString("CURRENCY").toUpperCase());
 					statement.setString(6, walletDetail.getExchangeName().name());
+					statement.setString(7, accountSuffix);
 					
-					statement.setDouble(7, walletDetail.getCoinBalance());
 					statement.setDouble(8, walletDetail.getCoinBalance());
-					statement.setString(9, walletDetail.getCoinDepositAddress());
-					statement.setString(10, marketCurrency);
-					statement.setString(11, marketCurrency);
-					statement.setString(12, walletDetail.getExchangeName().name());
+					statement.setDouble(9, walletDetail.getCoinBalance());
+					statement.setString(10, walletDetail.getCoinDepositAddress());
+					statement.setString(11, rsSelect.getString("CURRENCY").toUpperCase());
+					statement.setString(12, rsSelect.getString("CURRENCY").toUpperCase());
+					statement.setString(13, walletDetail.getExchangeName().name());
+					statement.setString(14, accountSuffix);
 					isSuccess = statement.execute();
 					statement.clearParameters();
 				}
@@ -282,22 +331,25 @@ public class UserDaoImpl implements UserDao {
 								
 				// PERFORM INSERT 5
 				if(!isSuccess) {
+					
+					count++;
 					statement = connection.prepareStatement(sqlInsert5);
 					Date date = new Date();
-					statement.setString(1, "00000001_Wallet");
+					statement.setString(1, "00000001" + count + "_Wallet");
 					statement.setDouble(2, walletDetail.getCoinBalance());
 					statement.setString(3, walletDetail.getCoinDepositAddress());
 					statement.setString(4, walletDetail.getCoinName());
 					statement.setTimestamp(5, new Timestamp(date.getTime()) );
 					statement.setString(6, walletDetail.getCoinName());					
 					statement.setString(7, walletDetail.getExchangeName().name());
+					statement.setString(8, accountSuffix);
 					
-					statement.setDouble(8, walletDetail.getCoinBalance());
-					statement.setTimestamp(9, new Timestamp(date.getTime()));
+					statement.setDouble(9, walletDetail.getCoinBalance());
+					statement.setTimestamp(10, new Timestamp(date.getTime()));
 					isSuccess = statement.execute();
 					break;
 				}
-
+				
 			}
 			
 			rsSelect.close();
@@ -318,7 +370,7 @@ public class UserDaoImpl implements UserDao {
 			String sqlInsert = "INSERT INTO EMAIL_PROVIDER( "
 					+ "ACCOUNT_NOTE, ADD_DATE, EMAIL_FROM, EMAIL_FROM_PASSWORD, "
 					+ "PROVIDER_NAME, USER_PROFILE_ID ) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ? )";
+					+ "VALUES (?, ?, ?, ?, ?, ? )";
 			
 			Date date = new Date();
 			statement = connection.prepareStatement(sqlInsert);
@@ -393,6 +445,8 @@ public class UserDaoImpl implements UserDao {
 			statement.setLong(1, password.getId());
 			ResultSet rs1 = statement.executeQuery();
 			statement.clearParameters();
+			
+			
 			if (rs1.next()) {
 				if (rs1.getString("PASSWORD").equals(password.getCurrentPassword())) {
 					statement = connection.prepareStatement(sqlUpdate);
@@ -406,7 +460,7 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage() );
 		}
-		return false;
+		return true;
 		
 	}
 	
@@ -485,11 +539,57 @@ public class UserDaoImpl implements UserDao {
 			connection = DAOUtils.getConnection();
 			String sqlSelect1 = "SELECT * FROM ACCOUNTS WHERE ACCOUNT_ID = ?";
 			
-			String sqlDelete1 = "DELETE FROM BALANCE WHERE EXCHANGE_NAME = ? AND CURRENCY = ? ";
+			String sqlDelete1 = "DELETE FROM BALANCE WHERE EXCHANGE_NAME = ? AND CURRENCY = ? "
+					+ "AND EXCHANGE_SUFFIX = ?";
+			
+			String sqlDelete2 = "DELETE FROM DEPOSIT_HISTORY_ENTRY "
+					+ "WHERE EXCHANGE_NAME = ? AND CURRENCY = ? AND EXCHANGE_SUFFIX = ? ";
+			
+			String sqlDelete3 = "DELETE FROM DEPOSIT_ADDRESS "
+					+ "WHERE EXCHANGE_NAME = ? AND CURRENCY = ? AND EXCHANGE_SUFFIX = ? ";
+			
+			String sqlDelete6 = "DELETE FROM ACCOUNTS WHERE ACCOUNT_ID = ?";
 			
 			statement = connection.prepareStatement(sqlSelect1);
 			statement.setLong(1, walletId);
-			return statement.execute();
+			ResultSet rs1 = statement.executeQuery();
+			
+			// ONLY ONE RECORD SHOULD BE RETURNED
+			if (rs1.next()) {
+				
+				// (1) DELETE FROM BALANCE
+				statement = connection.prepareStatement(sqlDelete1);
+				statement.setString(1, rs1.getString("EXCHANGE_NAME"));
+				statement.setString(2, rs1.getString("CURRENCY"));
+				statement.setString(3, rs1.getString("EXCHANGE_SUFFIX"));
+				statement.execute();
+				statement.clearParameters();
+				
+				// (2) DELETE FROM DEPOSIT HISTORY
+				statement = connection.prepareStatement(sqlDelete2);
+				statement.setString(1, rs1.getString("EXCHANGE_NAME"));
+				statement.setString(2, rs1.getString("CURRENCY"));
+				statement.setString(3, rs1.getString("EXCHANGE_SUFFIX"));
+				statement.execute();
+				statement.clearParameters();
+				
+				// (3) DELETE FROM DEPOSIT ADDRESS
+				statement = connection.prepareStatement(sqlDelete3);
+				statement.setString(1, rs1.getString("EXCHANGE_NAME"));
+				statement.setString(2, rs1.getString("CURRENCY"));
+				statement.setString(3, rs1.getString("EXCHANGE_SUFFIX"));
+				statement.execute();
+				statement.clearParameters();
+				
+				// (4) DELETE FROM ACCOUNTS
+				statement = connection.prepareStatement(sqlDelete6);
+				statement.setLong(1, walletId);
+				result = statement.execute();
+				
+			}
+			
+			rs1.close();
+			return result;
 			
 		} catch(SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage() );
@@ -644,34 +744,55 @@ public class UserDaoImpl implements UserDao {
 		List<RWExternalWallet> walletList = null;
 		try {
 
+			String exchangeSuffix = userId + "w";
+			String walletType = "WALLET";
+			// (1) NEED TO QUERY FOR ALL BALANCE_ID'S
+			String sqlSelect1 = "SELECT * FROM ACCOUNTS WHERE USER_PROFILE_ID = ?";
+			
 			connection = DAOUtils.getConnection();
-			String sqlSelect1 = "SELECT A.*, B.* FROM ACCOUNTS A "
-					+ "JOIN BALANCE B "
-					+ "WHERE A.EXCHANGE_NAME = ? "
-					+ "AND B.EXCHANGE_NAME = ? " 
-					+ "AND A.CURRENCY = B.CURRENCY "
-					+ "AND USER_PROFILE_ID = ? ";
+			String sqlSelect2 = "SELECT A.CURRENCY, "
+					+ "A.EXCHANGE_NAME, A.EXCHANGE_SUFFIX, "
+					+ "A.ACCOUNT_ID, B.* "
+					+ "FROM 	ACCOUNTS A JOIN BALANCE B "
+					+ "ON 		A.EXCHANGE_SUFFIX = B.EXCHANGE_SUFFIX "
+					+ "AND 		A.EXCHANGE_NAME = B.EXCHANGE_NAME "
+					+ "AND 		A.CURRENCY	= B.CURRENCY "
+					+ "WHERE 	A.EXCHANGE_SUFFIX = ? "
+					+ "AND 		A.EXCHANGE_NAME = ? "
+					+ "AND 		A.CURRENCY = ? "
+					+ "AND		A.USER_PROFILE_ID = ?";
 			
 		
 			statement= connection.prepareStatement(sqlSelect1);
-			statement.setString(1, "WALLET");
-			statement.setString(2, "WALLET");
-			statement.setLong(3, userId);
+			statement.setLong(1, userId);
 			ResultSet rs1 = statement.executeQuery();
 			statement.clearParameters();
 			
 			walletList = new ArrayList<>();
 			while (rs1.next() ) {
-				RWExternalWallet wallet = new RWExternalWallet();
-				wallet.setUserId(userId);
-				wallet.setId(rs1.getLong("BALANCE_ID"));
-				wallet.setWalletId(rs1.getLong("ACCOUNT_ID"));
-				wallet.setCoinName(rs1.getString("CURRENCY_NAME"));
-				wallet.setCoinBalance(rs1.getDouble("ACCOUNT_BALANCE"));
-				wallet.setCoinDepositAddress(rs1.getString("CRYPTO_ADDRESS"));
-				wallet.setCoinWithdrawalAddress(rs1.getString("CRYPTO_ADDRESS"));
-				wallet.setExchangeName( ExchangeName.valueOf(rs1.getString("EXCHANGE_NAME")));
-				walletList.add(wallet);
+				
+				statement= connection.prepareStatement(sqlSelect2);
+				statement.setString(1, exchangeSuffix);
+				statement.setString(2, walletType );
+				statement.setString(3, rs1.getString("CURRENCY"));
+				statement.setLong(4, userId);
+				ResultSet rs2 = statement.executeQuery();
+				
+				while (rs2.next()) {
+					RWExternalWallet wallet = new RWExternalWallet();
+					wallet.setUserId(userId);
+					wallet.setWalletId(rs1.getLong("ACCOUNT_ID"));
+					wallet.setCoinName(rs1.getString("CURRENCY"));
+					wallet.setExchangeSuffix(rs1.getString("EXCHANGE_SUFFIX"));
+					wallet.setExchangeName( ExchangeName.valueOf(rs1.getString("EXCHANGE_NAME")));
+					
+					wallet.setId(rs2.getLong("BALANCE_ID"));
+					wallet.setCoinBalance(rs2.getDouble("ACCOUNT_BALANCE"));
+					wallet.setCoinDepositAddress(rs2.getString("CRYPTO_ADDRESS"));
+					wallet.setCoinWithdrawalAddress(rs2.getString("CRYPTO_ADDRESS"));
+					walletList.add(wallet);
+				}
+				rs2.close();
 			}
 			rs1.close();
 			return walletList;

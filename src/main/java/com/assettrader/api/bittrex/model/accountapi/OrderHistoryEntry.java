@@ -81,8 +81,9 @@ public class OrderHistoryEntry implements Serializable {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name = "CURRENCY", referencedColumnName="CURRENCY", insertable=false, updatable=false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName="EXCHANGE_NAME", insertable=false, updatable=false) })
+		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
+		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false),
+		@JoinColumn(name = "EXCHANGE_SUFFIX", referencedColumnName = "EXCHANGE_SUFFIX", insertable = false, updatable = false) })
 	private Account account;
 	
 	@Transient

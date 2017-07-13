@@ -29,7 +29,7 @@ import com.assettrader.entities.ids.AccountId;
 public class Account {
 
 	@GeneratedValue(strategy = GenerationType.TABLE)
-	@Column(name = "ACCOUNT_ID", columnDefinition="SERIAL")
+	@Column(name = "ACCOUNT_ID", columnDefinition = "SERIAL")
 	private Long id;
 
 	@Id
@@ -39,12 +39,13 @@ public class Account {
 	@Id
 	@Column(name = "CURRENCY")
 	private String currency;
-	
+
+	@Id
+	@Column(name = "EXCHANGE_SUFFIX")
+	private String exchangeSuffix;
+
 	@Column(name = "ADD_DATE")
 	private Date addDate;
-
-//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,  mappedBy = "account")
-//	private List<UserAccount> userAccount;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<DepositHistoryEntry> depositHistoryEntry;
@@ -52,17 +53,17 @@ public class Account {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<Balance> balances;
 
-	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<OrderHistoryEntry> orderHistory;
 
-	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<WithdrawalHistoryEntry> withdrawHistoryEntry;
 
-	@OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "account")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<WithdrawalRequested> withdrawalRequested;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName="USER_PROFILE_ID", insertable=true, updatable=false)
+	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName = "USER_PROFILE_ID", insertable = true, updatable = false)
 	private UserProfile userProfile;
 
 	public Long getId() {
@@ -71,6 +72,22 @@ public class Account {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getExchangeSuffix() {
+		return exchangeSuffix;
+	}
+
+	public void setExchangeSuffix(String exchangeSuffix) {
+		this.exchangeSuffix = exchangeSuffix;
+	}
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
 	}
 
 	public String getExchangeName() {
@@ -96,14 +113,6 @@ public class Account {
 	public void setAddDate(Date addDate) {
 		this.addDate = addDate;
 	}
-
-//	public List<UserAccount> getUserAccount() {
-//		return userAccount;
-//	}
-//
-//	public void setUserAccount(List<UserAccount> userAccount) {
-//		this.userAccount = userAccount;
-//	}
 
 	public List<DepositHistoryEntry> getDepositHistoryEntry() {
 		return depositHistoryEntry;

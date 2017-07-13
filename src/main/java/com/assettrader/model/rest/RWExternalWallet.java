@@ -7,6 +7,7 @@ public class RWExternalWallet {
 	private Long id;
 	private Long userId;
 	private Long walletId;
+	private String exchangeSuffix;
 	private String coinName;
 	private Double coinBalance;
 	private String coinDepositAddress;
@@ -27,6 +28,14 @@ public class RWExternalWallet {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getExchangeSuffix() {
+		return exchangeSuffix;
+	}
+
+	public void setExchangeSuffix(String exchangeSuffix) {
+		this.exchangeSuffix = exchangeSuffix;
 	}
 
 	public ExchangeName getExchangeName() {

@@ -31,13 +31,6 @@ public class LoginController {
 
 	@Autowired
 	private UserService userService;
-
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String login() {
-
-		System.out.println("The LOGIN method was called!!");
-		return "hello";
-	}
 	
 	@RequestMapping(value = { "/login" },
 			consumes={MediaType.APPLICATION_JSON_VALUE},
@@ -59,20 +52,6 @@ public class LoginController {
 		registeredUser.setMessage("Username and/or password is incorrect");
 		return registeredUser;
 
-	}
-
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String logout() {
-
-		// TODO
-		return "";
-	}
-
-	@RequestMapping(value = "/register", method = RequestMethod.GET)
-	public String register() {
-
-		// TODO
-		return "gET WORKS";
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)

@@ -55,6 +55,9 @@ public class AccountDataController {
 	// GENERAL CONTROLLER IMPLEMENTATIONS
 	//=======================================
 	
+	// TODO -- REDO, ADD AND/OR APPEND EXCHANGE_SUFFIX TO CREATE UNIQUE PK FOR DATABASE
+	// ** PRE-CONDITIONS (PC) - USER MUST HAVE AN ACCOUNT, API KEY VALID
+	// ** ALL ADDRESSES   
 	
 	@RequestMapping(value ={ "/balances" }, method = RequestMethod.POST)
 	public ApiResult<List<Balance>> getBalances(@RequestBody RWLoginDetail userDetail) {
@@ -112,19 +115,6 @@ public class AccountDataController {
 	}
 	
 	
-	// IS WORKING 
-	@RequestMapping(value = "/depositaddress/{currency}", method = RequestMethod.GET)
-	public ApiResult<DepositAddress> getDepositAddressByCurrency(@PathVariable String currency) {
-		
-//		ApiResult<DepositAddress> depositAddressDTO = 
-//				initBittrexClient().getAccountApi().getDepositAddress(currency);
-		
-		// TODO -- ENABLE END-POINT FEATURE 
-		
-		return null; // accountDataServiceDTO.saveDepositAddressDTO(depositAddressDTO);
-	}
-
-	
 	//=======================================
 	// CUSTOM-SPECIFIC CONTROLLER IMPLEMENTATIONS
 	//=======================================
@@ -152,7 +142,6 @@ public class AccountDataController {
 			}
 
 		}
-		
 		
 		
 		ResWrapper<AccountBalanceView> res = new ResWrapper<>();
@@ -252,9 +241,11 @@ public class AccountDataController {
 		return balance * ask * btcprice;
 	}
 
+	
 	private ApiResult<List<Balance>> addLogoUrlToBalanceDTO(ApiResult<List<Balance>> balanceApiDTO) {
 		List<Coin> logoList = coinService.getAllCoinLogos();
 		
+		// TODO - MODIFY ALGORITHM, GET FIRST LETTER OF COIN, SUB-DIVIDE INTO SMALLER UNITS 
 		List<Balance> dtoList = balanceApiDTO.getResult();
 		START: for (int i = 0; i < dtoList.size(); i++ ) {
 			 for (Coin logo: logoList) {

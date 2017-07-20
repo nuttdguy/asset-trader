@@ -2,8 +2,6 @@ package com.assettrader.api.bittrex;
 
 import javax.annotation.Nullable;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.assettrader.api.bittrex.config.ApiBuilderFactory;

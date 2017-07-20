@@ -1,16 +1,37 @@
 package com.assettrader.api.bittrex.model.publicapi;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+import com.assettrader.entities.ids.CoinId;
+
+
 public class Currency {
+	
+	private Long id;
 
 	private String currency;
+	
 	private String currencyLong;
+	
 	private Integer minConfirmation;
+	
 	private Double txFee;
+	
 	private Boolean isActive;
+	
 	private String coinType;
+	
 	private String baseAddress;
+	
 	private String notice;
-
+	
+	
 	public String getCurrency() {
 		return currency;
 	}

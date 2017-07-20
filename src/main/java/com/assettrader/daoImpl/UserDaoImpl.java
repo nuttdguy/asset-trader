@@ -9,17 +9,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 import org.springframework.stereotype.Repository;
 
 import com.assettrader.dao.UserDao;
-import com.assettrader.model.Address;
-import com.assettrader.model.Credential;
 import com.assettrader.model.EmailProvider;
 import com.assettrader.model.SocialNetwork;
 import com.assettrader.model.UserProfile;
-import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.rest.RWApiCredential;
 import com.assettrader.model.rest.RWExternalWallet;
 import com.assettrader.model.rest.RWFavorite;

@@ -28,6 +28,9 @@ import com.assettrader.service.DTO.CoinServiceDTO;
 public class CoinApiController {
 
 	// TODO - CONSTRUCT A CLASS TO HANDLE/FORWARD A RESPONSE THAT CAN BE ITERATED THROUGH FROM CLIENT
+	// TODO - CHANGE RETURN TO BE IN A RESPONSE WRAPPER
+	// TODO - SAVE LOGOS INTO IMAGES DIRECTORY, UPDATE DATABASE IF NOT EXISTS IN DIRECTORY
+	// TODO - ABSTRACT LOGIC INTO SERVICE LAYER, TRY TO USE A PATTERN FOR ABSTRACTION
 	
 	private static int FIRST_PERSIST = 0;
 	
@@ -129,21 +132,5 @@ public class CoinApiController {
 		return null;
 	}
 	
-	
-//	
-//	@RequestMapping(value = "/getmarketsummary/{marketname}&{exchange}", method = RequestMethod.GET)
-//	private MarketSummary getMarketSummary(Model model, @PathVariable String marketname, @PathVariable String exchange) {
-//		String validatedExchange = validateExchangeName(exchange);
-//		
-//		if (validatedExchange != ERROR_INVALID_EXCHANGE) {
-//			if (FIRST_PERSIST == 0) {
-//				coinServiceDTO.loadApplicationBootingEndPoints(validatedExchange);
-//				FIRST_PERSIST++;
-//			}		
-//			return coinServiceDTO.getMarketSummary(marketname, validatedExchange);
-//		}
-//		return null;
-//	}
-//	
 	
 }

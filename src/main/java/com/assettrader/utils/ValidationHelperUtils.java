@@ -1,6 +1,6 @@
 package com.assettrader.utils;
 
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.assettrader.model.utils.OrderType;
 
 public class ValidationHelperUtils {
@@ -10,7 +10,7 @@ public class ValidationHelperUtils {
 	
 	//==|| PRIVATE VALIDATION METHODS
 	public static String validateExchangeName(String exchange) {
-		for (ExchangeName ex : ExchangeName.values()) { 
+		for (WalletOrigin ex : WalletOrigin.values()) { 
 			if (ex.name().toUpperCase().equals(exchange.toUpperCase())) {
 				return ex.name().toUpperCase();
 			}

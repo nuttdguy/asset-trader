@@ -1,5 +1,5 @@
 package com.assettrader.model.utils;
 
-public enum ExchangeName {
+public enum WalletOrigin {
 	BITTREX, POLONIEX, WALLET
 }

@@ -18,7 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.assettrader.model.Account;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -50,7 +50,7 @@ public class DepositHistoryEntry implements Serializable {
 		
 	@JsonIgnore
 	@Transient
-	private ExchangeName exchangeName;
+	private WalletOrigin walletOrigin;
 	
 	@Id
 	@Column( name = "TX_ID" )
@@ -114,12 +114,12 @@ public class DepositHistoryEntry implements Serializable {
         return confirmations;
     }
 
-    public ExchangeName getExchangeName() {
-		return exchangeName;
+    public WalletOrigin getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(ExchangeName exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(WalletOrigin walletOrigin) {
+		this.walletOrigin = walletOrigin;
 	}
 
 	public void setConfirmations(Integer confirmations) {

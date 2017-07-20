@@ -14,7 +14,7 @@ import javax.persistence.Transient;
 
 import com.assettrader.entities.ids.DepositAddressId;
 import com.assettrader.model.Account;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class DepositAddress {
 
 	@GeneratedValue( strategy = GenerationType.TABLE )
-	@Column( name = "DEPOSIT_ADDRESS_ID", columnDefinition="serial")
+	@Column( name = "DEPOSIT_ADDRESS_ID", columnDefinition="SERIAL")
 	private Long id;
 	
 	@Id
@@ -31,19 +31,17 @@ public class DepositAddress {
     private String currency;
 	
 	@Id
-	@Column(name = "ADDRESS")
+	@Column(name = "WALLET_ADDRESS")
     private String address;
 	
-	@JsonIgnore
 	@Transient
-	private ExchangeName exchangeName;
+	private WalletOrigin walletOrigin;
 	
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_SUFFIX", referencedColumnName = "EXCHANGE_SUFFIX", insertable = false, updatable = false) })
+		@JoinColumn(name = "WALLET_ORIGIN", referencedColumnName = "WALLET_ORIGIN", insertable = false, updatable = false),
+		@JoinColumn(name = "WALLET_PREFIX", referencedColumnName = "WALLET_PREFIX", insertable = false, updatable = false) })
 	private Account account;
 
 	
@@ -56,12 +54,12 @@ public class DepositAddress {
 		this.id = id;
 	}
 
-	public ExchangeName getExchangeName() {
-		return exchangeName;
+	public WalletOrigin getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(ExchangeName exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(WalletOrigin walletOrigin) {
+		this.walletOrigin = walletOrigin;
 	}
 
 	public Account getAccount() {

@@ -25,7 +25,7 @@ import com.assettrader.model.coinmarket.Coin;
 import com.assettrader.model.coinmarket.Ticker;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.ResWrapper;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.assettrader.model.view.AccountBalanceView;
 import com.assettrader.service.AccountDataService;
 import com.assettrader.service.CoinService;
@@ -131,7 +131,7 @@ public class AccountDataController {
 		List<Ticker> tickerList = new ArrayList<>();
 		Double portfolioValue = 0.00;		
 		String market = "BTC-";		
-		String exchangeName =  ExchangeName.BITTREX.name();
+		String exchangeName =  WalletOrigin.BITTREX.name();
 		
 		for (Balance currencyName : balances) {		
 			String marketName = market + currencyName.getCurrency();
@@ -268,7 +268,7 @@ public class AccountDataController {
 		START: for (int i = 0; i < dtoList.size(); i++ ) {
 			 for (Coin logo: logoList) {
 				 
-				String name = dtoList.get(i).getExchange().substring(4).toUpperCase();
+				String name = dtoList.get(i).getWalletOrderOrigin().name().substring(4).toUpperCase();
 				if (name.equals(logo.getMarketCurrency())) {
 					dtoList.get(i).setLogoUrl(logo.getLogoUrl());
 					continue START;

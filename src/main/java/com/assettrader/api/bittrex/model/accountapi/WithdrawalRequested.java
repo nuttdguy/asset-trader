@@ -23,12 +23,11 @@ public class WithdrawalRequested implements Serializable {
 	@Column( name = "UUID")
     private String uuid;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_SUFFIX", referencedColumnName = "EXCHANGE_SUFFIX", insertable = false, updatable = false) })
+		@JoinColumn(name = "WALLET_ORIGIN", referencedColumnName = "WALLET_ORIGIN", insertable = false, updatable = false),
+		@JoinColumn(name = "WALLET_PREFIX", referencedColumnName = "WALLET_PREFIX", insertable = false, updatable = false) })
 	private Account account;
 	
     public String getUuid() {
@@ -46,7 +45,5 @@ public class WithdrawalRequested implements Serializable {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-    
-    
     
 }

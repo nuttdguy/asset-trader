@@ -1,6 +1,6 @@
 package com.assettrader.model.rest;
 
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 
 public class RWExternalWallet {
 
@@ -12,7 +12,7 @@ public class RWExternalWallet {
 	private Double coinBalance;
 	private String coinDepositAddress;
 	private String coinWithdrawalAddress;
-	private ExchangeName exchangeName;
+	private WalletOrigin exchangeName;
 
 	public Long getWalletId() {
 		return walletId;
@@ -38,11 +38,11 @@ public class RWExternalWallet {
 		this.exchangeSuffix = exchangeSuffix;
 	}
 
-	public ExchangeName getExchangeName() {
+	public WalletOrigin getExchangeName() {
 		return exchangeName;
 	}
 
-	public void setExchangeName(ExchangeName exchangeName) {
+	public void setExchangeName(WalletOrigin exchangeName) {
 		this.exchangeName = exchangeName;
 	}
 

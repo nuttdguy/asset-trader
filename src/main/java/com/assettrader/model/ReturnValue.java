@@ -9,16 +9,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "RETURN_HISTORY")
-public class ReturnHistory {
+@Table(name = "RETURN_VALUE")
+public class ReturnValue {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "RETURN_HISTORY_ID")
+	@Column(name = "RETURN_VALUE_ID")
 	private Long id;
 
 	@Column(name = "TOTAL_DEPOSIT")
@@ -36,9 +37,12 @@ public class ReturnHistory {
 	@Column(name = "BTC_PRICE")
 	private Double btcPrice;
 
-	@ManyToOne(cascade=CascadeType.ALL)
-	@JoinColumn( name = "USER_PROFILE_ID" )
-	private UserProfile userProfile;
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
+		@JoinColumn(name = "WALLET_ORIGIN", referencedColumnName = "WALLET_ORIGIN", insertable = false, updatable = false),
+		@JoinColumn(name = "WALLET_PREFIX", referencedColumnName = "WALLET_PREFIX", insertable = false, updatable = false) })
+	private Account account;
 
 	public Long getId() {
 		return id;
@@ -88,12 +92,12 @@ public class ReturnHistory {
 		this.entryDate = entryDate;
 	}
 
-	public UserProfile getUserProfile() {
-		return userProfile;
+	public Account getAccount() {
+		return account;
 	}
 
-	public void setUserProfile(UserProfile userProfile) {
-		this.userProfile = userProfile;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 }

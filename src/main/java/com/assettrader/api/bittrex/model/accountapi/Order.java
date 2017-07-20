@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.assettrader.model.Account;
+import com.assettrader.model.utils.WalletOrigin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -26,84 +27,83 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = 349867175439622084L;
 
 	@JsonIgnore
-	@GeneratedValue( strategy=GenerationType.TABLE)
-	@Column( name = "ORDER_ID", columnDefinition="serial" )
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "ORDER_ID", columnDefinition = "SERIAL")
 	private String orderId;
-	
+
 	@Id
-	@Column( name = "ORDER_UUID" )
+	@Column(name = "ORDER_UUID")
 	private String orderUuid;
-	
-	@Column( name = "EXCHANGE_CURRENCY_MARKET" )
-	private String exchange;
-	
-	@Column( name = "ORDER_TYPE" )
+
+	@Column(name = "ORDER_WALLET_ORIGIN")
+	private WalletOrigin walletOrderOrigin;
+
+	@Column(name = "ORDER_TYPE")
 	private String orderType;
-	
-	@Column( name = "STOP_LIMIT" ) 
+
+	@Column(name = "STOP_LIMIT")
 	private Double limit;
-	
-	@Column( name = "ORDER_QUANTITY" )
+
+	@Column(name = "ORDER_QUANTITY")
 	private Double quantity;
-	
-	@Column( name = "ORDER_QUANTITY_REMAINING" )
+
+	@Column(name = "ORDER_QUANTITY_REMAINING")
 	private Double quantityRemaining;
-	
-	@Column( name = "IN_RESERVED" )
+
+	@Column(name = "IN_RESERVED")
 	private Double reserved;
-	
-	@Column( name = "IN_RESERVE_REMAINING" )
+
+	@Column(name = "IN_RESERVE_REMAINING")
 	private Double reserveRemaining;
-	
-	@Column( name = "COMMISSION_RESERVED" )
+
+	@Column(name = "COMMISSION_RESERVED")
 	private Double commissionReserved;
-	
-	@Column( name = "COMMISSION_RESERVED_REMANING" )
+
+	@Column(name = "COMMISSION_RESERVED_REMANING")
 	private Double commissionReserveRemaining;
-	
-	@Column( name = "COMMISSION_PAID" )
+
+	@Column(name = "COMMISSION_PAID")
 	private Double commissionPaid;
-	
-	@Column( name = "PRICE" )
+
+	@Column(name = "PRICE")
 	private Double price;
-	
-	@Column( name = "PRICE_PER_UNIT" )
+
+	@Column(name = "PRICE_PER_UNIT")
 	private Double pricePerUnit;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "DATE_OPENED" )
+	@Column(name = "DATE_OPENED")
 	private Date opened;
-	
-	@Column( name = "DATE_CLOSED" )
+
+	@Column(name = "DATE_CLOSED")
 	private Boolean closed;
-	
-	@Column( name = "IS_OPEN" )
+
+	@Column(name = "IS_OPEN")
 	private Boolean isOpen;
-	
-	@Column( name = "SENTINEL" )
+
+	@Column(name = "SENTINEL")
 	private String sentinel;
-	
-	@Column( name = "CANCEL_INITIATED" )
+
+	@Column(name = "CANCEL_INITIATED")
 	private Boolean cancelInitiated;
-	
-	@Column( name = "IMMEDIATE_OR_CANCEL" )
+
+	@Column(name = "IMMEDIATE_OR_CANCEL")
 	private Boolean immediateOrCancel;
-	
-	@Column( name = "IS_CONDITIONAL" )
+
+	@Column(name = "IS_CONDITIONAL")
 	private Boolean isConditional;
-	
-	@Column( name = "CONDITIONS_OF_EXCHANGE" )
+
+	@Column(name = "CONDITIONS_OF_EXCHANGE")
 	private String condition;
-	
-	@Column( name = "CONDITION_OF_EXCHANGE_TARGET" )
+
+	@Column(name = "CONDITION_OF_EXCHANGE_TARGET")
 	private String conditionTarget;
-	
-	@JsonIgnore
+
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_SUFFIX", referencedColumnName = "EXCHANGE_SUFFIX", insertable = false, updatable = false) })
+			@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
+			@JoinColumn(name = "WALLET_ORIGIN", referencedColumnName = "WALLET_ORIGIN", insertable = false, updatable = false),
+			@JoinColumn(name = "WALLET_PREFIX", referencedColumnName = "WALLET_PREFIX", insertable = false, updatable = false) })
 	private Account account;
 
 	public String getOrderId() {
@@ -122,12 +122,20 @@ public class Order implements Serializable {
 		this.orderUuid = orderUuid;
 	}
 
-	public String getExchange() {
-		return exchange;
+	public WalletOrigin getWalletOrderOrigin() {
+		return walletOrderOrigin;
 	}
 
-	public void setExchange(String exchange) {
-		this.exchange = exchange;
+	public void setWalletOrderOrigin(WalletOrigin walletOrderOrigin) {
+		this.walletOrderOrigin = walletOrderOrigin;
+	}
+
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
 	}
 
 	public String getType() {

@@ -21,7 +21,7 @@ import com.assettrader.model.rest.RWFavorite;
 import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
 import com.assettrader.model.utils.EmailProviderName;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.utils.DAOUtils;
 
@@ -138,10 +138,10 @@ public class UserDaoImpl implements UserDao {
 			
 			statement = connection.prepareStatement(sqlInsert1);
 			statement.setString(1, credential.getApiKey());
-			statement.setString(2, credential.getExchangeName() );
+			statement.setString(2, credential.getWalletOrigin() );
 			statement.setString(3, credential.getSecretKey() );
 			statement.setBoolean(4, true);
-			statement.setLong(5, credential.getId());
+			statement.setLong(5, credential.getWalletId());
 			
 			return statement.execute();
 			
@@ -193,7 +193,7 @@ public class UserDaoImpl implements UserDao {
 			
 			
 			// (1) ALWAYS INSERT RECORD IF WALLET
-			if (walletDetail.getExchangeName() == ExchangeName.WALLET) {
+			if (walletDetail.getExchangeName() == WalletOrigin.WALLET) {
 				try {
 					connection = DAOUtils.getConnection();
 					
@@ -270,7 +270,7 @@ public class UserDaoImpl implements UserDao {
 			while (rsSelect.next() ) {
 						
 				// PERFORM INSERT 1
-				if (rsSelect.getString("EXCHANGE_NAME").equals(ExchangeName.BITTREX)) {
+				if (rsSelect.getString("EXCHANGE_NAME").equals(WalletOrigin.BITTREX)) {
 					accountSuffix = walletDetail.getUserId() + "b";
 				} else {
 					accountSuffix = walletDetail.getUserId() + "w";
@@ -779,7 +779,7 @@ public class UserDaoImpl implements UserDao {
 					wallet.setWalletId(rs1.getLong("ACCOUNT_ID"));
 					wallet.setCoinName(rs1.getString("CURRENCY"));
 					wallet.setExchangeSuffix(rs1.getString("EXCHANGE_SUFFIX"));
-					wallet.setExchangeName( ExchangeName.valueOf(rs1.getString("EXCHANGE_NAME")));
+					wallet.setExchangeName( WalletOrigin.valueOf(rs1.getString("EXCHANGE_NAME")));
 					
 					wallet.setId(rs2.getLong("BALANCE_ID"));
 					wallet.setCoinBalance(rs2.getDouble("ACCOUNT_BALANCE"));

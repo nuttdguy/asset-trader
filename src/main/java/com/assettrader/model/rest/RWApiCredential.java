@@ -2,7 +2,7 @@ package com.assettrader.model.rest;
 
 public class RWApiCredential {
 
-	private Long id;
+	private Long walletId;
 
 	private Long userId;
 
@@ -14,14 +14,15 @@ public class RWApiCredential {
 
 	private String secretKey;
 
-	private String exchangeName;
+	private String walletOrigin;
+	
 
-	public Long getId() {
-		return id;
+	public Long getWalletId() {
+		return walletId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setWalletId(Long id) {
+		this.walletId = id;
 	}
 
 	public Long getUserId() {
@@ -64,12 +65,12 @@ public class RWApiCredential {
 		this.secretKey = secretKey;
 	}
 
-	public String getExchangeName() {
-		return exchangeName;
+	public String getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(String exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(String exchangeName) {
+		this.walletOrigin = exchangeName;
 	}
 
 }

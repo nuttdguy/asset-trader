@@ -33,16 +33,16 @@ public class Account {
 	private Long id;
 
 	@Id
-	@Column(name = "EXCHANGE_NAME")
-	private String exchangeName;
-
-	@Id
 	@Column(name = "CURRENCY")
 	private String currency;
+	
+	@Id
+	@Column(name = "WALLET_ORIGIN")
+	private String walletOrigin;
 
 	@Id
-	@Column(name = "EXCHANGE_SUFFIX")
-	private String exchangeSuffix;
+	@Column(name = "WALLET_PREFIX")
+	private String walletPrefix;
 
 	@Column(name = "ADD_DATE")
 	private Date addDate;
@@ -61,6 +61,9 @@ public class Account {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
 	private List<WithdrawalRequested> withdrawalRequested;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
+	private List<BalanceHistory> balanceHistory;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_PROFILE_ID", referencedColumnName = "USER_PROFILE_ID", insertable = true, updatable = false)
@@ -74,12 +77,12 @@ public class Account {
 		this.id = id;
 	}
 
-	public String getExchangeSuffix() {
-		return exchangeSuffix;
+	public String getWalletPrefix() {
+		return walletPrefix;
 	}
 
-	public void setExchangeSuffix(String exchangeSuffix) {
-		this.exchangeSuffix = exchangeSuffix;
+	public void setWalletPrefix(String walletPrefix) {
+		this.walletPrefix = walletPrefix;
 	}
 
 	public UserProfile getUserProfile() {
@@ -90,12 +93,12 @@ public class Account {
 		this.userProfile = userProfile;
 	}
 
-	public String getExchangeName() {
-		return exchangeName;
+	public String getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(String exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(String walletOrigin) {
+		this.walletOrigin = walletOrigin;
 	}
 
 	public String getCurrency() {
@@ -154,4 +157,14 @@ public class Account {
 		this.withdrawalRequested = withdrawalRequested;
 	}
 
+	public List<BalanceHistory> getBalanceHistory() {
+		return balanceHistory;
+	}
+
+	public void setBalanceHistory(List<BalanceHistory> balanceHistory) {
+		this.balanceHistory = balanceHistory;
+	}
+
+	
+	
 }

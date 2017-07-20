@@ -2,7 +2,7 @@ package com.assettrader.entities.ids;
 
 import java.io.Serializable;
 
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 
 public class BalanceId implements Serializable {
 

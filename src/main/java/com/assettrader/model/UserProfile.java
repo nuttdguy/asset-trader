@@ -61,7 +61,7 @@ public class UserProfile extends Person {
 	private List<BalanceHistory> balanceHistories;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
-	private List<ReturnHistory> returnHistories;
+	private List<ReturnValue> returnHistories;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userProfile")
 	private List<EmailProvider> emailProvider;
@@ -173,11 +173,11 @@ public class UserProfile extends Person {
 		this.balanceHistories = balanceHistories;
 	}
 
-	public List<ReturnHistory> getReturnHistories() {
+	public List<ReturnValue> getReturnHistories() {
 		return returnHistories;
 	}
 
-	public void setReturnHistories(List<ReturnHistory> returnHistories) {
+	public void setReturnHistories(List<ReturnValue> returnHistories) {
 		this.returnHistories = returnHistories;
 	}
 

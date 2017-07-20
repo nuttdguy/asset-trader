@@ -18,7 +18,7 @@ import com.assettrader.api.bittrex.model.accountapi.OrderHistoryEntry;
 import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
 import com.assettrader.dao.CoinDao;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.assettrader.utils.DAOUtils;
 import com.assettrader.utils.LocalDateTimePersistenceConverter;
 
@@ -53,13 +53,13 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				
 				statement = connection.prepareStatement(sqlInsert1);
 				statement.setString(1, entry1.getCurrency());
-				statement.setString(2, ExchangeName.BITTREX.name()); // TODO - CHANGE HARD CODED VALUE
+				statement.setString(2, WalletOrigin.BITTREX.name()); // TODO - CHANGE HARD CODED VALUE
 				statement.setTimestamp(3, new Timestamp(d.getTime()));
 				statement.setLong(4, userId);
 				statement.setString(5, exchangeSuffix );
 				
 				statement.setString(6, entry1.getCurrency());
-				statement.setString(7, ExchangeName.BITTREX.name() );
+				statement.setString(7, WalletOrigin.BITTREX.name() );
 				statement.execute();
 				statement.clearParameters();
 			}
@@ -77,7 +77,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(7, entry3.getCurrency());
 				statement.setString(8, exchangeSuffix );
 				
-				statement.setString(9, ExchangeName.BITTREX.name() );
+				statement.setString(9, WalletOrigin.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -110,7 +110,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			
 			statement = connection.prepareStatement(sqlInsert1);
 			statement.setString(1, balanceApiDTO.getResult().getCurrency());
-			statement.setString(2, ExchangeName.BITTREX.name() ); 
+			statement.setString(2, WalletOrigin.BITTREX.name() ); 
 			statement.setTimestamp(3, new Timestamp( d.getTime() ));
 			statement.execute();
 			statement.clearParameters();
@@ -124,7 +124,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			statement.setString(4, balanceApiDTO.getResult().getCryptoAddress());
 			statement.setString(5, balanceApiDTO.getResult().getCurrency());
 			statement.setDouble(6, balanceApiDTO.getResult().getPending());
-			statement.setString(7, ExchangeName.BITTREX.name() );
+			statement.setString(7, WalletOrigin.BITTREX.name() );
 			
 			statement.setString(8, "0b" ); 
 			// TODO -- TEST THIS IMPLEMENTATION, EXCHANGE_SUFFIX NEEDS TO BE APPLIED DYNAMICALLY
@@ -155,7 +155,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 			
 			statement.setString(1, depositAddressDTO.getResult().getAddress() );
 			statement.setString(2, depositAddressDTO.getResult().getCurrency() );
-			statement.setString(3, ExchangeName.BITTREX.name() );
+			statement.setString(3, WalletOrigin.BITTREX.name() );
 			
 			statement.execute();
 			System.out.println("Successfully persisted DEPOSIT ADDRESS RECORD");
@@ -199,7 +199,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(4, entry.getCondition());			
 				statement.setString(5, entry.getConditionTarget());
 				
-				statement.setString(6, entry.getExchange());
+				statement.setString(6, entry.getWalletOrderOrigin().name());
 				statement.setBoolean(7, entry.getImmediateOrCancel());
 				statement.setBoolean(8, entry.getIsConditional());
 				
@@ -212,7 +212,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setDouble(14, entry.getQuantityRemaining());
 				statement.setTimestamp(15, new Timestamp(entry.getTimeStamp().getTime() ));				
 				statement.setString(16, marketName.substring(4).toUpperCase() );
-				statement.setString(17, ExchangeName.BITTREX.name());
+				statement.setString(17, WalletOrigin.BITTREX.name());
 				
 				statement.execute();
 				statement.clearParameters();
@@ -256,7 +256,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(4, entry.getCondition());			
 				statement.setString(5, entry.getConditionTarget());
 				
-				statement.setString(6, entry.getExchange());
+				statement.setString(6, entry.getWalletOrderOrigin().name());
 				statement.setBoolean(7, entry.getImmediateOrCancel());
 				statement.setBoolean(8, entry.getIsConditional());
 				
@@ -268,8 +268,8 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				
 				statement.setDouble(14, entry.getQuantityRemaining());
 				statement.setTimestamp(15, new Timestamp(entry.getTimeStamp().getTime() ));				
-				statement.setString(16, entry.getExchange().substring(4).toUpperCase() ); // GETS THE CURRENCY SHORT-NAME
-				statement.setString(17, ExchangeName.BITTREX.name() );
+				statement.setString(16, entry.getWalletOrderOrigin().name().substring(4).toUpperCase() ); // GETS THE CURRENCY SHORT-NAME
+				statement.setString(17, WalletOrigin.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -316,7 +316,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setBoolean(9, entry.getPendingPayment());
 				statement.setDouble(10, entry.getTxCost());
 				statement.setString(11, entry.getTxId());
-				statement.setString(12, ExchangeName.BITTREX.name() );
+				statement.setString(12, WalletOrigin.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();
@@ -357,7 +357,7 @@ public class AccountDataDaoDTOImpl implements AccountDataDaoDTO {
 				statement.setString(4, entry.getCurrency());
 				statement.setTimestamp(5, new Timestamp(entry.getLastUpdated().getTime()));
 				statement.setString(6, entry.getTxId());
-				statement.setString(7, ExchangeName.BITTREX.name() );
+				statement.setString(7, WalletOrigin.BITTREX.name() );
 				
 				statement.execute();
 				statement.clearParameters();

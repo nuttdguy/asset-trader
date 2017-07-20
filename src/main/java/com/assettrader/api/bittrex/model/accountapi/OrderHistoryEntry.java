@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.assettrader.model.Account;
+import com.assettrader.model.utils.WalletOrigin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -34,8 +35,8 @@ public class OrderHistoryEntry implements Serializable {
 	@Column( name = "ORDER_UUID")
 	private String orderUuid;
 	
-	@Column( name = "EXCHANGE_CURRENCY_MARKET")
-	private String exchange;
+	@Column( name = "ORDER_WALLET_ORIGIN")
+	private WalletOrigin walletOrderOrigin;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column( name = "TIME_STAMP")
@@ -78,12 +79,11 @@ public class OrderHistoryEntry implements Serializable {
 	@Column( name = "CLOSED" )
 	private Date closed;
 	
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_SUFFIX", referencedColumnName = "EXCHANGE_SUFFIX", insertable = false, updatable = false) })
+		@JoinColumn(name = "WALLET_ORIGIN", referencedColumnName = "WALLET_ORIGIN", insertable = false, updatable = false),
+		@JoinColumn(name = "WALLET_PREFIX", referencedColumnName = "WALLET_PREFIX", insertable = false, updatable = false) })
 	private Account account;
 	
 	@Transient
@@ -111,14 +111,6 @@ public class OrderHistoryEntry implements Serializable {
 
 	public void setOrderUuid(String orderUuid) {
 		this.orderUuid = orderUuid;
-	}
-
-	public String getExchange() {
-		return exchange;
-	}
-
-	public void setExchange(String exchange) {
-		this.exchange = exchange;
 	}
 
 	public Date getTimeStamp() {
@@ -239,6 +231,14 @@ public class OrderHistoryEntry implements Serializable {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public WalletOrigin getWalletOrderOrigin() {
+		return walletOrderOrigin;
+	}
+
+	public void setWalletOrderOrigin(WalletOrigin walletOrderOrigin) {
+		this.walletOrderOrigin = walletOrderOrigin;
 	}
 	
 	

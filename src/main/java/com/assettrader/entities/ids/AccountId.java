@@ -6,25 +6,25 @@ public class AccountId implements Serializable {
 
 	private static final long serialVersionUID = -5874619578460890796L;
 	
-	private String exchangeName;
+	private String walletOrigin;
 	
 	private String currency;
 	
-	private String exchangeSuffix;
+	private String walletPrefix;
 	
 	public AccountId() {}
 
 	public AccountId(String exchangeName, String currency) {
-		this.exchangeName = exchangeName;
+		this.walletOrigin = exchangeName;
 		this.currency = currency;
 	}
 
-	public String getExchangeName() {
-		return exchangeName;
+	public String getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(String exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(String exchangeName) {
+		this.walletOrigin = exchangeName;
 	}
 
 	public String getCurrency() {
@@ -35,12 +35,12 @@ public class AccountId implements Serializable {
 		this.currency = currency;
 	}
 
-	public String getExchangeSuffix() {
-		return exchangeSuffix;
+	public String getWalletPrefix() {
+		return walletPrefix;
 	}
 
-	public void setExchangeSuffix(String exchangeSuffix) {
-		this.exchangeSuffix = exchangeSuffix;
+	public void setWalletPrefix(String exchangeSuffix) {
+		this.walletPrefix = exchangeSuffix;
 	}
 
 }

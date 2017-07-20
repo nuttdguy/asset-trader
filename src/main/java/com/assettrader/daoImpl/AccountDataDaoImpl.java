@@ -17,7 +17,7 @@ import com.assettrader.api.bittrex.model.accountapi.WithdrawalHistoryEntry;
 import com.assettrader.api.bittrex.model.common.ApiResult;
 import com.assettrader.dao.AccountDataDao;
 import com.assettrader.model.rest.RWLoginDetail;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.assettrader.utils.BittrexKeyUtil;
 import com.assettrader.utils.DAOUtils;
 
@@ -79,7 +79,7 @@ public class AccountDataDaoImpl implements AccountDataDao {
 				statement.setString(4, entry.getCurrency());
 				statement.setTimestamp(5, new Timestamp(entry.getLastUpdated().getTime()));
 				statement.setString(6, entry.getTxId());
-				statement.setString(7, ExchangeName.BITTREX.name());
+				statement.setString(7, WalletOrigin.BITTREX.name());
 				
 				statement.execute();
 				statement.clearParameters();
@@ -125,7 +125,7 @@ public class AccountDataDaoImpl implements AccountDataDao {
 				statement.setBoolean(9, entry.getPendingPayment());
 				statement.setDouble(10, entry.getTxCost());
 				statement.setString(11, entry.getTxId());
-				statement.setString(12, ExchangeName.BITTREX.name());
+				statement.setString(12, WalletOrigin.BITTREX.name());
 				
 				statement.execute();
 				statement.clearParameters();
@@ -269,14 +269,14 @@ public class AccountDataDaoImpl implements AccountDataDao {
 			// RESULT_1 == ALL WALLET-TYPE CURRENCY NAMES
 			statement = connection.prepareStatement(sqlSelectWallet);
 			statement.setLong(1, id);	
-			statement.setString(2, ExchangeName.WALLET.name());	
+			statement.setString(2, WalletOrigin.WALLET.name());	
 			ResultSet rs1 = statement.executeQuery();
 			statement.clearParameters();
 			
 			// RESULT_2 == ALL BITTREX-TYPE CURRENCY NAMES
 			statement = connection.prepareStatement(sqlSelectBittrex);
 			statement.setLong(1, id);		
-			statement.setString(2, ExchangeName.BITTREX.name());	
+			statement.setString(2, WalletOrigin.BITTREX.name());	
 			ResultSet rs2 = statement.executeQuery();
 			statement.clearParameters();
 			
@@ -295,7 +295,7 @@ public class AccountDataDaoImpl implements AccountDataDao {
 					b.setAvailable(rs3.getDouble("AVAILABLE"));
 					Date date = rs3.getDate("BALANCE_DATE");
 					b.setBalanceDate(date);
-					b.setExchangeName(ExchangeName.valueOf(rs3.getString("EXCHANGE_NAME")));
+					b.setWalletOrigin(WalletOrigin.valueOf(rs3.getString("EXCHANGE_NAME")));
 					balances.add(b);
 				}		
 				rs3.close();
@@ -315,7 +315,7 @@ public class AccountDataDaoImpl implements AccountDataDao {
 					b.setAvailable(rs4.getDouble("AVAILABLE"));
 					Date date = rs4.getDate("BALANCE_DATE");
 					b.setBalanceDate(date);
-					b.setExchangeName(ExchangeName.valueOf(rs4.getString("EXCHANGE_NAME")));
+					b.setWalletOrigin(WalletOrigin.valueOf(rs4.getString("EXCHANGE_NAME")));
 					balances.add(b);
 				}	
 				rs4.close();

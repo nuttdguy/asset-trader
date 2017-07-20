@@ -21,7 +21,7 @@ import com.assettrader.model.rest.RWLoginDetail;
 import com.assettrader.model.rest.RWPassword;
 import com.assettrader.model.rest.ResResponse;
 import com.assettrader.model.rest.ResWrapper;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.assettrader.model.view.FavoriteCoinView;
 import com.assettrader.service.UserService;
 
@@ -222,7 +222,7 @@ public class SettingsController {
 	@RequestMapping(value = "/wallet/add", method = RequestMethod.POST)
 	public ResResponse addExternalCoinWallet(@RequestBody RWExternalWallet walletDetail) {
 
-		walletDetail.setExchangeName(ExchangeName.WALLET);
+		walletDetail.setExchangeName(WalletOrigin.WALLET);
 		boolean isSuccess = userService.addExternalWallet(walletDetail);
 
 		ResResponse response = new ResResponse();

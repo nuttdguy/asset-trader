@@ -22,7 +22,7 @@ import javax.persistence.Transient;
 
 import com.assettrader.entities.ids.BalanceId;
 import com.assettrader.model.Account;
-import com.assettrader.model.utils.ExchangeName;
+import com.assettrader.model.utils.WalletOrigin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -68,14 +68,13 @@ public class Balance implements Serializable {
 
 	@Transient
 	@Enumerated(EnumType.STRING)
-	private ExchangeName exchangeName;
+	private WalletOrigin walletOrigin;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name = "CURRENCY", referencedColumnName = "CURRENCY", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_NAME", referencedColumnName = "EXCHANGE_NAME", insertable = false, updatable = false),
-		@JoinColumn(name = "EXCHANGE_SUFFIX", referencedColumnName = "EXCHANGE_SUFFIX", insertable = false, updatable = false) })
+		@JoinColumn(name = "WALLET_ORIGIN", referencedColumnName = "WALLET_ORIGIN", insertable = false, updatable = false),
+		@JoinColumn(name = "WALLET_PREFIX", referencedColumnName = "WALLET_PREFIX", insertable = false, updatable = false) })
 	private Account account;
 
 	@Transient
@@ -89,12 +88,12 @@ public class Balance implements Serializable {
 		this.logoUrl = logoUrl;
 	}
 
-	public ExchangeName getExchangeName() {
-		return exchangeName;
+	public WalletOrigin getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(ExchangeName exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(WalletOrigin walletOrigin) {
+		this.walletOrigin = walletOrigin;
 	}
 
 	public String getCurrency() {

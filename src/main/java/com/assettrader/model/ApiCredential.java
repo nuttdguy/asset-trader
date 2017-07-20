@@ -31,8 +31,8 @@ public class ApiCredential {
 	@Column(name = "SECRET_KEY")
 	private String secretKey;
 
-	@Column(name = "EXCHANGE_NAME")
-	private String exchangeName;
+	@Column(name = "WALLET_ORIGIN")
+	private String walletOrigin;
 	
 	@Column(name = "SET_PRIMARY")
 	private boolean setPrimary;
@@ -65,12 +65,12 @@ public class ApiCredential {
 		this.secretKey = secretKey;
 	}
 
-	public String getExchangeName() {
-		return exchangeName;
+	public String getWalletOrigin() {
+		return walletOrigin;
 	}
 
-	public void setExchangeName(String exchangeName) {
-		this.exchangeName = exchangeName;
+	public void setWalletOrigin(String exchangeName) {
+		this.walletOrigin = exchangeName;
 	}
 
 	public boolean isSetPrimary() {

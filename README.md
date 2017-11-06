@@ -28,8 +28,8 @@ How to run application:
 How to run Restful backend:
 1. Download asset-trader
 2. Using Eclipse IDE, import project as maven project
-3. In eclipse IDE, find command from menu `maven update'
-4. In eclipse IDE, run 'maven build'
+3. In eclipse IDE, find command from menu `maven update`
+4. In eclipse IDE, run 'maven build`
 
 To add account API
 1. Create BittrexKey class

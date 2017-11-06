@@ -22,8 +22,8 @@ How to run application:
 1. Download asset-trader-ui
 2. Open in Visual Code
 3. Navigate to the root directory
-4. Type `npm install'
-5. Type `ng serve'
+4. Type `npm install`
+5. Type `ng serve`
 
 How to run Restful backend:
 1. Download asset-trader
